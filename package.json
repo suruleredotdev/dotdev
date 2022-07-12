@@ -1,0 +1,24 @@
+{
+  "name": "dotdev-tuntun",
+  "version": "0.1.0",
+  "description": "dotdev tuntun",
+  "main": "index.ts",
+  "scripts": {
+    "clean": "rm -rf .cache build out",
+    "prep": "yarn clean && mkdir -p dist & cp -R assets dist",
+    "build": "SSR=true yarn prep && parcel build index.html --no-source-maps --no-cache",
+    "test": "mocha 'src/test/**/*.ts'",
+    "start": "SSR=true yarn prep && parcel index.html -p 8080 --open --no-cache",
+    "serve": "yarn prep && parcel index.html -p 8080 --no-cache"
+  },
+  "devDependencies": {
+    "yarn": "1.22.x",
+    "parcel": "2.6.x",
+    "mocha": "10.x.x"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "author": "korede@surulere.dev, kolade@surulere.dev",
+  "license": "ISC"
+}

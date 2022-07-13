@@ -6,19 +6,32 @@
   "scripts": {
     "clean": "rm -rf .cache build out",
     "prep": "yarn clean && mkdir -p dist & cp -R assets dist",
-    "build": "SSR=true yarn prep && parcel build index.html --no-source-maps --no-cache",
+    "build-parcel": "SSR=true yarn prep && parcel build index.html --no-source-maps --no-cache",
     "test": "mocha 'src/test/**/*.ts'",
-    "start": "SSR=true yarn prep && parcel index.html -p 8080 --open --no-cache",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export",
+    "start-parcel": "SSR=true yarn prep && parcel index.html -p 8080 --open --no-cache",
     "serve": "yarn prep && parcel index.html -p 8080 --no-cache"
   },
   "devDependencies": {
-    "yarn": "1.22.x",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "mocha": "10.x.x",
     "parcel": "2.6.x",
-    "mocha": "10.x.x"
+    "typescript": "^4.7.4",
+    "yarn": "1.22.x"
   },
   "directories": {
     "lib": "lib"
   },
   "author": "korede@surulere.dev, kolade@surulere.dev",
-  "license": "ISC"
+  "license": "ISC",
+  "dev": "next dev",
+  "dependencies": {
+    "contentful": "7.14.x",
+    "next": "11.1.x",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
 }

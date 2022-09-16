@@ -12,6 +12,140 @@
   --notion-header-height: 54px;
 }
 
+#content {
+    animation: fadeIn ease 700ms;
+    padding: var(--bg-size);
+}
+.LIGHT #content {
+  background-color: var(--bg-color-light);
+  color: var(--txt-color-light);
+  border: 0.5px solid var(--border-color-light);
+}
+
+.DARK #content {
+  background-color: var(--bg-color-dark);
+  color: var(--txt-color-dark);
+  border: 0.5px solid var(--border-color);
+}
+
+
+.LIGHT .content-border {
+  color: var(--txt-color-light);
+  border: 0.5px solid var(--border-color-light);
+}
+
+.DARK .content-border {
+  color: var(--txt-color-dark);
+  border: 0.5px solid var(--border-color);
+}
+
+/* large screens */
+@media screen and (min-width: 1200px) {
+  #content {
+    margin-left: calc(4 * var(--bg-size));
+    margin-right: calc(10 * var(--bg-size));
+    width: calc(19.3 * var(--bg-size));
+    margin-top: calc(1 * var(--bg-size));
+  }
+
+  #content.map {
+    margin-left: calc(2 * var(--bg-size));
+    margin-right: calc(4 * var(--bg-size));
+    width: calc(29 * var(--bg-size));
+    margin-top: calc(1 * var(--bg-size));
+  }
+
+  #logo img {
+    width: calc(2 * var(--bg-size));
+    margin-left: calc(4 * var(--bg-size));
+    margin-top: calc(1 * var(--bg-size));
+  }
+}
+
+/* medium screens */
+@media screen and (min-width: 600px) and (max-width: 1200px) {
+  #content {
+    margin-left: calc(4 * var(--bg-size));
+    margin-right: calc(4 * var(--bg-size));
+    margin-top: calc(1 * var(--bg-size));
+  }
+
+  #content.map {
+    margin-left: calc(2 * var(--bg-size));
+    margin-right: calc(4 * var(--bg-size));
+    width: calc(17.3 * var(--bg-size));
+    margin-top: calc(1 * var(--bg-size));
+  }
+
+  #logo img {
+    width: calc(2 * var(--bg-size));
+    margin-left: calc(4 * var(--bg-size));
+    margin-top: calc(1 * var(--bg-size));
+  }
+}
+
+/* small screens */
+@media screen and (max-width: 600px) {
+  #content {
+    margin-left: calc(0.2 * var(--bg-size));
+    margin-right: calc(0.2 * var(--bg-size));
+    animation: fadeIn ease 700ms;
+    margin-bottom: calc(1 * var(--bg-size));
+    padding: 20px;
+  }
+
+  #content.map {
+    margin-left: calc(0.2 * var(--bg-size));
+    margin-right: calc(0.2 * var(--bg-size));
+    height: calc(17 * var(--bg-size));
+    animation: fadeIn ease 700ms;
+    margin-bottom: calc(1 * var(--bg-size));
+  }
+
+  #logo img {
+    width: calc(1 * var(--bg-size));
+    margin-left: calc(0.5 * var(--bg-size));
+    margin-top: calc(0.5 * var(--bg-size));
+    margin-bottom: calc(0.5 * var(--bg-size));
+  }
+}
+
+a.no-ul {
+  border: 0px;
+}
+
+.title {
+  font-family: -apple-system, roboto, sans-serif;
+  color: var(--title-color);
+}
+
+.LIGHT a.title {
+  border-bottom: 1px dashed var(--txt-color-dark);
+}
+.DARK a.title {
+  border-bottom: 1px dashed var(--title-color);
+}
+a.title {
+  color: var(--title-color);
+}
+
+/*
+ * _layouts/post
+ */
+
+#content.post {
+  line-height: 1.6; /* recommend line-height */
+}
+
+.LIGHT #content.post blockquote {
+  border-left: 4px solid calc(0.8 * var(--txt-color-light));
+}
+
+.DARK #content.post blockquote {
+  border-left: 4px solid calc(0.8 * var(--txt-color-dark));
+}
+
+
 .notion-page {
   padding-bottom: calc(max(5vh, 32px)) !important;
   line-height: 1.65;

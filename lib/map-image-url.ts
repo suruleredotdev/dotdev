@@ -7,6 +7,9 @@ export const mapImageUrl = (url: string, block: Block) => {
   if (url === defaultPageCover || url === defaultPageIcon) {
     return url
   }
+  if (url.startsWith('/assets/')) {
+    return url
+  }
 
   return defaultMapImageUrl(url, block)
 }

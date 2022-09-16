@@ -25,5 +25,7 @@ export const PageAside: React.FC<{
     return <PageActions tweet={tweet} />
   }
 
-  return <PageSocial />
+  // on other pages e.g. home, don't show anything
+  // (social icons go in footer)
+  return <></> // <PageSocial />
 }

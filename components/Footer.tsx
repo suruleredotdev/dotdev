@@ -13,8 +13,9 @@ import * as config from 'lib/config'
 
 import styles from './styles.module.css'
 
-// TODO: merge the data and icons from PageSocial with the social links in Footer
+// TODO: merge the data and icons from PageSocial with the social links in Foote 
 
+// based on dotdev/default.html #footer element
 export const FooterImpl: React.FC = () => {
   const [hasMounted, setHasMounted] = React.useState(false)
   const { isDarkMode, toggleDarkMode } = useDarkMode()

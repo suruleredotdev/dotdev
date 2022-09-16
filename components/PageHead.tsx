@@ -79,6 +79,61 @@ export const PageHead: React.FC<
       <meta property='og:title' content={title} />
       <meta name='twitter:title' content={title} />
       <title>{title}</title>
+
+      <meta property="og:image" content="/assets/img/suruleredotdev_dark_bg.svg"/>
+      <meta property="twitter:image" content="/assets/img/suruleredotdev_dark_bg.svg"/>
+
+      <link rel="icon" href="/assets/img/suruleredotdev_white_bg.svg"/>
+
+      <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css"/>
     </Head>
   )
+  /*
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta property="og:image" content="/assets/img/suruleredotdev_dark_bg.svg">
+  <meta property="twitter:image" content="/assets/img/suruleredotdev_dark_bg.svg">
+
+  <link rel="icon" href="/assets/img/suruleredotdev_white_bg.svg">
+  <link rel="stylesheet" href="/styles.css">
+
+  <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css"/>
+
+  <script async defer data-domain="surulere.dev" src="https://plausible.io/js/plausible.js"></script>
+
+  <!-- <script src="/scripts/custom-element.js" type="text/javascript"></script> -->
+  
+  <title>suruleredotdev</title>
+
+  <script>
+    function setMode(mode) {
+      window.localStorage.setItem('mode', mode)
+      if(mode === 'dark') {
+        if (!document.querySelector('body').classList.contains('DARK')) document.querySelector('body').classList.add('DARK');
+        document.getElementById("logo-dark").style.display = "block";
+        document.getElementById("logo-light").style.display = "none";
+        document.querySelector('body').classList.remove('LIGHT');
+        if (typeof codemirror !== 'undefined') codemirror.setOption("theme", "material");
+      } else if(mode === 'light') {
+        if (!document.querySelector('body').classList.contains('LIGHT')) document.querySelector('body').classList.add('LIGHT');
+        document.getElementById("logo-light").style.display = "block";
+        document.getElementById("logo-dark").style.display = "none";
+        document.querySelector('body').classList.remove('DARK');
+        if (typeof codemirror !== 'undefined')  codemirror.setOption("theme", "neo");
+      }
+    }
+
+    function getMode() {
+      var hours = (new Date()).getHours();
+      var timeOfDayMode = hours > 6 && hours < 20 ? "light" : "dark";
+      let localStorageMode = window.localStorage.getItem("mode");
+      return (!!localStorageMode) ? localStorageMode : timeOfDayMode;
+    }
+
+    window.addEventListener('DOMContentLoaded', function (e) {
+      setMode(getMode());
+    });
+  </script>
+  */
 }

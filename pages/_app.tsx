@@ -1,6 +1,12 @@
 // global styles shared across the entire site
 import 'styles/global.css'
 
+// custom styles from original site
+import 'styles/styles.css'
+
+// tachyons styling system
+import 'styles/tachyons.css'
+
 // core styles shared by all of react-notion-x (required)
 import 'react-notion-x/src/styles.css'
 
@@ -37,6 +43,18 @@ import {
 if (!isServer) {
   bootstrap()
 }
+
+// NOTE: https://github.com/vercel/next-plugins/issues/282#issuecomment-432127816 
+// ALT: https://stackoverflow.com/questions/51932288/next-js-stylesheet-is-not-loaded
+// import Router from 'next/router';
+// 
+// Router.events.on('routeChangeComplete', () => {
+//   if (process.env.NODE_ENV !== 'production') {
+//     const els = document.querySelectorAll('link[href*="/_next/static/css/styles.chunk.css"]');
+//     const timestamp = new Date().valueOf();
+//     els[0].href = '/_next/static/css/styles.chunk.css?v=' + timestamp;
+//   }
+// })
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()

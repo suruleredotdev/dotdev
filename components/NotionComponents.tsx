@@ -44,15 +44,7 @@ import {
       propertyDateValue
 } from "./Blocks"
 
-export const getNotionProps = ({
-  site,
-  recordMap,
-  pageId
-}): any => {
-  const router = useRouter()
-  const lite = useSearchParam('lite')
-
-  const components = React.useMemo(
+export const getComponents = 
     () => ({
       nextImage: Image,
       nextLink: Link,
@@ -66,7 +58,18 @@ export const getNotionProps = ({
       propertyLastEditedTimeValue,
       propertyTextValue,
       propertyDateValue
-    }),
+    })
+
+export const getNotionProps = ({
+  site,
+  recordMap,
+  pageId
+}): any => {
+  const router = useRouter()
+  const lite = useSearchParam('lite')
+
+  const components = React.useMemo(
+    getComponents,
     []
   )
 
@@ -85,6 +88,7 @@ export const getNotionProps = ({
 
   const keys = Object.keys(recordMap?.block || {})
   const block = recordMap?.block?.[keys[0]]?.value
+  console.log({ keys, block })
 
   // const isRootPage =
   //   parsePageId(block?.id) === parsePageId(site?.rootNotionPageId)
@@ -103,13 +107,13 @@ export const getNotionProps = ({
 
   const footer = React.useMemo(() => <Footer />, [])
 
-  const title = getBlockTitle(block, recordMap) || site.name
+  const title = block ? getBlockTitle(block, recordMap) : site?.name
 
   console.log('notion page', {
     isDev: config.isDev,
     title,
     pageId,
-    rootNotionPageId: site.rootNotionPageId,
+    rootNotionPageId: site?.rootNotionPageId,
     recordMap
   })
 
@@ -125,8 +129,8 @@ export const getNotionProps = ({
     !config.isDev && getCanonicalPageUrl(site, recordMap)(pageId)
 
   const socialImage = mapImageUrl(
-    getPageProperty<string>('Social Image', block, recordMap) ||
-      (block as PageBlock).format?.page_cover ||
+    block ? getPageProperty<string>('Social Image', block, recordMap) :
+      // (block as PageBlock)?.format?.page_cover ||
       config.defaultPageCover,
     block
   )

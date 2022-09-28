@@ -1,4 +1,6 @@
 import * as React from 'react'
+import { useHover } from "usehooks-ts";
+
 import { FaTwitter } from '@react-icons/all-files/fa/FaTwitter'
 import { FaZhihu } from '@react-icons/all-files/fa/FaZhihu'
 import { FaGithub } from '@react-icons/all-files/fa/FaGithub'
@@ -12,11 +14,126 @@ import { useDarkMode } from 'lib/use-dark-mode'
 import * as config from 'lib/config'
 
 import styles from './styles.module.css'
+import { layoutDefaultClasses } from './styles';
 
 // TODO: merge the data and icons from PageSocial with the social links in Foote 
 
 // based on dotdev/default.html #footer element
-export const FooterImpl: React.FC = () => {
+
+const classes = layoutDefaultClasses
+
+export const FooterImpl: React.FC<any> = ({ page, isBlogPost }) => {
+  const shareHoverRef = React.useRef(null);
+  const shareIsHovered = useHover(shareHoverRef);
+  const settingsHoverRef = React.useRef(null);
+  const settingsIsHovered = useHover(settingsHoverRef);
+
+  const { toggleDarkMode } = useDarkMode();
+
+  return (
+    <footer ref={shareHoverRef} id="footer" className={classes.footer}>
+      <div id="social-block" className={classes.socialBlock}>
+        <span id="twitter-link" className={classes.socialBlockAction}>
+          <a className="link" href="https://twitter.com/suruleredotdev">
+            @SURULEREDOTDEV
+          </a>
+        </span>
+        {isBlogPost ? (
+          <div
+            id="share-block"
+            className={classes.shareBlock}
+            style={{ bottom: "0", left: "calc(2.6 * var(--bg-size))" }}
+          >
+            {shareIsHovered ? (
+              <>
+                <span className={classes.shareBlockAction}>
+                  <a
+                    target="_blank"
+                    className="no-ul"
+                    href={
+                      "https://twitter.com/intent/tweet?text=" +
+                      encodeURIComponent(
+                        `${page.title} https://surulere.dev ${page.url}`
+                      )
+                    }
+                    rel="noreferrer"
+                  >
+                    TWITTER
+                  </a>
+                </span>
+                <span className={classes.shareBlockAction}>
+                  <a
+                    target="_blank"
+                    className="no-ul"
+                    href={
+                      "https://www.facebook.com/sharer/sharer.php?u=" +
+                      encodeURIComponent(
+                        `${page.title} https://surulere.dev ${page.url}`
+                      )
+                    }
+                    rel="noreferrer"
+                  >
+                    FACEBOOK
+                  </a>
+                </span>
+              </>
+            ) : (
+              <></>
+            )}
+            <span className={classes.shareBlockDropdown}>
+              <a href="#" className="no-ul">
+                SHARE
+              </a>
+            </span>
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
+      <div
+        ref={settingsHoverRef}
+        id="settings-block"
+        className={classes.settingsBlock}
+        style={{ bottom: "0", right: "0" }}
+      >
+        {settingsIsHovered ? (
+          <>
+            <span
+              id="clear-local-storage"
+              className={classes.settingsBlockAction}
+              onClick={() => {
+                window.localStorage.clear();
+                console.log("[suruleredotdev]: local storage cleared!");
+              }}
+            >
+              CLEAR LOCAL STORAGE
+            </span>
+            <span
+              id="dark-mode-toggle"
+              className={classes.settingsBlockAction}
+              onClick={toggleDarkMode}
+            >
+              TOGGLE DARK MODE
+            </span>
+          </>
+        ) : (
+          <></>
+        )}
+        <script></script>
+
+        <span className={classes.settingsBlockDropdown}>
+          <a href="#" className="no-ul">
+            SETTINGS
+          </a>
+        </span>
+      </div>
+    </footer>
+  );
+};
+
+export const Footer = React.memo(FooterImpl)
+
+export const OldFooterImpl: React.FC = () => {
   const [hasMounted, setHasMounted] = React.useState(false)
   const { isDarkMode, toggleDarkMode } = useDarkMode()
 
@@ -126,5 +243,3 @@ export const FooterImpl: React.FC = () => {
     </footer>
   )
 }
-
-export const Footer = React.memo(FooterImpl)

@@ -2,16 +2,9 @@ import * as React from 'react'
 
 import * as types from 'lib/types'
 
-// import styles from './styles.module.css'
-// import { getNotionProps } from './NotionComponents'
-// import { NotionRenderer, NotionContextProvider, NotionBlockRenderer } from 'react-notion-x'
-// import { getAllPagesInSpace } from 'notion-utils'
-// import { mapPageUrl } from 'lib/map-page-url'
-// import { site } from 'lib/config'
-// import * as config from 'lib/config'
 import { getPage } from 'lib/notion'
-import { Block, BlockMap, PageBlock } from 'lib/types'
-import { getPageProperty } from '@notionhq/client/build/src/api-endpoints'
+import { Block, BlockMap, PageBlock, RecordMap } from 'lib/types'
+import { getPageProperty } from 'notion-utils'
 /*
 ---
 layout: default
@@ -31,7 +24,7 @@ export const LayoutPost: React.FC<types.PageProps & { children: React.ReactNode 
 }) => {
 
   const { rootBlock: page, contentBlocks } = getPageFromRecords({recordMap, pageId})
-  const content = renderPageContent(recordMap, page)
+  const content = renderPageContent({ recordMap, contentBlocks })
 
   // const pageProps = {
   //   1: getPageProperty("Author", page, recordMap),
@@ -44,15 +37,13 @@ export const LayoutPost: React.FC<types.PageProps & { children: React.ReactNode 
       <h1 className="gray o-90 mb0">{ page.title }</h1>
       <p className="gray o-90 mt0 pb4 ttu f7">{ page.date?.toString() } - 
         {page?.author ?
-          <a href={page.author?.link} className="title">{ page.author }</a>
-        : page.authors ?
+          <a href={page.author?.link} className="title">{ page.author.name }</a>
+        : (page.authors ?
           page.authors?.map((author, i) => (
             <a key={i} href={author.link} className="title">{ author.name }</a>
           ))
-        : <></>}
+        : <></>)}
       </p>
-
-      { content }
 
       { children }
 
@@ -61,11 +52,38 @@ export const LayoutPost: React.FC<types.PageProps & { children: React.ReactNode 
   )
 }
 
+// (WIP) Post Content Rendering flow
+// TODO: 
+// - [ ] properly utilize getStaticProps to pre-render content
+// - [ ] split NotionRenderer to use custom Article components
+// - [ ] incorporate getSitePosts (?)
+
+function pageFromBlock(args: { recordMap: RecordMap, block: PageBlock }) {
+  return {
+    author: getPageProperty("Author", args.block, args.recordMap),
+    title: getPageProperty("Title", args.block, args.recordMap),
+    date: getPageProperty("Date", args.block, args.recordMap),
+  }
+}
+
 function getPageFromRecords(args: { recordMap; pageId }): {
-  rootBlock: PageBlock,
+  rootBlock: any | PageBlock,
   contentBlocks: Array<Block>,
 } {
   const { recordMap, pageId } = args;
+
+  const defaultRootBlock = {
+    title: "",
+    date: "",
+    author: { link: "", name: "" },
+    authors: [{ link: "", name: "" }],
+  }
+  if (!recordMap?.block) {
+    return {
+      rootBlock: defaultRootBlock as any,
+      contentBlocks: []
+    }
+  }
 
   const postRootBlock = Object.values(recordMap?.block).find(
     (block: BlockMap) => {
@@ -73,23 +91,23 @@ function getPageFromRecords(args: { recordMap; pageId }): {
         block?.value?.id === pageId
       )
     }
-  ).value as PageBlock
+  )?.value as PageBlock
   const postContentBlocks = Object.values(recordMap?.block).filter(
     (block: BlockMap) => {
       return (
         block?.value?.parent_id === pageId
       )
     }
-  ).map((b: BlockMap[string]) => b.value) as Array<Block>;
+  ).map((b: BlockMap[string]) => b?.value) as Array<Block>;
 
   return {
-    rootBlock: postRootBlock,
+    rootBlock: pageFromBlock({ recordMap, page: postRootBlock }),
     contentBlocks: postContentBlocks
   }
 }
-function renderPageContent(page: void) {
+
+function renderPageContent(args: { recordMap: RecordMap, contentBlocks: Array<Block> }) {
   return <></>
-  // throw new Error('Function not implemented.')
 }
 
 // {

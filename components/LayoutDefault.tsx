@@ -39,16 +39,20 @@ interface Page {
 
 export const LayoutDefault: React.FC<types.PageProps & { children: React.ReactNode }> = ({
   children,
+  ...props
 }) => {
 
   const { isDarkMode } = useDarkMode();
 
+  const isLoading = !props.recordMap;
+  const loadingAnimation = isLoading?"animate-bg-infinite":"animate-bg"
+
   return (
     <>
       {isDarkMode ? (
-        <BodyClassName className="sans-serif DARK animate-bg" />
+        <BodyClassName className={`sans-serif DARK ${loadingAnimation}`} />
       ) : (
-        <BodyClassName className="sans-serif LIGHT animate-bg" />
+        <BodyClassName className={`sans-serif LIGHT ${loadingAnimation}`} />
       )}
       <a name="top"></a>
       <a id="logo" href="/" className="bn">

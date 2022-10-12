@@ -70,6 +70,10 @@ body.animate-bg {
   animation: bg-slide 640ms linear;
 }
 
+body.animate-bg-infinite {
+  animation: bg-slide 750ms ease infinite;
+}
+
 /* DARK MODE */
 body.LIGHT {
   background-image: url(/assets/img/suruleredotdev_background.svg);

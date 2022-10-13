@@ -3,9 +3,13 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true'
 })
 
+const isProd = process.env.NODE_ENV === 'production'
+
 module.exports = withBundleAnalyzer({
+  assetPrefix: isProd ? '/dotdev/' : '',
   staticPageGenerationTimeout: 300,
   images: {
+    unoptimized: true,
     domains: [
       'www.notion.so',
       'notion.so',

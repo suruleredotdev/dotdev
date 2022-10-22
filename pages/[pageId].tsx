@@ -49,6 +49,10 @@ export default function DynamicPostPage(props) {
     page: !recordMap || recordMap.block[pageId]
   })
 
+  const header = (<>
+      
+  </>)
+
   return <LayoutDefault {...props} >
       <LayoutPost
         site={site}
@@ -57,7 +61,6 @@ export default function DynamicPostPage(props) {
         pageId={pageId}
         rootPageBlock={block}
       >
-
         <NotionRenderer
           bodyClassName={
             "" // (styles.notion, pageId === site.rootNotionPageId && "index-page")
@@ -77,6 +80,8 @@ export default function DynamicPostPage(props) {
           defaultPageCover={config.defaultPageCover}
           defaultPageCoverPosition={config.defaultPageCoverPosition}
           mapImageUrl={mapImageUrl}
+          disableHeader={true}
+          className="pa0 o-80"
           // searchNotion={config.isSearchEnabled ? searchNotion : null}
         />
 
@@ -84,6 +89,44 @@ export default function DynamicPostPage(props) {
 
       <Footer page={undefined} isBlogPost={isBlogPost}></Footer>
   </LayoutDefault>
+}
+
+// based on NotionBlockRenderer
+export const PostRenderer: React.FC<{
+  className?: string
+  bodyClassName?: string
+  header?: React.ReactNode
+  footer?: React.ReactNode
+  disableHeader?: boolean
+
+  blockId?: string
+  hideBlockId?: boolean
+  level?: number
+}> = ({ level = 0, blockId, ...props }) => {
+  const { recordMap } = useNotionContext()
+  const id = blockId || Object.keys(recordMap.block)[0]
+  const block = recordMap.block[id]?.value
+
+  if (!block) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('missing block', blockId)
+    }
+
+    return null
+  }
+
+  return (
+    <Block key={id} level={level} block={block} {...props}>
+      {block?.content?.map((contentBlockId) => (
+        <NotionBlockRenderer
+          key={contentBlockId}
+          blockId={contentBlockId}
+          level={level + 1}
+          {...props}
+        />
+      ))}
+    </Block>
+  )
 }
 
 // used to render page at build time

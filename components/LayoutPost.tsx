@@ -24,11 +24,7 @@ export const LayoutPost: React.FC<types.PageProps & { children: React.ReactNode 
 }) => {
 
   const { rootBlock: page, contentBlocks } = getPageFromRecords({recordMap, pageId})
-  const content = renderPageContent({ recordMap, contentBlocks })
-
-  // const pageProps = {
-  //   1: getPageProperty("Author", page, recordMap),
-  // }
+  console.log("LayoutPost", { rootBlock: page, pageId: recordMap?.[pageId], contentBlocks })
 
   return (
     <div id="content" className="post pa3 pa5-ns mt6-l mh7-l f5">
@@ -58,7 +54,7 @@ export const LayoutPost: React.FC<types.PageProps & { children: React.ReactNode 
 // - [ ] split NotionRenderer to use custom Article components
 // - [ ] incorporate getSitePosts (?)
 
-function pageFromBlock(args: { recordMap: RecordMap, block: PageBlock }) {
+export function pageFromBlock(args: { recordMap: RecordMap, block: PageBlock }) {
   return {
     author: getPageProperty("Author", args.block, args.recordMap),
     title: getPageProperty("Title", args.block, args.recordMap),
@@ -100,8 +96,10 @@ function getPageFromRecords(args: { recordMap; pageId }): {
     }
   ).map((b: BlockMap[string]) => b?.value) as Array<Block>;
 
+  const page = pageFromBlock({ recordMap, page: postRootBlock })
+  console.log("getPageFromRecords", { record: postRootBlock, page })
   return {
-    rootBlock: pageFromBlock({ recordMap, page: postRootBlock }),
+    rootBlock: page,
     contentBlocks: postContentBlocks
   }
 }

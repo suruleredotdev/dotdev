@@ -38,7 +38,9 @@ export const NotionPageHeader: React.FC<{
   const { components, mapPageUrl } = useNotionContext()
 
   if (navigationStyle === 'default') {
-    return <Header block={block} />
+    return <h1>
+      <Header block={block} />
+    </h1>
   }
 
   return (

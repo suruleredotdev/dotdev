@@ -1,20 +1,20 @@
 <p align="center">
   <a href="https://transitivebullsh.it/nextjs-notion-starter-kit">
-    <img alt="Example article page" src="https://user-images.githubusercontent.com/552829/160132094-12875e09-41ec-450a-80fc-ae8cd488129d.jpg" width="689">
+    <img width="699" alt="Landing page view with essays and archive entries" src="https://user-images.githubusercontent.com/16245199/197334695-55afdc55-d5b6-4bff-979e-0fc40abcabd6.png">
+
   </a>
 </p>
 
-# Next.js Notion Starter Kit
-
-> The perfect starter kit for building websites with Next.js and Notion.
+# SURULERE[DOT]DEV (IKEJI/II/2)
+__ Based on Next.js Notion Starter Kit: The perfect starter kit for building websites with Next.js and Notion.__
 
 [![Build Status](https://github.com/transitive-bullshit/nextjs-notion-starter-kit/actions/workflows/build.yml/badge.svg)](https://github.com/transitive-bullshit/nextjs-notion-starter-kit/actions/workflows/build.yml) [![Prettier Code Formatting](https://img.shields.io/badge/code_style-prettier-brightgreen.svg)](https://prettier.io)
 
 ## Intro
 
-This repo is what I use to power my personal blog and portfolio site [transitivebullsh.it](https://transitivebullsh.it).
-
-It uses Notion as a CMS, [react-notion-x](https://github.com/NotionX/react-notion-x), [Next.js](https://nextjs.org/), and [Vercel](https://vercel.com).
+> This repo is what I use to power my personal blog and portfolio site [transitivebullsh.it](https://transitivebullsh.it).
+>
+> It uses Notion as a CMS, [react-notion-x](https://github.com/NotionX/react-notion-x), [Next.js](https://nextjs.org/), and [Vercel](https://vercel.com).
 
 ## Features
 

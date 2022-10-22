@@ -6,7 +6,9 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const isProd = process.env.NODE_ENV === 'production'
 
 module.exports = withBundleAnalyzer({
-  assetPrefix: isProd ? '/dotdev/' : '',
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || ''
+  assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH || ''
+
   staticPageGenerationTimeout: 300,
   images: {
     unoptimized: true,

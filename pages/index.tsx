@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as config from "lib/config";
 import { resolveNotionPage } from 'lib/resolve-notion-page'
+import { resolveArenaChannels } from 'lib/resolve-arena-channels'
 import { useDarkMode } from "lib/use-dark-mode";
 import { mapPageUrl } from "lib/map-page-url";
 import { LayoutDefault, parsePageId } from 'components/LayoutDefault'
@@ -15,7 +16,12 @@ import { getLayoutProps } from 'lib/get-layout-props';
 // https://nextjs.org/docs/basic-features/data-fetching/get-static-props
 export const getStaticProps = async () => {
   try {
-    const props = await resolveNotionPage(config.domain)
+    const notionProps = await resolveNotionPage(config.domain)
+    const channels = await resolveArenaChannels(config.domain)
+    const props = {
+      ...notionProps,
+      channels 
+    }
     console.log("STATIC PROPS: index", { domain:config.domain, props })
 
     return { props, revalidate: 10 }
@@ -34,6 +40,7 @@ const IndexPage: React.FC<any> = (props) => {
     recordMap,
     error,
     pageId,
+    channels: arenaChannels,
   } = props
 
   console.log("IndexPage", { props })
@@ -74,6 +81,7 @@ const IndexPage: React.FC<any> = (props) => {
         error={error}
         pageId={pageId}
         rootPageBlock={block}
+        channels={arenaChannels}
       ></HomePageContent>
 
         <Footer page={undefined} isBlogPost={isBlogPost}></Footer>

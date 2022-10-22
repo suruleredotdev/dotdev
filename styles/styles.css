@@ -143,3 +143,18 @@ body.DARK {
   content: "–";
   padding-right: 8px;
 }
+
+.b-color {
+  border-color: var(--border-color),
+}
+
+.horizontal-scroll-shadow{
+  background-image: linear-gradient(to right, transparent, transparent), linear-gradient(to right, transparent, transparent), linear-gradient(to right, rgba(0, 0, 20, .50), rgba(255, 255, 255, 0)), linear-gradient(to left, rgba(0, 0, 20, .50), rgba(255, 255, 255, 0));
+  /* Shadows */
+  /* Shadow covers */
+  background-position: left center, right center, left center, right center;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  background-size: 20px 100%, 20px 100%, 10px 100%, 10px 100%;
+  background-attachment: local, local, scroll, scroll;
+}

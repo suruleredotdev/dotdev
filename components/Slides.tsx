@@ -14,7 +14,7 @@ import { Block, ExtendedRecordMap } from 'notion-types'
 // 
 // import { getPageTweet } from 'lib/get-page-tweet'
 
-export const slides : React.FC<{
+export const Slides : React.FC<{
   block: Block
   recordMap: ExtendedRecordMap
   isBlogPost: boolean
@@ -35,6 +35,7 @@ export const slides : React.FC<{
     });
 
   //<style>
+  // // eslint-disable-next-line 
   const style = `
       .SLIDES.tool-container {
           display: flex;

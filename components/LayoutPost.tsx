@@ -2,8 +2,7 @@ import * as React from 'react'
 
 import * as types from 'lib/types'
 
-import { getPage } from 'lib/notion'
-import { Block, BlockMap, PageBlock, RecordMap } from 'lib/types'
+import { Block, BlockMap, PageBlock, RecordMap, ExtendedRecordMap } from 'lib/types'
 import { getPageProperty } from 'notion-utils'
 /*
 ---
@@ -31,7 +30,7 @@ export const LayoutPost: React.FC<types.PageProps & { children: React.ReactNode 
       <a href="/">&larr;</a>
 
       <h1 className="gray o-90 mb0">{ page.title }</h1>
-      <p className="gray o-90 mt0 pb4 ttu f7">{ page.date?.toString() } - 
+      <p className="gray o-90 mt0 pb4 ttu f7">{ (new Date(page.date))?.toLocaleDateString() } - 
         {page?.author ?
           <a href={page.author?.link} className="title">{ page.author.name }</a>
         : (page.authors ?
@@ -54,11 +53,11 @@ export const LayoutPost: React.FC<types.PageProps & { children: React.ReactNode 
 // - [ ] split NotionRenderer to use custom Article components
 // - [ ] incorporate getSitePosts (?)
 
-export function pageFromBlock(args: { recordMap: RecordMap, block: PageBlock }) {
+export function pageFromBlock(args: { recordMap: ExtendedRecordMap, block: PageBlock }) {
   return {
     author: getPageProperty("Author", args.block, args.recordMap),
-    title: getPageProperty("Title", args.block, args.recordMap),
-    date: getPageProperty("Date", args.block, args.recordMap),
+    title: getPageProperty("Name", args.block, args.recordMap),
+    date: getPageProperty("PublishePublishedd", args.block, args.recordMap),
   }
 }
 
@@ -96,7 +95,8 @@ function getPageFromRecords(args: { recordMap; pageId }): {
     }
   ).map((b: BlockMap[string]) => b?.value) as Array<Block>;
 
-  const page = pageFromBlock({ recordMap, page: postRootBlock })
+  console.log("pageFromBlock", { recordMap, page: postRootBlock })
+  const page = pageFromBlock({ recordMap, block: postRootBlock })
   console.log("getPageFromRecords", { record: postRootBlock, page })
   return {
     rootBlock: page,

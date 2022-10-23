@@ -18,7 +18,7 @@ export interface PageProps {
   pageId?: string
   error?: PageError
   rootPageBlock?: Block
-  channels: Array<Arena.Channel>
+  channels?: Array<Arena.Channel>
 }
 
 export interface Params extends ParsedUrlQuery {

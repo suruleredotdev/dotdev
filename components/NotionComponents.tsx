@@ -44,20 +44,27 @@ import {
       propertyDateValue
 } from "./Blocks"
 
+const defaultComponents = {
+    nextImage: Image,
+    nextLink: Link,
+    Code,
+    Collection,
+    Equation,
+    Pdf,
+    Modal,
+    Tweet,
+    Header: NotionPageHeader,
+    propertyLastEditedTimeValue,
+    propertyTextValue,
+    propertyDateValue
+}
+
+type Components = typeof defaultComponents
+
 export const getComponents = 
-    () => ({
-      nextImage: Image,
-      nextLink: Link,
-      Code,
-      Collection,
-      Equation,
-      Pdf,
-      Modal,
-      Tweet,
-      Header: NotionPageHeader,
-      propertyLastEditedTimeValue,
-      propertyTextValue,
-      propertyDateValue
+  (customComponents: Partial<Components> = {}) => ({
+      ...defaultComponents,
+      ...customComponents
     })
 
 export const getNotionProps = ({

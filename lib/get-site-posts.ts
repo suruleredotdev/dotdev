@@ -9,8 +9,8 @@ export function getSitePosts(args: { recordMap; pageId }): Array<object> {
   console.log(">>> getSitePosts 0", {
     recordMap,
     blocks: Object.values(recordMap.block).map((i) => {
-      let v: Block = i?.value;
-      return !!v ? { props: v.properties, type: v.type } : null;
+      const v: Block = i?.value;
+      return v ? { props: v.properties, type: v.type } : null;
     }),
   });
 

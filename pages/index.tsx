@@ -17,7 +17,7 @@ import { getLayoutProps } from 'lib/get-layout-props';
 export const getStaticProps = async () => {
   try {
     const notionProps = await resolveNotionPage(config.domain)
-    const channels = await resolveArenaChannels(config.domain)
+    const channels = await resolveArenaChannels()
     const props = {
       ...notionProps,
       channels 
@@ -61,29 +61,28 @@ const IndexPage: React.FC<any> = (props) => {
   console.log({ isBlogPost })
 
   return <LayoutDefault {...props} >
-      <NotionContextProvider
-        components={components}
-        recordMap={recordMap}
-        mapPageUrl={mapPageUrl}
-        darkMode={isDarkMode}
-        previewImages={!!recordMap.preview_images}
-        showCollectionViewDropdown={false}
-        showTableOfContents={false} //  config.defaultShowTableOfContents
-        minTableOfContentsItems={false} //  config.defaultMinTableOfContentsItems
-        defaultPageIcon={config.defaultPageIcon}
-        defaultPageCover={config.defaultPageCover}
-        defaultPageCoverPosition={config.defaultPageCoverPosition}
-        zoom={false}
-      >
-      <HomePageContent
-        site={site}
-        recordMap={recordMap}
-        error={error}
-        pageId={pageId}
-        rootPageBlock={block}
-        channels={arenaChannels}
-      ></HomePageContent>
-
+        <NotionContextProvider
+          components={components}
+          recordMap={recordMap}
+          mapPageUrl={mapPageUrl}
+          darkMode={isDarkMode}
+          previewImages={recordMap.preview_images}
+          showCollectionViewDropdown={false}
+          showTableOfContents={false} //  config.defaultShowTableOfContents
+          minTableOfContentsItems={false} //  config.defaultMinTableOfContentsItems
+          defaultPageIcon={config.defaultPageIcon}
+          defaultPageCover={config.defaultPageCover}
+          defaultPageCoverPosition={config.defaultPageCoverPosition}
+          zoom={false}
+        >
+        <HomePageContent
+          site={site}
+          recordMap={recordMap}
+          error={error}
+          pageId={pageId}
+          rootPageBlock={block}
+          channels={arenaChannels}
+        ></HomePageContent>
         <Footer page={undefined} isBlogPost={isBlogPost}></Footer>
       </NotionContextProvider>
   </LayoutDefault>

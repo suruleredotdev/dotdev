@@ -54,7 +54,7 @@ export const LayoutDefault: React.FC<types.PageProps & { children: React.ReactNo
       ) : (
         <BodyClassName className={`sans-serif LIGHT ${loadingAnimation}`} />
       )}
-      <a name="top"></a>
+      <a href="top"></a>
       <a id="logo" href="/" className="bn">
         {isDarkMode ? (
           <img

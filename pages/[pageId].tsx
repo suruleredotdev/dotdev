@@ -25,8 +25,11 @@ export default function DynamicPostPage(props) {
     site,
     recordMap,
     error,
-    pageId,
+    pageId: blogPageId,
   } = props
+
+  // 
+  const pageId = recordMap.collection[blogPageId]
 
   console.log("DynamicPostPage", { props })
 
@@ -98,7 +101,6 @@ export const PostRenderer: React.FC<{
   header?: React.ReactNode
   footer?: React.ReactNode
   disableHeader?: boolean
-
   blockId?: string
   hideBlockId?: boolean
   level?: number

@@ -17,11 +17,11 @@ export const ArenaBlock = (props: {
   // <div className={`pa1 b--dotted b-color`} style={size || ({ height: 30; width: 30 })}>
 //
 }) => (
-  <a href={`https://are.na/block/`+props.block.id} target="_blank">
+  <a href={`https://are.na/block/`+props.block?.id} target="_blank">
     <div className={`pa3 pt2 b--dotted b-color overflow-hidden`} style={{ height: 250, width: 250 }}>
-      <p className="f5 w5">{props.block.title || props.block.source.url }</p>
-      <img src={props.block.image.display.url}
-        alt={props.block.description}
+      <p className="f5 w5">{props.block?.title || props.block?.source?.url }</p>
+      <img src={props.block?.image?.display?.url}
+        alt={props.block?.description}
         style={{ height: 200, width: 200 }}/>
       <br/>
     </div>
@@ -43,8 +43,8 @@ export const ArenaChannel = (props: {
         }
         </div>
         <div className="f6 grey flex flex-row">
-          <a className="link black w5 pa1" href={`https://are.na/${props.channel.user.slug}/${props.channel.slug}`} target="_blank">
-            {props.channel.title} <br/>
+          <a className="link black w5 pa1" href={`https://are.na/${props.channel?.user?.slug}/${props.channel?.slug}`} target="_blank">
+            {props.channel?.title} <br/>
           </a>
           <span className="pa1">
             {props.channel?.metadata?.description}

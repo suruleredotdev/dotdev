@@ -1,9 +1,5 @@
-import Arena from "are.na"
 import fetch from "node-fetch"
 
-import * as acl from './acl'
-import { pageUrlOverrides, pageUrlAdditions, environment, site } from './config'
-import { db } from './db'
 import { getEnv } from './get-config-value'
 
 const ARENA_USER = {
@@ -12,13 +8,16 @@ const ARENA_USER = {
   token: getEnv("ARENA_PERSONAL_ACCESS_TOKEN")
 }
 
-export async function resolveArenaChannels(domain: string, rawPageId?: string) {
-  // TODO remove code for are.na client library
-  // const arena = new Arena()
-  // const arenaUser = arena.user(/* id */ ARENA_USER.id,)
+// used to render
+export async function resolveArenaChannels() {
   console.log("resolveArenaChannels", ARENA_USER)
-  const arenaUser = await requestArenaUserWithChannels(ARENA_USER.id, {accessToken: ARENA_USER.token})
-  return arenaUser.channels
+  try {
+    const arenaUser = await requestArenaUserWithChannels(ARENA_USER.id, {accessToken: ARENA_USER.token})
+    return arenaUser.channels
+  } catch (e) {
+    console.log("ERROR resolveArenaChannels", e)
+    return []
+  }
 }
 
 async function requestArenaUserWithChannels(

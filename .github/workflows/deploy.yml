@@ -14,6 +14,13 @@ jobs:
         node-version: [14.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
+    env:
+      NOTION_SECRET: ${{ secrets.NOTION_SECRET }}
+      ARENA_UID: ${{ secrets.ARENA_UID }}
+      ARENA_SECRET: ${{ secrets.ARENA_SECRET }}
+      ARENA_PERSONAL_ACCESS_TOKEN: ${{ secrets.ARENA_PERSONAL_ACCESS_TOKEN }}
+      NEXT_PUBLIC_BASE_PATH: '/dotdev'
+
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}

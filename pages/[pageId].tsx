@@ -1,7 +1,9 @@
 import * as React from 'react'
 import { GetStaticProps } from 'next'
 import {
-  NotionContextProvider, NotionRenderer,
+  NotionRenderer,
+  useNotionContext,
+  // Text as NotionText
 } from "react-notion-x";
 
 import * as config from "lib/config";
@@ -29,7 +31,7 @@ export default function DynamicPostPage(props) {
   } = props
 
   // 
-  const pageId = recordMap.collection[blogPageId]
+  const pageId = recordMap?.collection?.[blogPageId]
 
   console.log("DynamicPostPage", { props })
 

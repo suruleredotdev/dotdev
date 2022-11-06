@@ -57,7 +57,7 @@ export function pageFromBlock(args: { recordMap: ExtendedRecordMap, block: PageB
   return {
     author: getPageProperty("Author", args.block, args.recordMap),
     title: getPageProperty("Name", args.block, args.recordMap),
-    date: getPageProperty("PublishePublishedd", args.block, args.recordMap),
+    date: getPageProperty("Published", args.block, args.recordMap),
   }
 }
 
@@ -80,15 +80,15 @@ function getPageFromRecords(args: { recordMap; pageId }): {
     }
   }
 
-  const postRootBlock = Object.values(recordMap?.block).find(
-    (block: BlockMap) => {
+  const postRootBlock = (Object.values(recordMap?.block).find(
+    (block: BlockMap[string]) => {
       return (
         block?.value?.id === pageId
       )
     }
-  )?.value as PageBlock
+  ) as BlockMap[string])?.value as PageBlock
   const postContentBlocks = Object.values(recordMap?.block).filter(
-    (block: BlockMap) => {
+    (block: BlockMap[string]) => {
       return (
         block?.value?.parent_id === pageId
       )

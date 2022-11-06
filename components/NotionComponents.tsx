@@ -10,9 +10,6 @@ import { PageBlock } from 'notion-types'
 
 import TweetEmbed from 'react-tweet-embed'
 
-// core notion renderer
-import { NotionRenderer } from 'react-notion-x'
-
 // utils
 import { getBlockTitle, getPageProperty, formatDate } from 'notion-utils'
 import { mapPageUrl, getCanonicalPageUrl } from 'lib/map-page-url'

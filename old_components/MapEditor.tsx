@@ -1,12 +1,18 @@
+// TODO: fix type errors
+
 import * as React from 'react'
 import * as types from 'lib/types'
-// <script type="module" src="/tools/components/map-tool.js"></script>
-import * as MapTool from "./map-tool.ts"
-import _ from "lodash"
-// <link rel="stylesheet" href="/tools/components/map-tool.css"/>
-import styles from "./map-tool.css"
+import * as L from "leaflet"
+import omnivore from "@mapbox/leaflet-omnivore"
+/// <script type="module" src="/tools/components/map-tool.js"></script>
+// import * as MapTool from "./old_components/tools/components/map-tool.js"
+// import _ from "lodash"
+/// <link rel="stylesheet" href="/tools/components/map-tool.css"/>
+// import styles from "./map-tool.css"
+import { hideError, logError } from "./Tool"
+import { I } from "./state-helpers"
 
-// raw global state. todo: convert to 
+// raw global state. todo: convert to props/useState
 let attribution,
     tileLayerUrl,
     tileLayer,
@@ -21,7 +27,7 @@ export const MapTool: React.FC<types.PageProps> = ({ site, pageId, error }) => {
     React.useEffect(setupMaps);
 // </script>
     const title = site?.name
-    const mapTool = site?.tool // TODO(korede)
+    // const mapTool = site?.tool // TODO(korede)
 
     const handlers = {
         mouseUpSelect: (e) => { e.target.select() },
@@ -32,6 +38,7 @@ export const MapTool: React.FC<types.PageProps> = ({ site, pageId, error }) => {
         changeCoord1SetValue: (e) => { coord[1].set(e.target.value) },
         changeZoomSetValue: (e) => { zoom.set(e.target.value) },
         change: (e) => {mapType.set(e.target.value)},
+        changeMapTypeSetValue: (e) => { mapType.set(e.target.value) }
     }
     return (
         <>
@@ -65,7 +72,7 @@ export const MapTool: React.FC<types.PageProps> = ({ site, pageId, error }) => {
                         <input 
                             id="attribution-setting"
                             name="attribution"
-                            placeholder="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+                            placeholder={"&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"}
                             onMouseDown={handlers.mouseDownAttribSetPlaceholder}
                             onMouseUp={handlers.mouseUpSelect}
                             onChange={handlers.changeAttribSetValue}
@@ -112,7 +119,7 @@ export const MapTool: React.FC<types.PageProps> = ({ site, pageId, error }) => {
                         id="map-type-setting"
                         name="map-type"
                         className="setting bg-transparent w-70 pa0 dib"
-                        onChange={handlers.changeMapTypeSetValue}"">
+                        onChange={handlers.changeMapTypeSetValue}>
 
                         <option value="normal">
                         Normal
@@ -131,24 +138,25 @@ export const MapTool: React.FC<types.PageProps> = ({ site, pageId, error }) => {
                         id="import-data-setting"
                         name="import-data"
                         placeholder= "comma separated list of KML or GeoJSON files"
-                        onmouseup="event.target.select()"
+                        onMouseUp={handlers.mouseUpSelect}
                         type="text"
                         className="setting bg-transparent w-70 pa0 dib"
-                        onchange="mapData.set(event.target.value)"/>
-                    // <datalist id="map-datasets">
-                    //     {{ site?.data.maps.map((map) =>
-                    //         <option value="{{ map.url }}">{{ map.name }} </option>
-                    //     )}}
-                    // </datalist>
+                        onChange={(event) => mapData.set(event.target.value)}
+                  />
+                    <datalist id="map-datasets">
+                        {/*site?.data?.maps.map((map) => (
+                            <option value={ map.url }>{ map.name }</option>
+                        ))*/}
+                    </datalist>
                 </div>
 
-                <div id="settings-error" className="red f7 o-40 fw5 pa1 pt2 flex flex-row" style={{ width: fit-content}}>
+                <div id="settings-error" className="red f7 o-40 fw5 pa1 pt2 flex flex-row" style={{ width: "fit-content"}}>
                     <span className="b" style={{ width: "fit-content"}}>ERROR: </span> 
                     <br/>
                     <div id="settings-error-msg"> 
                     </div> 
                     <br/>
-                    <a className="black pointer" onClick={hideError()}><small>CLEAR</small></a>
+                    <a className="black pointer" onClick={_ => hideError()}><small>CLEAR</small></a>
                 </div>
 
                 <p className="f7 gray pa2">
@@ -184,9 +192,10 @@ export const setupMaps = () => {
         coord[0].set(center.lat, false);
         coord[1].set(center.lng, false);
     });
+    map.setZoom(zoom.get())
 
     tileLayer = L.tileLayer(tileLayerUrl.get(), {
-        zoom: zoom.get(),
+        // zoom: zoom.get(),
         maxZoom: 19,
         subdomains: ['mt0','mt1','mt2','mt3'],
         attribution: attribution.get()

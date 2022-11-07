@@ -36,7 +36,6 @@ jobs:
         with:
           path: ./out
           retention-days: 1
-          branch: gh-pages # The branch the action should depoy to.
 
   # Deploy job
   deploy:

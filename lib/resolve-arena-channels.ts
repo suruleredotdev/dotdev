@@ -26,7 +26,7 @@ async function requestArenaUserWithChannels(
   params: { page?: string, per?: string } = {}
 ) {
   opts = opts || {};
-  let headers = {
+  const headers = {
     "Content-Type": "application/json"
   };
   if (opts.accessToken) {

@@ -1,5 +1,5 @@
 function valueOrDefault(input) {
-    return (!!input.value) ? input.value : input.placeholder;
+    return (input.value) ? input.value : input.placeholder;
 }
 
 export class S {
@@ -25,12 +25,12 @@ export var sources = {
 
         /* modifies URL (w/o reloading) */
         function(key, val) {
-            let query = (new URLSearchParams(window.location.search));
+            const query = (new URLSearchParams(window.location.search));
             query.set(key, val);
 
             // update URL query params without reloading page
             if (history.pushState) {
-                var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + query.toString();
+                const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + query.toString();
                 window.history.pushState({ path: newUrl }, '', newUrl);
             }
         },
@@ -61,7 +61,7 @@ export class I {
             * use unboound-Node if no such element exists, won't be GC'd since there's a reference
             */
             document.getElementById(id) || document.createElement("DIV"); 
-        if (!!initVal) {
+        if (initVal) {
             this.el.value = initVal;
         }
         this.query = source;
@@ -71,11 +71,11 @@ export class I {
         };
         // attempt to get inital value from query params
         if (Object.is(this.query, sources.URL)) {
-            let param = this.query.get(this.el.id.replace(new RegExp('-setting$'), ''));
+            const param = this.query.get(this.el.id.replace(new RegExp('-setting$'), ''));
             console.log('el: ', this.el.id);
-            if (!!param) {
+            if (param) {
                 this.el.value = param;
-                let setting = this;
+                const setting = this;
                 setTimeout(function() { 
                     console.log(`initializing ${id} from URL params`);
                     setting.update(param);

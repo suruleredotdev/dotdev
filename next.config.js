@@ -11,7 +11,9 @@ module.exports = withBundleAnalyzer({
 
   staticPageGenerationTimeout: 300,
   images: {
-    unoptimized: true,
+    // unoptimized: true,
+    loader: 'akamai',
+    path: '',
     domains: [
       'www.notion.so',
       'notion.so',

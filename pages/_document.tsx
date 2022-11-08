@@ -2,12 +2,19 @@ import * as React from 'react'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 import { IconContext } from '@react-icons/all-files'
 
+import { getEnv } from 'lib/get-config-value'
+
 export default class MyDocument extends Document {
   render() {
     return (
       <IconContext.Provider value={{ style: { verticalAlign: 'middle' } }}>
         <Html lang='en'>
           <Head>
+            {
+              getEnv("NODE_ENV") === "production"
+                ? <base href={getEnv("NEXT_PUBLIC_BASE_PATH")} />
+                : <></>
+            }
             <link rel='shortcut icon' href='/favicon.ico' />
             <link
               rel='icon'

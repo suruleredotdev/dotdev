@@ -1,16 +1,16 @@
 import * as React from 'react'
+import {
+  NotionContextProvider,
+} from "react-notion-x";
+
+import { LayoutDefault } from 'components/LayoutDefault'
+import { Footer } from 'components/Footer'
+import { HomePageContent } from 'components/PageHome'
 import * as config from "lib/config";
 import { resolveNotionPage } from 'lib/resolve-notion-page'
 import { resolveArenaChannels } from 'lib/resolve-arena-channels'
 import { useDarkMode } from "lib/use-dark-mode";
 import { mapPageUrl } from "lib/map-page-url";
-import { LayoutDefault, parsePageId } from 'components/LayoutDefault'
-import { Footer } from 'components/Footer'
-import { getComponents, getNotionProps } from 'components/NotionComponents'
-import {
-  NotionContextProvider,
-} from "react-notion-x";
-import { HomePageContent } from 'components/PageHome'
 import { getLayoutProps } from 'lib/get-layout-props';
 
 // https://nextjs.org/docs/basic-features/data-fetching/get-static-props
@@ -49,10 +49,10 @@ const IndexPage: React.FC<any> = (props) => {
 
   const {
     block,
-    isRootPage,
     isBlogPost, // TODO: strip this out, in favor of [pageId]
-    showTableOfContents,
-    minTableOfContentsItems,
+    // isRootPage,
+    // showTableOfContents,
+    // minTableOfContentsItems,
     notionProps,
   } = getLayoutProps(props)
 

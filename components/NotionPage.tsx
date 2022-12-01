@@ -207,6 +207,7 @@ export const NotionPage: React.FC<types.PageProps> = ({
   }
 
   if (error || !site || !block) {
+    console.log("Page404", { error, site, block })
     return <Page404 site={site} pageId={pageId} error={error} />
   }
 

@@ -23,7 +23,9 @@ export default class MyDocument extends Document {
               href='favicon.png'
             />
 
+            {/*
             <link rel='manifest' href='/manifest.json' />
+            */}
           </Head>
 
           <body>

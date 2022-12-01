@@ -1,9 +1,12 @@
 import * as React from 'react'
 import { GetStaticProps } from 'next'
+import { useRouter } from 'next/router'
+import { ExtendedRecordMap } from 'notion-types'
+
 import {
   NotionRenderer,
   useNotionContext,
-  // Text as NotionText
+  Text as NotionText
 } from "react-notion-x";
 
 import * as config from "lib/config";
@@ -27,11 +30,9 @@ export default function DynamicPostPage(props) {
     site,
     recordMap,
     error,
-    pageId: blogPageId,
+    pageId: postPageId,
+    posts
   } = props
-
-  // 
-  const pageId = recordMap?.collection?.[blogPageId]
 
   console.log("DynamicPostPage", { props })
 
@@ -50,10 +51,13 @@ export default function DynamicPostPage(props) {
   console.log("[pageId] POST", {
     rootPageId: site?.rootNotionPageId,
     rootPage: !recordMap || recordMap.block[site?.rootNotionPageId],
-    pageId,
-    page: !recordMap || recordMap.block[pageId]
+    postPageId,
+    page: !recordMap || recordMap.block[postPageId],
+    block,
+    title: block.properties.title,
   })
 
+  // TODO: customize post header component
   const header = (<>
       
   </>)
@@ -63,31 +67,18 @@ export default function DynamicPostPage(props) {
         site={site}
         recordMap={recordMap}
         error={error}
-        pageId={pageId}
+        pageId={postPageId}
         rootPageBlock={block}
       >
-        <NotionRenderer
+
+        <PostRenderer
           bodyClassName={
             "" // (styles.notion, pageId === site.rootNotionPageId && "index-page")
           }
-          darkMode={isDarkMode}
-          components={components}
-          recordMap={recordMap}
-          rootPageId={site?.rootNotionPageId}
-          blockId={pageId}
-          rootDomain={site?.domain}
-          fullPage={false}
-          previewImages={!!recordMap?.preview_images}
-          showCollectionViewDropdown={false}
-          showTableOfContents={false} //  config.defaultShowTableOfContents
-          minTableOfContentsItems={false} //  config.defaultMinTableOfContentsItems
-          defaultPageIcon={config.defaultPageIcon}
-          defaultPageCover={config.defaultPageCover}
-          defaultPageCoverPosition={config.defaultPageCoverPosition}
-          mapImageUrl={mapImageUrl}
+          blockId={postPageId}
           disableHeader={true}
           className="pa0 o-80"
-          // searchNotion={config.isSearchEnabled ? searchNotion : null}
+          recordMap={recordMap}
         />
 
       </LayoutPost>
@@ -106,10 +97,14 @@ export const PostRenderer: React.FC<{
   blockId?: string
   hideBlockId?: boolean
   level?: number
-}> = ({ level = 0, blockId, ...props }) => {
-  const { recordMap } = useNotionContext()
+  recordMap: ExtendedRecordMap
+}> = ({ level = 0, blockId, recordMap, ...props }) => {
   const id = blockId || Object.keys(recordMap.block)[0]
   const block = recordMap.block[id]?.value
+
+  console.log("PostRenderer 0", {
+    id, block, recordMap
+  })
 
   if (!block) {
     if (process.env.NODE_ENV !== 'production') {
@@ -119,17 +114,24 @@ export const PostRenderer: React.FC<{
     return null
   }
 
+  console.log("PostRenderer", {
+    content: block?.content.map(id => recordMap.block[id].value)
+  })
+
   return (
-    <Block key={id} level={level} block={block} {...props}>
+    <div key={id}>
       {block?.content?.map((contentBlockId) => (
-        <NotionBlockRenderer
-          key={contentBlockId}
-          blockId={contentBlockId}
-          level={level + 1}
-          {...props}
-        />
+        <div className="pv2">
+          <NotionText
+            key={contentBlockId}
+            value={recordMap.block[contentBlockId].value?.properties?.title}
+            block={recordMap.block[contentBlockId].value}
+            {...props}
+          />
+          <br/>
+        </div>
       ))}
-    </Block>
+    </div>
   )
 }
 
@@ -140,7 +142,7 @@ export const getStaticProps: GetStaticProps<PageProps, Params> = async ({ params
 
   try {
     const props = await resolveNotionPage(config.domain) //, rawPageId)
-    console.log("STATIC PROPS: pageId", { domain:config.domain, props })
+    console.log("STATIC PROPS: pageId", { pageId, domain:config.domain, props })
 
     const posts = getSitePosts({ recordMap: props?.recordMap, pageId })
 
@@ -156,12 +158,12 @@ export const getStaticProps: GetStaticProps<PageProps, Params> = async ({ params
 
 // https://nextjs.org/docs/basic-features/data-fetching/get-static-paths
 export async function getStaticPaths() {
-  if (isDev) {
-    return {
-      paths: [],
-      fallback: true
-    }
-  }
+  // if (isDev) {
+  //   return {
+  //     paths: [],
+  //     fallback: true
+  //   }
+  // }
 
   const siteMap = await getSiteMap()
 

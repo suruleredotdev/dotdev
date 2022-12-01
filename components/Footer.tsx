@@ -53,7 +53,7 @@ export const FooterImpl: React.FC<any> = ({ page, isBlogPost }) => {
                     href={
                       "https://twitter.com/intent/tweet?text=" +
                       encodeURIComponent(
-                        `${page.title} https://surulere.dev ${page.url}`
+                        `${page?.title} https://surulere.dev ${page?.url}`
                       )
                     }
                     rel="noreferrer"
@@ -68,7 +68,7 @@ export const FooterImpl: React.FC<any> = ({ page, isBlogPost }) => {
                     href={
                       "https://www.facebook.com/sharer/sharer.php?u=" +
                       encodeURIComponent(
-                        `${page.title} https://surulere.dev ${page.url}`
+                        `${page?.title} https://surulere.dev ${page?.url}`
                       )
                     }
                     rel="noreferrer"

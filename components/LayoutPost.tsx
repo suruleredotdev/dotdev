@@ -23,7 +23,7 @@ export const LayoutPost: React.FC<types.PageProps & { children: React.ReactNode 
 }) => {
 
   const { rootBlock: page, contentBlocks } = getPageFromRecords({recordMap, pageId})
-  console.log("LayoutPost", { rootBlock: page, pageId: recordMap?.[pageId], contentBlocks })
+  console.log("LayoutPost", { pageFromRecordsRootBlock: page, pageFromRecordMap: recordMap?.[pageId], contentBlocks })
 
   return (
     <div id="content" className="post pa3 pa5-ns mt6-l mh7-l f5">
@@ -102,10 +102,6 @@ function getPageFromRecords(args: { recordMap; pageId }): {
     rootBlock: page,
     contentBlocks: postContentBlocks
   }
-}
-
-function renderPageContent(args: { recordMap: RecordMap, contentBlocks: Array<Block> }) {
-  return <></>
 }
 
 // {

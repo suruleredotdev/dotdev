@@ -4,13 +4,14 @@ import { getComponents } from "components/NotionComponents";
 export function getLayoutProps({
     site,
     recordMap,
+    pageId
   }) {
   const keys = Object.keys(recordMap?.block || {});
-  const block = recordMap?.block?.[keys[0]]?.value;
+  const block = recordMap?.block?.[pageId || keys[0]]?.value;
 
   const isRootPage =
-    parsePageId(block?.id) === parsePageId(site?.rootNotionPageId) ||
-    window.location.href === "/";
+    parsePageId(block?.id) === parsePageId(site?.rootNotionPageId); // ||
+    // window.location.href === "/";
 
   // TODO: to LayoutPost
   const isBlogPost =

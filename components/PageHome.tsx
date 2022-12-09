@@ -70,7 +70,7 @@ export const ArenaChannel = (props: {
     
 const homePageText = [
   {
-    tagline: "Serious writing about Africa's future.",
+    tagline: "A space for critical thinking on African future",
     description: "Essays and visualizations to help us think critically about our ever-changing reality in the 2020s and build a better future for  ourselves."
   },
   {

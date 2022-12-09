@@ -115,21 +115,23 @@ export const PostRenderer: React.FC<{
   }
 
   console.log("PostRenderer", {
-    content: block?.content.map(id => recordMap.block[id].value)
+    content: block?.content.map(id => recordMap.block[id]?.value.id)
   })
 
+  /*
+ TODO:
+ - [x] handle regular text blocks
+ - [x] handle images and other block types
+   - Handled via NotionRenderer
+   - [x] Classes: Headers, Sub-headers, Italics
+   - [x] Containers: Callouts, Toggle lists, 
+   - [ ] Custom Containers:
+    - [ ] article references (Quote + Ref)
+   */
   return (
     <div key={id}>
       {block?.content?.map((contentBlockId) => (
-        <div className="pv2">
-          <NotionText
-            key={contentBlockId}
-            value={recordMap.block[contentBlockId].value?.properties?.title}
-            block={recordMap.block[contentBlockId].value}
-            {...props}
-          />
-          <br/>
-        </div>
+        <NotionRenderer recordMap={recordMap} fullPage={false} darkMode={false} blockId={contentBlockId}/>
       ))}
     </div>
   )

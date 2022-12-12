@@ -29,6 +29,7 @@ import * as React from 'react'
 import * as Fathom from 'fathom-client'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 import posthog from 'posthog-js'
 
 import { bootstrap } from 'lib/bootstrap-client'
@@ -85,5 +86,13 @@ export default function App({ Component, pageProps }: AppProps) {
     }
   }, [router.events])
 
-  return <Component {...pageProps} />
+  return <>
+    <Head>
+      <title>
+      surulere.dev - A space for critical thinking on African future
+      </title>
+
+    </Head>
+    <Component {...pageProps} />
+  </>
 }

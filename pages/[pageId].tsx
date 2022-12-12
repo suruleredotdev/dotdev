@@ -31,7 +31,6 @@ export default function DynamicPostPage(props) {
     recordMap,
     error,
     pageId: postPageId,
-    posts
   } = props
 
   console.log("DynamicPostPage", { props })
@@ -115,7 +114,10 @@ export const PostRenderer: React.FC<{
   }
 
   console.log("PostRenderer", {
-    content: block?.content.map(id => recordMap.block[id]?.value.id)
+    content: block?.content.map(contentId => {
+      let { _id, parent_id, type } = recordMap.block[contentId ]?.value
+      return { id,_id: contentId  == _id, parent_id, _parent: parent_id == id,type }
+    })
   })
 
   /*
@@ -127,11 +129,15 @@ export const PostRenderer: React.FC<{
    - [x] Containers: Callouts, Toggle lists, 
    - [ ] Custom Containers:
     - [ ] article references (Quote + Ref)
+
+  BUGS:
+  - [ ] Missing blocks in recordMap
    */
   return (
     <div key={id}>
       {block?.content?.map((contentBlockId) => (
-        <NotionRenderer recordMap={recordMap} fullPage={false} darkMode={false} blockId={contentBlockId}/>
+        <NotionRenderer key={contentBlockId} recordMap={recordMap}
+          fullPage={false} darkMode={false} blockId={contentBlockId}/>
       ))}
     </div>
   )

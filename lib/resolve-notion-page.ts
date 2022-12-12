@@ -49,6 +49,8 @@ export async function resolveNotionPage(domain: string, rawPageId?: string) {
       // handle mapping of user-friendly canonical page paths to Notion page IDs
       // e.g., /developer-x-entrepreneur versus /71201624b204481f862630ea25ce62fe
       const siteMap = await getSiteMap()
+
+      console.log("INFO getPage->getSitemap", siteMap)
       pageId = siteMap?.canonicalPageMap[rawPageId]
 
       if (pageId) {

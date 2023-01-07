@@ -24,7 +24,7 @@ export const getStaticProps = async () => {
     }
     console.log("STATIC PROPS: index", { domain:config.domain, props })
 
-    return { props, revalidate: 10 }
+    return { props, revalidate: 1 }
   } catch (err) {
     console.error('page error', config.domain, err)
 

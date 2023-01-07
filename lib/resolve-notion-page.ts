@@ -7,7 +7,9 @@ import { db } from './db'
 import { getPage } from './notion'
 import { getSiteMap } from './get-site-map'
 
-export async function resolveNotionPage(domain: string, rawPageId?: string) {
+export async function resolveNotionPage(domain: string, rawPageId?: string): Promise<{
+  site: any, recordMap: ExtendedRecordMap, pageId: string, [key:string]: any
+}> {
   let pageId: string
   let recordMap: ExtendedRecordMap
 

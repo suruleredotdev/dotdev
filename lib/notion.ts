@@ -38,7 +38,9 @@ const getNavigationLinkPages = pMemoize(
 )
 
 export async function getPage(pageId: string): Promise<ExtendedRecordMap> {
-  let recordMap = await notion.getPage(pageId)
+  let recordMap = await notion.getPage(pageId, {
+    chunkLimit: 100
+  })
 
   if (navigationStyle !== 'default') {
     // ensure that any pages linked to in the custom navigation header have

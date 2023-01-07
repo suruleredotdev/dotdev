@@ -46,4 +46,19 @@ module.exports = withBundleAnalyzer({
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+
+  redirects: async () => {
+    return [
+      {
+        source: '/2020/08/23/mapping-lagos-slums.html',
+        destination: '/mapping-lagos-slums-66b44ffa4d8b49d09583c5335322bb06/',
+        permanent: true,
+      },
+      {
+        source: '/2020/08/16/naira-stablecoins.html',
+        destination: '/naira-stablecoins-fb1a8832de874f3597069381e1032fd9/',
+        permanent: true,
+      },
+    ]
+  },
 })

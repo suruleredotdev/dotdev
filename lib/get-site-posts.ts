@@ -20,8 +20,9 @@ export function getSitePosts(args: { recordMap; pageId }): Array<object> {
     collectionView: CollectionView = (
       Object.values(recordMap.collection_view)[0] as CollectionViewMap[string]
     )?.value,
+    _ = console.log("log", {collection, collectionView, query: Object.keys(recordMap)}),
     collectionQueryResult: CollectionQueryResult =
-      recordMap.collection_query[collection.id][collectionView.id];
+      recordMap.collection_query[collection.id]?.[collectionView.id];
   if (!collection) return [];
 
   const collectionId = collection.id,

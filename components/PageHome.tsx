@@ -105,31 +105,34 @@ export const HomePageContent: React.FC<types.PageProps> = ({
 
       <b className={classes.postsTitle}>ESSAYS</b>
       <ul className={classes.postsList}>
-        {posts?.filter(post => post.draft != true).map((post, i) =>
-          <p key={i}>
-            <a className={classes.postLink} href={"/" + post.slug}>
-              {post.title}
-            </a>
-            <small className={classes.postDate}>
-            &nbsp; &mdash; {new Date(post.published).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric'})}
-            </small>
-            {post.tags ? (
-              <>
-                <br />
-                {post.tags?.map((tag, i) => (
-                  <a
-                    key={i}
-                    className={classes.postTag}
-                    href={"/blog/tag/" + tag}
-                  >
-                    <em>{tag}</em>
-                  </a>
-                ))}
-              </>
-            ) : (
-              <></>
-            )}
-          </p>
+        {posts?
+          .sort((a,b) => b.published - a.published)
+          .filter(post => post.public == true)
+          .map((post, i) =>
+            <p key={i}>
+              <a className={classes.postLink} href={"/" + post.slug}>
+                {post.title}
+              </a>
+              <small className={classes.postDate}>
+              &nbsp; &mdash; {new Date(post.published).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric'})}
+              </small>
+              {post.tags ? (
+                <>
+                  <br />
+                  {post.tags?.map((tag, i) => (
+                    <a
+                      key={i}
+                      className={classes.postTag}
+                      href={"/blog/tag/" + tag}
+                    >
+                      <em>{tag}</em>
+                    </a>
+                  ))}
+                </>
+              ) : (
+                <></>
+              )}
+            </p>
         )}
       </ul>
       <br />

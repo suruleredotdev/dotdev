@@ -68,10 +68,9 @@ export function getSitePosts(args: { recordMap; pageId }): Array<object> {
     postBlocks,
     posts,
     pageIdsMatchingQuery,
-    1: getPageProperty("Author", postBlocks[0], recordMap),
+    author: getPageProperty("Author", postBlocks[0], recordMap),
     published: new Date(getPageProperty("Published", postBlocks[0], recordMap))
   });
 
-  posts.sort(function(a, b){return (new Date(a["published"])).getTime() - (new Date(b["published"])).getTime()})
-  return posts; // TODO
+  return posts;
 }

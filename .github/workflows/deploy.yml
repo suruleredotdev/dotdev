@@ -19,7 +19,7 @@ jobs:
       ARENA_UID: ${{ secrets.ARENA_UID }}
       ARENA_SECRET: ${{ secrets.ARENA_SECRET }}
       ARENA_PERSONAL_ACCESS_TOKEN: ${{ secrets.ARENA_PERSONAL_ACCESS_TOKEN }}
-      NEXT_PUBLIC_BASE_PATH: '/dotdev'
+      NEXT_PUBLIC_BASE_PATH: ${{ vars.NEXT_PUBLIC_BASE_PATH }}
 
     steps:
       - uses: actions/checkout@v2

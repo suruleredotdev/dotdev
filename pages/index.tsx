@@ -58,7 +58,7 @@ const IndexPage: React.FC<any> = (props) => {
 
   const { components } = notionProps;
   
-  console.log({ isBlogPost })
+  // console.log({ isBlogPost, arenaChannels })
 
   return <LayoutDefault {...props} >
         <NotionContextProvider

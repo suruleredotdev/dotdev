@@ -48,15 +48,6 @@ export default function DynamicPostPage(props) {
     components,
   } = notionProps;
 
-  console.log("[pageId] POST", {
-    rootPageId: site?.rootNotionPageId,
-    rootPage: !recordMap || recordMap.block[site?.rootNotionPageId],
-    postPageId,
-    page: !recordMap || recordMap.block[postPageId],
-    block,
-    title: block.properties.title,
-  })
-
   return <LayoutDefault {...props} >
       <LayoutPost
         site={site}
@@ -96,8 +87,8 @@ export const PostRenderer: React.FC<{
   recordMap: ExtendedRecordMap
   components: Partial<NotionComponents>
 }> = ({ level = 0, blockId, recordMap, components, ...props }) => {
-  const id = blockId || Object.keys(recordMap.block)[0]
-  const block = recordMap.block[id]?.value
+  const id = blockId || Object.keys(recordMap?.block || {})[0]
+  const block = recordMap?.block[id]?.value
 
   console.log("PostRenderer 0", {
     id, block, recordMap
@@ -114,7 +105,7 @@ export const PostRenderer: React.FC<{
   console.log("PostRenderer", {
     content: block?.content.map(contentId => {
       // let { parent_id, type } = recordMap.block[contentId ]?.value
-      return recordMap.block[contentId ]?.value //{ id, parent_id, type }
+      return recordMap?.block[contentId ]?.value //{ id, parent_id, type }
     })
   })
 

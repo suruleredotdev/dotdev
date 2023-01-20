@@ -22,7 +22,6 @@ export const getStaticProps = async () => {
       ...notionProps,
       channels 
     }
-    console.log("STATIC PROPS: index", { domain:config.domain, props })
 
     return { props, revalidate: 1 }
   } catch (err) {
@@ -43,23 +42,16 @@ const IndexPage: React.FC<any> = (props) => {
     channels: arenaChannels,
   } = props
 
-  console.log("IndexPage", { props })
-
   const { isDarkMode } = useDarkMode();
 
   const {
     block,
     isBlogPost, // TODO: strip this out, in favor of [pageId]
-    // isRootPage,
-    // showTableOfContents,
-    // minTableOfContentsItems,
     notionProps,
   } = getLayoutProps(props)
 
   const { components } = notionProps;
   
-  // console.log({ isBlogPost, arenaChannels })
-
   return <LayoutDefault {...props} >
         <NotionContextProvider
           components={components}

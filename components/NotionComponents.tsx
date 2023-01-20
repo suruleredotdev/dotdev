@@ -1,14 +1,11 @@
 import * as React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import dynamic from 'next/dynamic'
-import cs from 'classnames'
-import { useRouter } from 'next/router'
 import { useSearchParam } from 'react-use'
-import BodyClassName from 'react-body-classname'
-import { PageBlock } from 'notion-types'
 
-import TweetEmbed from 'react-tweet-embed'
+import {
+  NotionComponents,
+} from "react-notion-x";
 
 // utils
 import { getBlockTitle, getPageProperty, formatDate } from 'notion-utils'
@@ -16,7 +13,6 @@ import { mapPageUrl, getCanonicalPageUrl } from 'lib/map-page-url'
 import { mapImageUrl } from 'lib/map-image-url'
 import { searchNotion } from 'lib/search-notion'
 import { useDarkMode } from 'lib/use-dark-mode'
-import * as types from 'lib/types'
 import * as config from 'lib/config'
 
 // components
@@ -41,7 +37,7 @@ import {
       propertyDateValue
 } from "./Blocks"
 
-const defaultComponents = {
+const defaultComponents: Partial<NotionComponents> = {
     nextImage: Image,
     nextLink: Link,
     Code,
@@ -69,16 +65,12 @@ export const getNotionProps = ({
   recordMap,
   pageId
 }): any => {
-  const router = useRouter()
   const lite = useSearchParam('lite')
 
   const components = React.useMemo(
     getComponents,
     []
   )
-
-  // lite mode is for oembed
-  const isLiteMode = lite === 'true'
 
   const { isDarkMode } = useDarkMode()
 

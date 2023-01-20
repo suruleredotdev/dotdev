@@ -13,9 +13,6 @@ const classes: StyleClasses = {
 
 export const ArenaBlock = (props: {
   block: Arena.Block
-  // size: { height: number; width: number } 
-  // <div className={`pa1 b--dotted b-color`} style={size || ({ height: 30; width: 30 })}>
-//
 }) => (
   <a href={`https://are.na/block/`+props.block?.id} target="_blank" rel="noreferrer">
     <div className={`pa3 pt2 b--dotted b-color overflow-hidden`} style={{ height: 250, width: 250 }}>

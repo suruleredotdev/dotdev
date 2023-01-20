@@ -1,28 +1,20 @@
 import * as React from 'react'
 import { GetStaticProps } from 'next'
-import { useRouter } from 'next/router'
 import { ExtendedRecordMap } from 'notion-types'
 
 import {
   NotionRenderer,
   NotionComponents,
-  useNotionContext,
-  Text as NotionText
 } from "react-notion-x";
 
 import * as config from "lib/config";
-import { isDev, domain } from 'lib/config'
+import { domain } from 'lib/config'
 import { getSiteMap } from 'lib/get-site-map'
 import { resolveNotionPage } from 'lib/resolve-notion-page'
 import { PageProps, Params } from 'lib/types'
-import { useDarkMode } from "lib/use-dark-mode";
-import { mapImageUrl } from 'lib/map-image-url'
-import { NotionPage } from 'components'
 import { LayoutDefault, parsePageId } from 'components/LayoutDefault'
 import { LayoutPost } from 'components/LayoutPost'
 import { Footer } from 'components/Footer';
-import { mapPageUrl } from 'lib/map-page-url';
-import { useSearchParam } from 'react-use';
 import { getLayoutProps } from 'lib/get-layout-props';
 import { getSitePosts } from 'lib/get-site-posts';
 
@@ -41,8 +33,6 @@ export default function DynamicPostPage(props) {
     isBlogPost,
     notionProps,
   } = getLayoutProps(props)
-
-  const { isDarkMode } = useDarkMode();
 
   const {
     components,
@@ -104,7 +94,6 @@ export const PostRenderer: React.FC<{
 
   console.log("PostRenderer", {
     content: block?.content.map(contentId => {
-      // let { parent_id, type } = recordMap.block[contentId ]?.value
       return recordMap?.block[contentId ]?.value //{ id, parent_id, type }
     })
   })
@@ -120,15 +109,15 @@ export const PostRenderer: React.FC<{
     - [ ] article references (Quote + Ref)
 
   BUGS:
-  - [ ] Missing blocks in recordMap
+  - [x] Missing blocks in recordMap => resolved by tweaking API calls, updating pkg
    */
   return (
-    <div key={id}>
+    <span key={id}>
       {block?.content?.map((contentBlockId) => (
         <NotionRenderer key={contentBlockId} recordMap={recordMap}
           fullPage={false} darkMode={false} blockId={contentBlockId} components={components}/>
       ))}
-    </div>
+    </span>
   )
 }
 
@@ -139,7 +128,6 @@ export const getStaticProps: GetStaticProps<PageProps, Params> = async ({ params
 
   try {
     const props = await resolveNotionPage(config.domain, pageId)
-    console.log("STATIC PROPS: pageId", { pageId, domain:config.domain, props })
 
     const posts = getSitePosts({ recordMap: props?.recordMap, pageId })
 
@@ -174,6 +162,5 @@ export async function getStaticPaths() {
     fallback: true
   }
 
-  console.log("STATIC PATHS", staticPaths.paths)
   return staticPaths
 }

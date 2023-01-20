@@ -61,7 +61,7 @@ export function pageFromBlock(args: { recordMap: ExtendedRecordMap, block: PageB
   }
 }
 
-function getPageFromRecords(args: { recordMap; pageId }): {
+function getPageFromRecords(args: { recordMap: ExtendedRecordMap; pageId: string }): {
   rootBlock: any | PageBlock,
   contentBlocks: Array<Block>,
 } {
@@ -95,32 +95,9 @@ function getPageFromRecords(args: { recordMap; pageId }): {
     }
   ).map((b: BlockMap[string]) => b?.value) as Array<Block>;
 
-  console.log("pageFromBlock", { recordMap, page: postRootBlock })
   const page = pageFromBlock({ recordMap, block: postRootBlock })
-  console.log("getPageFromRecords", { record: postRootBlock, page })
   return {
     rootBlock: page,
     contentBlocks: postContentBlocks
   }
 }
-
-// {
-//     type: 'page',
-//     /// BasePageBlock 
-//     // id: ID;
-//     // type: BlockType;
-//     // properties?: any;
-//     // format?: any;
-//     // content?: ID[];
-//     // space_id?: ID;
-//     // parent_id: ID;
-//     // parent_table: string | 'space' | 'block' | 'table';
-//     // version: number;
-//     // created_time: number;
-//     // last_edited_time: number;
-//     // alive: boolean;
-//     // created_by_table: string;
-//     // created_by_id: ID;
-//     // last_edited_by_table: string;
-//     // last_edited_by_id: ID;
-//   } as PageBlock

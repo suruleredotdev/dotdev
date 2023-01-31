@@ -51,12 +51,22 @@ module.exports = withBundleAnalyzer({
     return [
       {
         source: '/2020/08/23/mapping-lagos-slums.html',
-        destination: '/mapping-lagos-slums-66b44ffa4d8b49d09583c5335322bb06/',
+        destination: '/mapping-lagos-slums',
         permanent: true,
       },
       {
         source: '/2020/08/16/naira-stablecoins.html',
-        destination: '/naira-stablecoins-fb1a8832de874f3597069381e1032fd9/',
+        destination: '/naira-stablecoins',
+        permanent: true,
+      },
+      {
+        source: '/2020/03/01/blockchain-in-africa.html',
+        destination: '/blockchain-in-africa',
+        permanent: true,
+      },
+      {
+        source: '/2018/07/23/digital-platform-adoption-in-developing-countries.html',
+        destination: '/digital-platform-adoption-in-developing-countries',
         permanent: true,
       },
     ]

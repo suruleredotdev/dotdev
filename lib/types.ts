@@ -19,6 +19,7 @@ export interface PageProps {
   error?: PageError
   rootPageBlock?: Block
   channels?: Array<Arena.Channel>
+  siteMap?: SiteMap
 }
 
 export interface Params extends ParsedUrlQuery {

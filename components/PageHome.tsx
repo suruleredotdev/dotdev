@@ -82,12 +82,16 @@ export const HomePageContent: React.FC<types.PageProps> = ({
   recordMap,
   pageId,
   channels,
+  siteMap,
 }) => {
   // TODO: render from root page block
   const posts = getSitePosts({
     recordMap,
-    pageId,
   });
+
+  const idToPagePath = Object.keys(siteMap).reduce((acc, pagePath) => ({
+    ...acc, [siteMap[pagePath]]: pagePath
+  }), {})
   return (
     <div id="content" className={classes.content}>
       <div id="about pb5">
@@ -107,7 +111,7 @@ export const HomePageContent: React.FC<types.PageProps> = ({
           .filter(post => post.public == true)
           .map((post, i) =>
             <p key={i}>
-              <a className={classes.postLink} href={"/" + post.slug}>
+              <a className={classes.postLink} href={"/" + idToPagePath[post.id]}>
                 {post.title}
               </a>
               <small className={classes.postDate}>
@@ -115,6 +119,7 @@ export const HomePageContent: React.FC<types.PageProps> = ({
               </small>
               {post.tags ? (
                 <>
+                  {/* TODO: implement tags
                   <br />
                   {post.tags?.map((tag, i) => (
                     <a
@@ -124,7 +129,7 @@ export const HomePageContent: React.FC<types.PageProps> = ({
                     >
                       <em>{tag}</em>
                     </a>
-                  ))}
+                  ))} */}
                 </>
               ) : (
                 <></>

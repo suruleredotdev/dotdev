@@ -12,15 +12,18 @@ import { resolveArenaChannels } from 'lib/resolve-arena-channels'
 import { useDarkMode } from "lib/use-dark-mode";
 import { mapPageUrl } from "lib/map-page-url";
 import { getLayoutProps } from 'lib/get-layout-props';
+import { getSiteMap } from 'lib/get-site-map';
 
 // https://nextjs.org/docs/basic-features/data-fetching/get-static-props
 export const getStaticProps = async () => {
   try {
     const notionProps = await resolveNotionPage(config.domain)
     const channels = await resolveArenaChannels()
+    const siteMap = await getSiteMap()
     const props = {
       ...notionProps,
-      channels 
+      channels,
+      siteMap 
     }
 
     return { props, revalidate: 1 }
@@ -40,6 +43,7 @@ const IndexPage: React.FC<any> = (props) => {
     error,
     pageId,
     channels: arenaChannels,
+    siteMap
   } = props
 
   const { isDarkMode } = useDarkMode();
@@ -70,6 +74,7 @@ const IndexPage: React.FC<any> = (props) => {
         <HomePageContent
           site={site}
           recordMap={recordMap}
+          siteMap={siteMap}
           error={error}
           pageId={pageId}
           rootPageBlock={block}

@@ -16,9 +16,8 @@ import { LayoutDefault, parsePageId } from 'components/LayoutDefault'
 import { LayoutPost } from 'components/LayoutPost'
 import { Footer } from 'components/Footer';
 import { getLayoutProps } from 'lib/get-layout-props';
-import { getSitePosts } from 'lib/get-site-posts';
 
-export default function DynamicPostPage(props) {
+export default function DynamicPostPage(props: PageProps) {
   const {
     site,
     recordMap,
@@ -93,7 +92,7 @@ export const PostRenderer: React.FC<{
   }
 
   console.log("PostRenderer", {
-    content: block?.content.map(contentId => {
+    content: block?.content?.map(contentId => {
       return recordMap?.block[contentId ]?.value //{ id, parent_id, type }
     })
   })
@@ -124,14 +123,17 @@ export const PostRenderer: React.FC<{
 // used to render page at build time
 // https://nextjs.org/docs/basic-features/data-fetching/get-static-props
 export const getStaticProps: GetStaticProps<PageProps, Params> = async ({ params }) => {
-  const pageId: string = parsePageId(params.pageId, { uuid: true }) as string
+  const siteMap = await getSiteMap()
+
+  // if param.pageId might be slug excluding ID, use canonicalPageMap to convert to UUID
+  const rawPageId = siteMap.canonicalPageMap[params.pageId] || params.pageId
+
+  const pageId: string = parsePageId(rawPageId, { uuid: true }) as string
 
   try {
-    const props = await resolveNotionPage(config.domain, pageId)
+    const props: PageProps = await resolveNotionPage(config.domain, pageId)
 
-    const posts = getSitePosts({ recordMap: props?.recordMap, pageId })
-
-    return { props: { ...props, pageId, posts }, revalidate: 10 }
+    return { props: { ...props, pageId }, revalidate: 10 }
   } catch (err) {
     console.error('page error', domain, pageId, err)
 
@@ -151,6 +153,8 @@ export async function getStaticPaths() {
   // }
 
   const siteMap = await getSiteMap()
+
+  console.log("pages/pageId: SITEMAP", siteMap)
 
   const staticPaths = {
     paths: Object.keys(siteMap.canonicalPageMap).map((pageId) => ({

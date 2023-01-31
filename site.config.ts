@@ -14,7 +14,7 @@ export default siteConfig({
   author: "Korede Aderele",
 
   // open graph metadata (optional)
-  description: "Example Next.js Notion Starter Kit Site",
+  description: "Essays and visualizations to help us think critically about our ever-changing reality in the 2020s and build a better future for  ourselves.",
 
   // social usernames (optional)
   twitter: "suruleredotdev",

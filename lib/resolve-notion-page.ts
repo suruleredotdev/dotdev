@@ -6,10 +6,11 @@ import { pageUrlOverrides, pageUrlAdditions, environment, site } from './config'
 import { db } from './db'
 import { getPage } from './notion'
 import { getSiteMap } from './get-site-map'
+import { PageProps } from './types'
 
-export async function resolveNotionPage(domain: string, rawPageId?: string): Promise<{
-  site: any, recordMap: ExtendedRecordMap, pageId: string, [key:string]: any
-}> {
+export async function resolveNotionPage(
+  domain: string, rawPageId?: string
+): Promise<PageProps> {
   let pageId: string
   let recordMap: ExtendedRecordMap
 

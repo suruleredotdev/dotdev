@@ -89,9 +89,10 @@ export const HomePageContent: React.FC<types.PageProps> = ({
     recordMap,
   });
 
-  const idToPagePath = Object.keys(siteMap).reduce((acc, pagePath) => ({
-    ...acc, [siteMap[pagePath]]: pagePath
+  const idToPagePath = Object.keys(siteMap.canonicalPageMap).reduce((acc, pagePath) => ({
+    ...acc, [siteMap.canonicalPageMap[pagePath]]: pagePath
   }), {})
+
   return (
     <div id="content" className={classes.content}>
       <div id="about pb5">

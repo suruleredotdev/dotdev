@@ -5,37 +5,20 @@ import BodyClassName from "react-body-classname";
 import { useDarkMode } from "lib/use-dark-mode";
 import * as types from "lib/types";
 
-// import styles from "./styles.module.css";
-// import { getNotionProps } from "./NotionComponents";
-// import {
-//   NotionRenderer,
-//   NotionContextProvider,
-//   NotionBlockRenderer,
-// } from "react-notion-x";
-// import { getAllPagesInSpace } from "notion-utils";
-// import { mapPageUrl } from "lib/map-page-url";
-// import { site } from "lib/config";
-// import * as config from "lib/config";
-// import { getPage } from "lib/notion";
 import { layoutDefaultClasses } from "./styles";
 
 // -----------------------------------------------------------------------------
 // dynamic imports for optional components
 // -----------------------------------------------------------------------------
 
-/* TODO: abstract tachyons styles
+/* 
+TODO: 
+- ? use footer component inside layoutdefault
+- abstract tachyons styles
   - wrap with useTachyons hook
   - build dropdown/slider UI to toggle classes
   - pull updated classes from UI
 */
-
-const classes = layoutDefaultClasses
-
-interface Page {
-  title: string;
-  url: string;
-  layout: "post" | string;
-}
 
 export const LayoutDefault: React.FC<types.PageProps & { children: React.ReactNode }> = ({
   children,

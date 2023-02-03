@@ -3,9 +3,8 @@ import {
   NotionContextProvider,
 } from "react-notion-x";
 
-import { LayoutDefault } from 'components/LayoutDefault'
-import { Footer } from 'components/Footer'
-import { HomePageContent } from 'components/PageHome'
+import * as types from "lib/types";
+import { getSitePosts } from "lib/get-site-posts";
 import * as config from "lib/config";
 import { resolveNotionPage } from 'lib/resolve-notion-page'
 import { resolveArenaChannels } from 'lib/resolve-arena-channels'
@@ -13,6 +12,17 @@ import { useDarkMode } from "lib/use-dark-mode";
 import { mapPageUrl } from "lib/map-page-url";
 import { getLayoutProps } from 'lib/get-layout-props';
 import { getSiteMap } from 'lib/get-site-map';
+
+import { LayoutDefault } from 'components/LayoutDefault'
+import { Footer } from 'components/Footer'
+import { ArenaChannel } from 'components/Arena'
+// NOTE: simple styling classlist strings w tachyons. may upgrade to be more configurable
+import { globalClasses, layoutDefaultClasses, StyleClasses } from "components/styles";
+
+const classes: StyleClasses = {
+    ...globalClasses,
+    ...layoutDefaultClasses,
+}
 
 // https://nextjs.org/docs/basic-features/data-fetching/get-static-props
 export const getStaticProps = async () => {
@@ -35,6 +45,95 @@ export const getStaticProps = async () => {
     throw err
   }
 }
+
+    
+const homePageText = [
+  {
+    tagline: "A space for critical thinking on African future",
+    description: "Essays and visualizations to help us think critically about our ever-changing reality in the 2020s and build a better future for  ourselves."
+  },
+  {
+    tagline: "",
+    description: ""
+  },
+]
+const textVersion = 0
+
+export const HomePageContent: React.FC<types.PageProps> = ({
+  site,
+  recordMap,
+  pageId,
+  channels,
+  siteMap,
+}) => {
+  // TODO: render from root page block
+  const posts = getSitePosts({
+    recordMap,
+  });
+
+  const idToPagePath = Object.keys(siteMap.canonicalPageMap).reduce((acc, pagePath) => ({
+    ...acc, [siteMap.canonicalPageMap[pagePath]]: pagePath
+  }), {})
+
+  return (
+    <div id="content" className={classes.content}>
+      <div id="about pb5">
+        <p className={classes.tagline}>
+          {homePageText[textVersion].tagline}
+        </p>
+
+        <p className={classes.description}>
+          {homePageText[textVersion].description}
+        </p>
+      </div>
+
+      <b className={classes.postsTitle}>ESSAYS</b>
+      <ul className={classes.postsList}>
+        {posts?
+          .sort((a,b) => b.published - a.published)
+          .filter(post => post.public == true)
+          .map((post, i) =>
+            <p key={i}>
+              <a className={classes.postLink} href={"/" + idToPagePath[post.id]}>
+                {post.title}
+              </a>
+              <small className={classes.postDate}>
+              &nbsp; &mdash; {new Date(post.published).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric'})}
+              </small>
+              {post.tags ? (
+                <>
+                  {/* TODO: implement tags
+                  <br />
+                  {post.tags?.map((tag, i) => (
+                    <a
+                      key={i}
+                      className={classes.postTag}
+                      href={"/blog/tag/" + tag}
+                    >
+                      <em>{tag}</em>
+                    </a>
+                  ))} */}
+                </>
+              ) : (
+                <></>
+              )}
+            </p>
+        )}
+      </ul>
+      <br />
+
+      <b className={classes.postsTitle}>ARCHIVES</b>
+      <ul className={"f5 pl2 flex flex-column"}>
+        {channels.slice(0,10)?.filter(channel => !!channel ).map((channel, i) =>
+          (
+            <ArenaChannel channel={channel}/>
+          )
+        )}
+      </ul>
+    </div>
+  );
+};
+
 
 const IndexPage: React.FC<any> = (props) => {
   const {
@@ -85,3 +184,4 @@ const IndexPage: React.FC<any> = (props) => {
   </LayoutDefault>
 }
 export default IndexPage
+

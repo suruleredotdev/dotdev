@@ -1,10 +1,13 @@
 import * as React from 'react'
 import { GetStaticProps } from 'next'
-import { ExtendedRecordMap } from 'notion-types'
+import { Block, ExtendedRecordMap } from 'notion-types'
+import NextHead from 'next/head'
+import { getPageProperty } from 'notion-utils'
 
 import {
   NotionRenderer,
   NotionComponents,
+  Text 
 } from "react-notion-x";
 
 import * as config from "lib/config";
@@ -25,23 +28,39 @@ export default function DynamicPostPage(props: PageProps) {
     pageId: postPageId,
   } = props
 
-  console.log("DynamicPostPage", { props })
-
   const {
     block,
     isBlogPost,
     notionProps,
   } = getLayoutProps(props)
 
+  console.log("DynamicPostPage", { props, block, isBlogPost })
+
   const {
     components,
   } = notionProps;
 
+  const title = block.properties.title
+  const description = getPageProperty('description', block, recordMap) as string
   return <LayoutDefault {...props} >
+      <NextHead>
+        <title>
+          {title} - surulere.dev
+        </title>
+        <meta property="og:url"
+          content="http://surulere.dev/" />
+        <meta property="og:type"
+          content="article" />
+        <meta property="og:title"
+          content={title}/>
+        <meta property="og:description"
+          content={description} />
+        <meta property="og:image"       
+          content={"/favicon.png"} /> 
+      </NextHead>
+
       <LayoutPost
-        site={site}
         recordMap={recordMap}
-        error={error}
         pageId={postPageId}
         rootPageBlock={block}
       >

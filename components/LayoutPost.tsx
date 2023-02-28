@@ -15,9 +15,7 @@ layout: default
 */
 
 export const LayoutPost: React.FC<types.PageProps & { children: React.ReactNode }> = ({
-  site,
   recordMap,
-  error,
   pageId,
   children 
 }) => {

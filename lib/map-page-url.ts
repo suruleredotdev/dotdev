@@ -9,6 +9,8 @@ import { getCanonicalPageId } from './get-canonical-page-id'
 // (they're nice for debugging and speed up local dev)
 const uuid = !!includeNotionIdInUrls
 
+// TODO(ERR): (site: Site, recordMap: ExtendedRecordMap, searchParams: URLSearchParams) => (pageId?: string) => string    !==     type 'MapPageUrlFn'.
+//     type 'MapPageUrlFn' = (pageId: string, recordMap?: types.ExtendedRecordMap | undefined) => string;
 export const mapPageUrl =
   (site: Site, recordMap: ExtendedRecordMap, searchParams: URLSearchParams) =>
   (pageId = '') => {

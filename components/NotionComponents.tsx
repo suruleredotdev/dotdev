@@ -4,11 +4,14 @@ import Image from 'next/image'
 import { useSearchParam } from 'react-use'
 
 import {
+  NotionRenderer,
   NotionComponents,
+  Text
 } from "react-notion-x";
+import { getBlockTitle, getPageProperty, formatDate } from 'notion-utils'
+import { Block, ExtendedRecordMap } from "notion-types"
 
 // utils
-import { getBlockTitle, getPageProperty, formatDate } from 'notion-utils'
 import { mapPageUrl, getCanonicalPageUrl } from 'lib/map-page-url'
 import { mapImageUrl } from 'lib/map-image-url'
 import { searchNotion } from 'lib/search-notion'

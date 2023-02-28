@@ -13,7 +13,7 @@ export function getLayoutProps({
     parsePageId(block?.id) === parsePageId(site?.rootNotionPageId); // ||
     // window.location.href === "/";
 
-  // TODO: to LayoutPost
+  // TODO: use recordMap?.block[block?.parent_id].title == "Posts"
   const isBlogPost =
     block?.type === "page" && block?.parent_table === "collection";
 

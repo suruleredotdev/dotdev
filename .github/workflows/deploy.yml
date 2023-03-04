@@ -4,6 +4,12 @@ name: Build and Deploy
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+      commit_version:
+        description: 'Commit version to deploy (Git SHA)'
+        default: 'HEAD'
+        required: true
+        type: string
 
 jobs:
   build:
@@ -28,6 +34,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          ref: $${{ inputs.commit_version }}
       - run: npm i
       - run: npm run build
       - run: npm run export
@@ -35,7 +42,7 @@ jobs:
         uses: actions/upload-pages-artifact@v0
         with:
           path: ./out
-          retention-days: 1
+          retention-days: 7
 
   # Deploy job
   deploy:

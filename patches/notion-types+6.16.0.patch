@@ -1,0 +1,12 @@
+diff --git a/node_modules/notion-types/build/block.d.ts b/node_modules/notion-types/build/block.d.ts
+index 18427f9..4dd0e1b 100644
+--- a/node_modules/notion-types/build/block.d.ts
++++ b/node_modules/notion-types/build/block.d.ts
+@@ -78,6 +78,7 @@ export interface BookmarkBlock extends BaseBlock {
+         link: Decoration[];
+         title: Decoration[];
+         description: Decoration[];
++        caption?: Decoration[];
+     };
+     format: {
+         block_color?: string;

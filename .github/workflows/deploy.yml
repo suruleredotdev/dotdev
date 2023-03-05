@@ -5,11 +5,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-    commit_version:
-      description: 'Commit version to deploy (Git SHA)'
-      default: 'HEAD'
-      required: true
-      type: string
+    inputs:
+      commit_version:
+        description: 'Commit version to deploy (Git SHA)'
+        default: 'HEAD'
+        required: true
+        type: string
 
 jobs:
   build:

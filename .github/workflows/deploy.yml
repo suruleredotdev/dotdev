@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          ref: $${{ inputs.commit_version }}
+          ref: ${{ inputs.commit_version }}
       - run: npm i
       - run: npm run build
       - run: npm run export

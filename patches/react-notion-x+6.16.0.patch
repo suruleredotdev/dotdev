@@ -1,0 +1,39 @@
+diff --git a/node_modules/react-notion-x/build/index.js b/node_modules/react-notion-x/build/index.js
+index a18bcfd..c201274 100644
+--- a/node_modules/react-notion-x/build/index.js
++++ b/node_modules/react-notion-x/build/index.js
+@@ -2438,16 +2438,19 @@ var Block = (props) => {
+       if (!title) {
+         title = getTextContent2(link);
+       }
++      let isURL = false;
+       if (title) {
+         if (title.startsWith("http")) {
+           try {
+             const url = new URL(title);
+             title = url.hostname;
++            isURL = true;
+           } catch (err) {
+           }
+         }
+       }
+-      return /* @__PURE__ */ React28.createElement("div", {
++      const caption = block == null ? void 0 : block.properties["caption"];
++      return /* @__PURE__ */ React28.createElement(React28.Fragment, null, /* @__PURE__ */ React28.createElement("div", {
+         className: "notion-row"
+       }, /* @__PURE__ */ React28.createElement(components.Link, {
+         target: "_blank",
+@@ -2488,7 +2491,12 @@ var Block = (props) => {
+         style: {
+           objectFit: "cover"
+         }
+-      }))));
++      })))), caption && !isURL && /* @__PURE__ */ React28.createElement("figcaption", {
++        className: "notion-asset-caption"
++      }, /* @__PURE__ */ React28.createElement(Text, {
++        value: caption,
++        block
++      })));
+     }
+     case "toggle":
+       return /* @__PURE__ */ React28.createElement("details", {

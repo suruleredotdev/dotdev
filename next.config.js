@@ -71,4 +71,8 @@ module.exports = withBundleAnalyzer({
       },
     ]
   },
+
+  experimental: {
+    largePageDataBytes: 256 * 100000,
+  },
 })

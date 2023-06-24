@@ -7,6 +7,8 @@ import { getCanonicalPageId } from './get-canonical-page-id'
 import * as config from './config'
 import * as types from './types'
 
+import { log } from "./log"
+
 const uuid = !!includeNotionIdInUrls
 
 export async function getSiteMap(): Promise<types.SiteMap> {
@@ -31,11 +33,11 @@ async function getAllPagesImpl(
 ): Promise<Partial<types.SiteMap>> {
   const getPage = async (pageId: string, ...args) => {
     try {
-      console.log('\nnotion.getPage', uuidToId(pageId))
+      log("DEBUG", '\nnotion.getPage', uuidToId(pageId))
       return notion.getPage(pageId, ...args)
     } catch (e) {
-      console.log('\nerror on notion.getPage', e)
-      console.log('\n...skipping page', pageId)
+      log("DEBUG", '\ncaught error on notion.getPage', e)
+      log("DEBUG", '\n...skipping page', pageId)
     }
   }
 

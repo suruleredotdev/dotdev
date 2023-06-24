@@ -9,11 +9,13 @@ import {
 } from "notion-types";
 import { getCanonicalPageId } from "./get-canonical-page-id";
 
+import { log } from "./log";
+
 const POSTS_COLLECTION_TITLE = "Posts";
 export function getSitePosts(args: { recordMap: ExtendedRecordMap }): Array<object> {
   const { recordMap } = args;
 
-  console.log(">>> getSitePosts 0", {
+  log("DEBUG", ">>> getSitePosts 0", {
     recordMap,
     blocks: Object.values(recordMap.block).map((i) => {
       const v: Block = i?.value;
@@ -30,7 +32,7 @@ export function getSitePosts(args: { recordMap: ExtendedRecordMap }): Array<obje
     collectionView: CollectionView = (
       Object.values(recordMap.collection_view)[0] as CollectionViewMap[string]
     )?.value,
-    // _ = console.log("log", {collection, collectionView, query: Object.keys(recordMap)}),
+    // _ = log("DEBUG", {collection, collectionView, query: Object.keys(recordMap)}),
     collectionQueryResult: CollectionQueryResult =
       recordMap.collection_query[collection?.id]?.[collectionView?.id];
   if (!collection) return [];
@@ -73,7 +75,7 @@ export function getSitePosts(args: { recordMap: ExtendedRecordMap }): Array<obje
     ),
   }));
 
-  console.log(">>> getSitePosts 2", {
+  log("DEBUG", ">>> getSitePosts 2", {
     posts,
   });
 

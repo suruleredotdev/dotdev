@@ -20,6 +20,8 @@ import { LayoutPost } from 'components/LayoutPost'
 import { Footer } from 'components/Footer';
 import { getLayoutProps } from 'lib/get-layout-props';
 
+import { log } from 'lib/log';
+
 export default function DynamicPostPage(props: PageProps) {
   const {
     site,
@@ -34,13 +36,13 @@ export default function DynamicPostPage(props: PageProps) {
     notionProps,
   } = getLayoutProps(props)
 
-  console.log("DynamicPostPage", { props, block, isBlogPost })
+  log("DEBUG", "DynamicPostPage", { props, block_id: block.id, isBlogPost })
 
   const {
     components,
   } = notionProps;
 
-  const title = block.properties.title
+  const title = block?.properties?.title
   const description = getPageProperty('description', block, recordMap) as string
   return <LayoutDefault {...props} >
       <NextHead>
@@ -98,19 +100,19 @@ export const PostRenderer: React.FC<{
   const id = blockId || Object.keys(recordMap?.block || {})[0]
   const block = recordMap?.block[id]?.value
 
-  console.log("PostRenderer 0", {
-    id, block, recordMap
+  log("DEBUG", "PostRenderer 0", {
+    id, block, recordMap, level
   })
 
   if (!block) {
     if (process.env.NODE_ENV !== 'production') {
-      console.warn('missing block', blockId)
+      log("DEBUG", 'missing block', blockId)
     }
 
     return null
   }
 
-  console.log("PostRenderer", {
+  log("DEBUG", "PostRenderer", {
     content: block?.content?.map(contentId => {
       return recordMap?.block[contentId ]?.value //{ id, parent_id, type }
     })
@@ -173,7 +175,7 @@ export async function getStaticPaths() {
 
   const siteMap = await getSiteMap()
 
-  console.log("pages/pageId: SITEMAP", siteMap)
+  log("DEBUG", "pages/pageId: SITEMAP", siteMap)
 
   const staticPaths = {
     paths: Object.keys(siteMap.canonicalPageMap).map((pageId) => ({

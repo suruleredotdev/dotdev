@@ -5,8 +5,6 @@ import BodyClassName from "react-body-classname";
 import { useDarkMode } from "lib/use-dark-mode";
 import * as types from "lib/types";
 
-import { layoutDefaultClasses } from "./styles";
-
 // -----------------------------------------------------------------------------
 // dynamic imports for optional components
 // -----------------------------------------------------------------------------

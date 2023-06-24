@@ -4,6 +4,8 @@ import * as types from 'lib/types'
 
 import { Block, BlockMap, PageBlock, RecordMap, ExtendedRecordMap } from 'lib/types'
 import { getPageProperty } from 'notion-utils'
+
+import { log } from "lib/log"
 /*
 ---
 layout: default
@@ -19,9 +21,12 @@ export const LayoutPost: React.FC<types.PageProps & { children: React.ReactNode 
   pageId,
   children 
 }) => {
-
   const { rootBlock: page, contentBlocks } = getPageFromRecords({recordMap, pageId})
-  console.log("LayoutPost", { pageFromRecordsRootBlock: page, pageFromRecordMap: recordMap?.[pageId], contentBlocks })
+  log("DEBUG", "LayoutPost", {
+    pageFromRecordsRootBlock: page,
+    pageFromRecordMap: recordMap?.[pageId],
+      contentBlockIds: contentBlocks?.map(x => x.id)
+  })
 
   return (
     <div id="content" className="post pa3 pa5-ns mt6-l mh7-l f5">

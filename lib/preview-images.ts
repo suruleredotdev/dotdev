@@ -8,6 +8,7 @@ import { getPageImageUrls, normalizeUrl } from 'notion-utils'
 import { defaultPageIcon, defaultPageCover } from './config'
 import { db } from './db'
 import { mapImageUrl } from './map-image-url'
+import { log } from './log'
 
 export async function getPreviewImageMap(
   recordMap: ExtendedRecordMap
@@ -51,7 +52,7 @@ async function createPreviewImage(
 
     const { body } = await got(url, { responseType: 'buffer' })
     const result = await lqip(body)
-    console.log('lqip', { ...result.metadata, url, cacheKey })
+    log("DEBUG", 'lqip', { ...result.metadata, url, cacheKey })
 
     const previewImage = {
       originalWidth: result.metadata.originalWidth,

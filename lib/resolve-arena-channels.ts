@@ -2,6 +2,8 @@ import fetch from "node-fetch"
 
 import { getEnv } from './get-config-value'
 
+import { log } from "./log"
+
 const ARENA_USER = {
   slug: 'korede-aderele',
   id: 60392,
@@ -10,12 +12,12 @@ const ARENA_USER = {
 
 // used to render
 export async function resolveArenaChannels() {
-  console.log("resolveArenaChannels", ARENA_USER)
+  log("DEBUG", "resolveArenaChannels", ARENA_USER)
   try {
     const arenaUser = await requestArenaUserWithChannels(ARENA_USER.id, {accessToken: ARENA_USER.token})
     return arenaUser.channels
   } catch (e) {
-    console.log("ERROR resolveArenaChannels", e)
+    log("ERROR", "resolveArenaChannels", e)
     return []
   }
 }

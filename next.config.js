@@ -1,12 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true'
-})
-
 const isProd = process.env.NODE_ENV === 'production'
 const basePath = isProd ? (process.env.NEXT_PUBLIC_BASE_PATH || '') : ''
 
-module.exports = withBundleAnalyzer({
+module.exports = {
   basePath,
   assetPrefix: basePath,
 
@@ -75,4 +70,4 @@ module.exports = withBundleAnalyzer({
   experimental: {
     largePageDataBytes: 512 * 100000,
   },
-})
+}

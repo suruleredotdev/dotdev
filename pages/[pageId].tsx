@@ -33,7 +33,7 @@ export default function DynamicPostPage(props: PageProps) {
     notionProps,
   } = getLayoutProps(props)
 
-  log("DEBUG", "DynamicPostPage", { props, block_id: block.id, isBlogPost })
+  log("DEBUG", "DynamicPostPage", { props, block_id: block?.id, isBlogPost })
 
   const {
     components,

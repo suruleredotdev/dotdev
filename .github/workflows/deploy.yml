@@ -38,8 +38,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
           ref: ${{ inputs.commit_version }}
-      - run: npm i
-      - run: npm run build -D cross-env typescript @types/react @next/bundle-analyzer # arg src: https://github.com/apotdevin/thunderhub/issues/104#issuecomment-665566260
+      - run: npm i -D cross-env typescript @types/react @next/bundle-analyzer # arg src: https://github.com/apotdevin/thunderhub/issues/104#issuecomment-665566260
+      - run: npm run build
       - run: npm run export
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v0

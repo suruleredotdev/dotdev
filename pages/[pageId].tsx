@@ -1,13 +1,12 @@
 import * as React from 'react'
 import { GetStaticProps } from 'next'
-import { Block, ExtendedRecordMap } from 'notion-types'
+import { ExtendedRecordMap } from 'notion-types'
 import NextHead from 'next/head'
 import { getPageProperty } from 'notion-utils'
 
 import {
   NotionRenderer,
   NotionComponents,
-  Text 
 } from "react-notion-x";
 
 import * as config from "lib/config";
@@ -24,9 +23,7 @@ import { log } from 'lib/log';
 
 export default function DynamicPostPage(props: PageProps) {
   const {
-    site,
     recordMap,
-    error,
     pageId: postPageId,
   } = props
 
@@ -96,7 +93,7 @@ export const PostRenderer: React.FC<{
   level?: number
   recordMap: ExtendedRecordMap
   components: Partial<NotionComponents>
-}> = ({ level = 0, blockId, recordMap, components, ...props }) => {
+}> = ({ level = 0, blockId, recordMap, components }) => {
   const id = blockId || Object.keys(recordMap?.block || {})[0]
   const block = recordMap?.block[id]?.value
 

@@ -18,7 +18,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     env:
@@ -38,7 +38,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
           ref: ${{ inputs.commit_version }}
-      - run: npm i -D cross-env typescript @types/react @next/bundle-analyzer # arg src: https://github.com/apotdevin/thunderhub/issues/104#issuecomment-665566260
+      - run: npm install --save-dev cross-env typescript @types/react @next/bundle-analyzer # arg src: https://github.com/apotdevin/thunderhub/issues/104#issuecomment-665566260
       - run: npm run build
       - run: npm run export
       - name: Upload Artifacts

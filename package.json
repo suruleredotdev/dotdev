@@ -78,6 +78,8 @@
     "react-tweet-embed": "^2.0.0",
     "react-use": "^17.3.2",
     "rss": "^1.2.2",
+    "twitter": "^1.7.1",
+    "twitter-api-v2": "^1.15.0",
     "usehooks-ts": "^2.6.0"
   },
   "devDependencies": {

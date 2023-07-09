@@ -1,26 +1,26 @@
-import * as React from 'react'
+import * as React from "react";
 import { useHover } from "usehooks-ts";
 
-import { FaTwitter } from '@react-icons/all-files/fa/FaTwitter'
-import { FaZhihu } from '@react-icons/all-files/fa/FaZhihu'
-import { FaGithub } from '@react-icons/all-files/fa/FaGithub'
-import { FaLinkedin } from '@react-icons/all-files/fa/FaLinkedin'
-import { FaEnvelopeOpenText } from '@react-icons/all-files/fa/FaEnvelopeOpenText'
-import { FaYoutube } from '@react-icons/all-files/fa/FaYoutube'
-import { IoSunnyOutline } from '@react-icons/all-files/io5/IoSunnyOutline'
-import { IoMoonSharp } from '@react-icons/all-files/io5/IoMoonSharp'
+import { FaTwitter } from "@react-icons/all-files/fa/FaTwitter";
+import { FaZhihu } from "@react-icons/all-files/fa/FaZhihu";
+import { FaGithub } from "@react-icons/all-files/fa/FaGithub";
+import { FaLinkedin } from "@react-icons/all-files/fa/FaLinkedin";
+import { FaEnvelopeOpenText } from "@react-icons/all-files/fa/FaEnvelopeOpenText";
+import { FaYoutube } from "@react-icons/all-files/fa/FaYoutube";
+import { IoSunnyOutline } from "@react-icons/all-files/io5/IoSunnyOutline";
+import { IoMoonSharp } from "@react-icons/all-files/io5/IoMoonSharp";
 
-import { useDarkMode } from 'lib/use-dark-mode'
-import * as config from 'lib/config'
+import { useDarkMode } from "lib/use-dark-mode";
+import * as config from "lib/config";
 
-import styles from './styles.module.css'
-import { layoutDefaultClasses } from './styles';
+import styles from "./styles.module.css";
+import { layoutDefaultClasses } from "./styles";
 
-// TODO: merge the data and icons from PageSocial with the social links in Foote 
+// TODO: merge the data and icons from PageSocial with the social links in Foote
 
 // based on dotdev/default.html #footer element
 
-const classes = layoutDefaultClasses
+const classes = layoutDefaultClasses;
 
 export const FooterImpl: React.FC<any> = ({ page, isBlogPost }) => {
   const shareHoverRef = React.useRef(null);
@@ -131,23 +131,23 @@ export const FooterImpl: React.FC<any> = ({ page, isBlogPost }) => {
   );
 };
 
-export const Footer = React.memo(FooterImpl)
+export const Footer = React.memo(FooterImpl);
 
 export const OldFooterImpl: React.FC = () => {
-  const [hasMounted, setHasMounted] = React.useState(false)
-  const { isDarkMode, toggleDarkMode } = useDarkMode()
+  const [hasMounted, setHasMounted] = React.useState(false);
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   const onToggleDarkMode = React.useCallback(
     (e) => {
-      e.preventDefault()
-      toggleDarkMode()
+      e.preventDefault();
+      toggleDarkMode();
     },
     [toggleDarkMode]
-  )
+  );
 
   React.useEffect(() => {
-    setHasMounted(true)
-  }, [])
+    setHasMounted(true);
+  }, []);
 
   return (
     <footer className={styles.footer}>
@@ -157,10 +157,10 @@ export const OldFooterImpl: React.FC = () => {
         {hasMounted && (
           <a
             className={styles.toggleDarkMode}
-            href='#'
-            role='button'
+            href="#"
+            role="button"
             onClick={onToggleDarkMode}
-            title='Toggle dark mode'
+            title="Toggle dark mode"
           >
             {isDarkMode ? <IoMoonSharp /> : <IoSunnyOutline />}
           </a>
@@ -173,8 +173,8 @@ export const OldFooterImpl: React.FC = () => {
             className={styles.twitter}
             href={`https://twitter.com/${config.twitter}`}
             title={`Twitter @${config.twitter}`}
-            target='_blank'
-            rel='noopener noreferrer'
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <FaTwitter />
           </a>
@@ -185,8 +185,8 @@ export const OldFooterImpl: React.FC = () => {
             className={styles.zhihu}
             href={`https://zhihu.com/people/${config.zhihu}`}
             title={`Zhihu @${config.zhihu}`}
-            target='_blank'
-            rel='noopener noreferrer'
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <FaZhihu />
           </a>
@@ -197,8 +197,8 @@ export const OldFooterImpl: React.FC = () => {
             className={styles.github}
             href={`https://github.com/${config.github}`}
             title={`GitHub @${config.github}`}
-            target='_blank'
-            rel='noopener noreferrer'
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <FaGithub />
           </a>
@@ -209,8 +209,8 @@ export const OldFooterImpl: React.FC = () => {
             className={styles.linkedin}
             href={`https://www.linkedin.com/in/${config.linkedin}`}
             title={`LinkedIn ${config.author}`}
-            target='_blank'
-            rel='noopener noreferrer'
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <FaLinkedin />
           </a>
@@ -221,8 +221,8 @@ export const OldFooterImpl: React.FC = () => {
             className={styles.newsletter}
             href={`${config.newsletter}`}
             title={`Newsletter ${config.author}`}
-            target='_blank'
-            rel='noopener noreferrer'
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <FaEnvelopeOpenText />
           </a>
@@ -233,13 +233,13 @@ export const OldFooterImpl: React.FC = () => {
             className={styles.youtube}
             href={`https://www.youtube.com/${config.youtube}`}
             title={`YouTube ${config.author}`}
-            target='_blank'
-            rel='noopener noreferrer'
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <FaYoutube />
           </a>
         )}
       </div>
     </footer>
-  )
-}
+  );
+};

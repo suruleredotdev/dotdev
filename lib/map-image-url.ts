@@ -1,15 +1,15 @@
-import { Block } from 'notion-types'
-import { defaultMapImageUrl } from 'react-notion-x'
+import { Block } from "notion-types";
+import { defaultMapImageUrl } from "react-notion-x";
 
-import { defaultPageIcon, defaultPageCover } from './config'
+import { defaultPageIcon, defaultPageCover } from "./config";
 
 export const mapImageUrl = (url: string, block: Block) => {
   if (url === defaultPageCover || url === defaultPageIcon) {
-    return url
+    return url;
   }
-  if (url.startsWith('/assets/')) {
-    return url
+  if (url.startsWith("/assets/")) {
+    return url;
   }
 
-  return defaultMapImageUrl(url, block)
-}
+  return defaultMapImageUrl(url, block);
+};

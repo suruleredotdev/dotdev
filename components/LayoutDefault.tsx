@@ -18,15 +18,13 @@ TODO:
   - pull updated classes from UI
 */
 
-export const LayoutDefault: React.FC<types.PageProps & { children: React.ReactNode }> = ({
-  children,
-  ...props
-}) => {
-
+export const LayoutDefault: React.FC<
+  types.PageProps & { children: React.ReactNode }
+> = ({ children, ...props }) => {
   const { isDarkMode } = useDarkMode();
 
   const isLoading = !props.recordMap;
-  const loadingAnimation = isLoading?"animate-bg-infinite":"animate-bg"
+  const loadingAnimation = isLoading ? "animate-bg-infinite" : "animate-bg";
 
   return (
     <>

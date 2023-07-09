@@ -1,31 +1,33 @@
-import pMemoize from 'p-memoize'
-import { getAllPagesInSpace, uuidToId } from 'notion-utils'
+import pMemoize from "p-memoize";
+import { getAllPagesInSpace, uuidToId } from "notion-utils";
 
-import { includeNotionIdInUrls } from './config'
-import { notion } from './notion-api'
-import { getCanonicalPageId } from './get-canonical-page-id'
-import * as config from './config'
-import * as types from './types'
+import { includeNotionIdInUrls } from "./config";
+import { notion } from "./notion-api";
+import { getCanonicalPageId } from "./get-canonical-page-id";
+import * as config from "./config";
+import * as types from "./types";
 
-import { log } from "./log"
+import { log } from "./log";
 
-const uuid = !!includeNotionIdInUrls
+const uuid = !!includeNotionIdInUrls;
 
 export async function getSiteMap(): Promise<types.SiteMap> {
   const partialSiteMap = await getAllPages(
     config.rootNotionPageId,
     config.rootNotionSpaceId
-  )
+  );
 
   return {
     site: config.site,
-    ...partialSiteMap
-  } as types.SiteMap
+    ...partialSiteMap,
+  } as types.SiteMap;
 }
 
-const getAllPages = pMemoize(getAllPagesImpl, {
-  cacheKey: (...args) => JSON.stringify(args)
-})
+const getAllPages = config.usePMemo
+  ? pMemoize(getAllPagesImpl, {
+      cacheKey: (...args) => JSON.stringify(args),
+    })
+  : getAllPagesImpl;
 
 async function getAllPagesImpl(
   rootNotionPageId: string,
@@ -33,53 +35,53 @@ async function getAllPagesImpl(
 ): Promise<Partial<types.SiteMap>> {
   const getPage = async (pageId: string, ...args) => {
     try {
-      log("DEBUG", '\nnotion.getPage', uuidToId(pageId))
-      return notion.getPage(pageId, ...args)
+      log("DEBUG", "\nnotion.getPage", uuidToId(pageId));
+      return notion.getPage(pageId, ...args);
     } catch (e) {
-      log("DEBUG", '\ncaught error on notion.getPage', e)
-      log("DEBUG", '\n...skipping page', pageId)
+      log("ERROR", "\ncaught error on notion.getPage", e);
+      log("DEBUG", "\n...skipping page", pageId);
     }
-  }
+  };
 
   const pageMap = await getAllPagesInSpace(
     rootNotionPageId,
     rootNotionSpaceId,
     getPage
-  )
+  );
 
   const canonicalPageMap = Object.keys(pageMap).reduce(
     (map, pageId: string) => {
-      const recordMap = pageMap[pageId]
+      const recordMap = pageMap[pageId];
       if (!recordMap) {
-        throw new Error(`Error loading page "${pageId}"`)
+        throw new Error(`Error loading page "${pageId}"`);
       }
 
       const canonicalPageId = getCanonicalPageId(pageId, recordMap, {
-        uuid
-      })
+        uuid,
+      });
 
       if (map[canonicalPageId]) {
         // you can have multiple pages in different collections that have the same id
         // TODO: we may want to error if neither entry is a collection page
-        console.warn('error duplicate canonical page id', {
+        console.warn("error duplicate canonical page id", {
           canonicalPageId,
           pageId,
-          existingPageId: map[canonicalPageId]
-        })
+          existingPageId: map[canonicalPageId],
+        });
 
-        return map
+        return map;
       } else {
         return {
           ...map,
-          [canonicalPageId]: pageId
-        }
+          [canonicalPageId]: pageId,
+        };
       }
     },
     {}
-  )
+  );
 
   return {
     pageMap,
-    canonicalPageMap
-  }
+    canonicalPageMap,
+  };
 }

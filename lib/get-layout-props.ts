@@ -1,17 +1,13 @@
 import { parsePageId } from "components/LayoutDefault";
 import { getComponents } from "components/NotionComponents";
 
-export function getLayoutProps({
-    site,
-    recordMap,
-    pageId
-  }) {
+export function getLayoutProps({ site, recordMap, pageId }) {
   const keys = Object.keys(recordMap?.block || {});
   const block = recordMap?.block?.[pageId || keys[0]]?.value;
 
   const isRootPage =
     parsePageId(block?.id) === parsePageId(site?.rootNotionPageId); // ||
-    // window.location.href === "/";
+  // window.location.href === "/";
 
   // TODO: use recordMap?.block[block?.parent_id].title == "Posts"
   const isBlogPost =
@@ -27,7 +23,7 @@ export function getLayoutProps({
     showTableOfContents,
     minTableOfContentsItems,
     notionProps: {
-      components: getComponents()
+      components: getComponents(),
     },
-  }
+  };
 }

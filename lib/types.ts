@@ -1,77 +1,77 @@
-import { Block, ExtendedRecordMap, PageMap } from 'notion-types'
-import { ParsedUrlQuery } from 'querystring'
+import { Block, ExtendedRecordMap, PageMap } from "notion-types";
+import { ParsedUrlQuery } from "querystring";
 
-export * from 'notion-types'
+export * from "notion-types";
 
-import Arena from 'are.na'
+import Arena from "are.na";
 
-export type NavigationStyle = 'default' | 'custom'
+export type NavigationStyle = "default" | "custom";
 
 export interface PageError {
-  message?: string
-  statusCode: number
+  message?: string;
+  statusCode: number;
 }
 
 export interface PageProps {
-  site?: Site
-  recordMap?: ExtendedRecordMap
-  pageId?: string
-  error?: PageError
-  rootPageBlock?: Block
-  channels?: Array<Arena.Channel>
-  siteMap?: SiteMap
+  site?: Site;
+  recordMap?: ExtendedRecordMap;
+  pageId?: string;
+  error?: PageError;
+  rootPageBlock?: Block;
+  channels?: Array<Arena.Channel>;
+  siteMap?: SiteMap;
 }
 
 export interface Params extends ParsedUrlQuery {
-  pageId: string
+  pageId: string;
 }
 
 export interface Site {
-  name: string
-  domain: string
+  name: string;
+  domain: string;
 
-  rootNotionPageId: string
-  rootNotionSpaceId: string
+  rootNotionPageId: string;
+  rootNotionSpaceId: string;
 
   // settings
-  html?: string
-  fontFamily?: string
-  darkMode?: boolean
-  previewImages?: boolean
+  html?: string;
+  fontFamily?: string;
+  darkMode?: boolean;
+  previewImages?: boolean;
 
   // opengraph metadata
-  description?: string
-  image?: string
+  description?: string;
+  image?: string;
 
-  posts: Array<Post>
+  posts: Array<Post>;
 }
 
 export interface Post {
-  props: PageProps
-  draft: boolean,
-  tags: Array<string>
+  props: PageProps;
+  draft: boolean;
+  tags: Array<string>;
 }
 
 export interface SiteMap {
-  site: Site
-  pageMap: PageMap
-  canonicalPageMap: CanonicalPageMap
+  site: Site;
+  pageMap: PageMap;
+  canonicalPageMap: CanonicalPageMap;
 }
 
 export interface CanonicalPageMap {
-  [canonicalPageId: string]: string
+  [canonicalPageId: string]: string;
 }
 
 export interface PageUrlOverridesMap {
   // maps from a URL path to the notion page id the page should be resolved to
   // (this overrides the built-in URL path generation for these pages)
-  [pagePath: string]: string
+  [pagePath: string]: string;
 }
 
 export interface PageUrlOverridesInverseMap {
   // maps from a notion page id to the URL path the page should be resolved to
   // (this overrides the built-in URL path generation for these pages)
-  [pageId: string]: string
+  [pageId: string]: string;
 }
 
 /*

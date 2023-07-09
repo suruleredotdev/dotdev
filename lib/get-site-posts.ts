@@ -1,18 +1,26 @@
 /*
  - getSitePosts parses recordMap 
 */
-import { getPageProperty } from 'notion-utils'
-import { 
-  Block, Collection, CollectionMap, CollectionView,
-  CollectionViewMap, CollectionQueryResult, BlockMap,
-  ExtendedRecordMap, Role
+import { getPageProperty } from "notion-utils";
+import {
+  Block,
+  Collection,
+  CollectionMap,
+  CollectionView,
+  CollectionViewMap,
+  CollectionQueryResult,
+  BlockMap,
+  ExtendedRecordMap,
+  Role,
 } from "notion-types";
 import { getCanonicalPageId } from "./get-canonical-page-id";
 
 import { log } from "./log";
 
 const POSTS_COLLECTION_TITLE = "Posts";
-export function getSitePosts(args: { recordMap: ExtendedRecordMap }): Array<object> {
+export function getSitePosts(args: {
+  recordMap: ExtendedRecordMap;
+}): Array<object> {
   const { recordMap } = args;
 
   log("DEBUG", ">>> getSitePosts 0", {
@@ -49,14 +57,14 @@ export function getSitePosts(args: { recordMap: ExtendedRecordMap }): Array<obje
   const pageIdsMatchingQuery =
     collectionQueryResult?.collection_group_results?.blockIds || [];
 
-  const postBlocks = Object.values(recordMap.block).filter(
-    (block: { role: Role; value: Block; }) => {
+  const postBlocks = Object.values(recordMap.block)
+    .filter((block: { role: Role; value: Block }) => {
       return (
         block.value?.parent_id === collectionId ||
         pageIdsMatchingQuery.includes(block.value?.id)
       );
-    }
-  ).map((b: BlockMap[string]) => b.value);
+    })
+    .map((b: BlockMap[string]) => b.value);
 
   /*
     Construct posts pointer including { id, slug, title, [properties]... }
@@ -69,7 +77,7 @@ export function getSitePosts(args: { recordMap: ExtendedRecordMap }): Array<obje
       (acc, propId) => ({
         ...acc,
         [collectionSchema[propId].name?.toLowerCase()?.replace(/\s/g, "_")]:
-          getPageProperty(collectionSchema[propId].name, p, recordMap)
+          getPageProperty(collectionSchema[propId].name, p, recordMap),
       }),
       {}
     ),

@@ -1,13 +1,13 @@
-import './styles.module.css'
+import "./styles.module.css";
 
 // TODO: upgrade this
 // create methods for manipulating individual classes in list of classes
-type Classes = string
-export type StyleClasses = Record<string, Classes >
+type Classes = string;
+export type StyleClasses = Record<string, Classes>;
 
 export const globalClasses: StyleClasses = {
-    content:  "pa3 pa5-ns mt6-l mh7-l f4 h-100",
-}
+  content: "pa3 pa5-ns mt6-l mh7-l f4 h-100",
+};
 
 export const layoutDefaultClasses: StyleClasses = {
   ...globalClasses,
@@ -27,4 +27,4 @@ export const layoutDefaultClasses: StyleClasses = {
   settingsBlock: "w-33-ns tr mv2 pointer flex flex-column absolute",
   settingsBlockAction: "link dim ph3 pv2 hide",
   settingsBlockDropdown: "link dim ph3 pv2 underline",
-}
+};

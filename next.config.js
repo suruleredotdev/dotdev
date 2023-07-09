@@ -1,5 +1,5 @@
-const isProd = process.env.NODE_ENV === 'production'
-const basePath = isProd ? (process.env.NEXT_PUBLIC_BASE_PATH || '') : ''
+const isProd = process.env.NODE_ENV === "production";
+const basePath = isProd ? process.env.NEXT_PUBLIC_BASE_PATH || "" : "";
 
 module.exports = {
   basePath,
@@ -10,20 +10,20 @@ module.exports = {
   staticPageGenerationTimeout: 300,
   images: {
     // unoptimized: true,
-    loader: 'akamai',
-    path: '',
+    loader: "akamai",
+    path: "",
     domains: [
-      'www.notion.so',
-      'notion.so',
-      'images.unsplash.com',
-      'pbs.twimg.com',
-      'abs.twimg.com',
-      's3.us-west-2.amazonaws.com',
-      'surulere.dev'
+      "www.notion.so",
+      "notion.so",
+      "images.unsplash.com",
+      "pbs.twimg.com",
+      "abs.twimg.com",
+      "s3.us-west-2.amazonaws.com",
+      "surulere.dev",
     ],
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
     dangerouslyAllowSVG: true,
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;"
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
   eslint: {
@@ -45,29 +45,30 @@ module.exports = {
   redirects: async () => {
     return [
       {
-        source: '/2020/08/23/mapping-lagos-slums.html',
-        destination: '/mapping-lagos-slums',
+        source: "/2020/08/23/mapping-lagos-slums.html",
+        destination: "/mapping-lagos-slums",
         permanent: true,
       },
       {
-        source: '/2020/08/16/naira-stablecoins.html',
-        destination: '/naira-stablecoins',
+        source: "/2020/08/16/naira-stablecoins.html",
+        destination: "/naira-stablecoins",
         permanent: true,
       },
       {
-        source: '/2020/03/01/blockchain-in-africa.html',
-        destination: '/blockchain-in-africa',
+        source: "/2020/03/01/blockchain-in-africa.html",
+        destination: "/blockchain-in-africa",
         permanent: true,
       },
       {
-        source: '/2018/07/23/digital-platform-adoption-in-developing-countries.html',
-        destination: '/digital-platform-adoption-in-developing-countries',
+        source:
+          "/2018/07/23/digital-platform-adoption-in-developing-countries.html",
+        destination: "/digital-platform-adoption-in-developing-countries",
         permanent: true,
       },
-    ]
+    ];
   },
 
   experimental: {
     largePageDataBytes: 512 * 100000,
   },
-}
+};

@@ -5,7 +5,7 @@
   "main": "index.ts",
   "module": "es2020",
   "engines": {
-    "node": ">=14.17"
+    "node": ">=v22.9.0"
   },
   "directories": {
     "lib": "lib"

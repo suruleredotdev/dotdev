@@ -12,6 +12,11 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+  actions: write
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,12 +37,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ inputs.commit_version }}
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          ref: ${{ inputs.commit_version }}
       - run: npm install --save-dev cross-env typescript @types/react @next/bundle-analyzer # arg src: https://github.com/apotdevin/thunderhub/issues/104#issuecomment-665566260
       - run: npm run build
       - run: npm run export
@@ -68,3 +73,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
+

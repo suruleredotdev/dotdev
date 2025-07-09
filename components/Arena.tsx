@@ -34,22 +34,22 @@ export const ArenaChannel = (props: { channel: Arena.Channel }) => {
         <div className="pr3 pointer">
           {collapse ? <span className="o-20">&rarr;</span> : <>&darr;</>}
         </div>
-        <div className="f5 grey flex flex-row-ns flex-column">
-          <a
-            className="link black w5 pa1"
-            href={`https://are.na/${props.channel?.user?.slug}/${props.channel?.slug}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {props.channel?.title} <br />
+        <a
+          className="link black pa1"
+          href={`https://are.na/${props.channel?.user?.slug}/${props.channel?.slug}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <div className="grey flex flex-row flex-column-m gap-2">
+            <div className="f5">{props.channel?.title}</div>
             <span
-              className="f6 pa1 overflow-x-hidden"
+              className="f6 pa1 overflow-x-hidden o-70"
               style={{ lineBreak: "anywhere" }}
             >
               {props.channel?.metadata?.description}
             </span>
-          </a>
-        </div>
+          </div>
+        </a>
       </div>
       {collapse ? (
         <></>

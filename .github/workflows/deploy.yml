@@ -43,7 +43,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm install --save-dev cross-env typescript @types/react @next/bundle-analyzer # arg src: https://github.com/apotdevin/thunderhub/issues/104#issuecomment-665566260
       - run: npm install
       - run: DEBUG=1 VERBOSE=1 npm run build
       - run: npm run export

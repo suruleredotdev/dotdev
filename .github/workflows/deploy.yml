@@ -48,10 +48,9 @@ jobs:
       - run: DEBUG=1 VERBOSE=1 npm run build
       - run: npm run export
       - name: Upload Artifacts
-        uses: actions/upload-pages-artifact@v0
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
-          retention-days: 7
 
   # Deploy job
   deploy:
@@ -68,5 +67,5 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
 

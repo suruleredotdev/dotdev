@@ -92,6 +92,7 @@ export const HomePageContent: React.FC<types.PageProps> = ({
       </div>
 
       <b className={classes.postsTitle}>ESSAYS</b>
+      {/* {JSON.stringify(posts.slice(0, 3), null, 2)} */}
       <ul className={classes.postsList}>
         {posts
           ?.sort((a, b) => b.published - a.published)
@@ -104,6 +105,12 @@ export const HomePageContent: React.FC<types.PageProps> = ({
               >
                 {post.title}
               </a>
+              <span className={classes.postDescription}>
+                {post.description?.length > 200
+                  ? post.description?.substring(0, 197) + "..."
+                  : post.description}
+              </span>
+
               <small className={classes.postDate}>
                 &nbsp; &mdash;{" "}
                 {new Date(post.published).toLocaleDateString("en-US", {

@@ -27,4 +27,5 @@ export const layoutDefaultClasses: StyleClasses = {
   settingsBlock: "w-33-ns tr mv2 pointer flex flex-column absolute",
   settingsBlockAction: "link dim ph3 pv2 hide",
   settingsBlockDropdown: "link dim ph3 pv2 underline",
+  postDescription: "f7 pa1 pl2 gray",
 };

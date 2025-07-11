@@ -43,7 +43,7 @@ export const ArenaChannel = (props: { channel: Arena.Channel }) => {
           <div className="grey flex flex-row flex-column-m gap-2">
             <div className="f5">{props.channel?.title}</div>
             <span
-              className="f6 pa1 overflow-x-hidden o-70"
+              className="f7 pa1 overflow-x-hidden o-70"
               style={{ lineBreak: "anywhere" }}
             >
               {props.channel?.metadata?.description}

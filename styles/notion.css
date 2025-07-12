@@ -125,6 +125,12 @@ a.no-ul {
 .DARK a.title {
   border-bottom: 1px dashed var(--title-color);
 }
+.LIGHT .full-a.title {
+  border: 1px dashed var(--txt-color-dark);
+}
+.DARK .full-a.title {
+  border: 1px dashed var(--title-color);
+}
 a.title {
   color: var(--title-color);
 }

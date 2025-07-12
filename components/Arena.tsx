@@ -8,7 +8,7 @@ export const ArenaBlock = (props: { block: Arena.Block }) => (
     rel="noreferrer"
   >
     <div
-      className={`pa3 pt2 b--dotted b-color overflow-hidden`}
+      className={`pa3 pt2 full-a b-color overflow-hidden`}
       style={{ height: 250, width: 250 }}
     >
       <p className="f5 w5">{props.block?.title || props.block?.source?.url}</p>
@@ -58,9 +58,9 @@ export const ArenaChannel = (props: { channel: Arena.Channel }) => {
           className={`flex flex-row overflow-y-auto list horizontal-scroll-shadow`}
         >
           {props.channel.contents?.slice(0, 15).map((block, i) => (
-            <li key={i} className="w-100 collapse">
+            <li key={i} className="w-100 collapse pa3 o-75">
               {block.base_class == "Block" ? (
-                <ArenaBlock block={block} size={null} />
+                <ArenaBlock block={block} />
               ) : (
                 <></>
               )}

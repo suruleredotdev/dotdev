@@ -58,7 +58,12 @@ b, p, em > p, em {
   color: var(--txt-color-dark);
   border-bottom: 1px dashed var(--txt-color-dark);
 }
-
+.LIGHT .full-a {
+  border: 1px dashed var(--txt-color-light);
+}
+.DARK .full-a {
+  border: 1px dashed var(--txt-color-dark);
+}
 
 body {
   background-size: var(--bg-size);

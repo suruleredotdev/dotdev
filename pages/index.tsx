@@ -144,7 +144,48 @@ export const HomePageContent: React.FC<types.PageProps> = ({
       </ul>
       <br />
 
+      <b className={classes.postsTitle}>TOOLS</b>
+      <ul className={"f5 pl2 flex flex-row gap-2 flex-wrap w-100"}>
+        {[
+          {
+            title: "Archive 3D",
+            url: "https://archive-3d.surulere.dev",
+            image: "/archive-3d-preview.jpeg",
+            description: "Visualize and explore vector-similar archives in 3D",
+          },
+          {
+            title: "Map Tool",
+            url: "https://map-tool.surulere.dev",
+            image: "/map-tool-preview.png",
+            description: "Simple tool to view and share maps on the web.",
+          },
+        ].map((tool, i) => (
+          <div key={i} className={`pa1 flex flex-column w-50-ns w-100 mb1 mt1 pr4-l`}>
+            <a
+              className={classes.postLink + " flex flex-column gap-2 pa1"}
+              href={tool.url}
+              target="_blank"
+            >
+              <div style={{ width: "100%", height: "175px", overflow: "hidden" }}>
+                <img src={tool.image} alt={tool.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              </div>
+              <span className={classes.postLink}>{tool.title}</span>
+            </a>
+
+            <span className={classes.postDescription}>
+              {tool.description?.length > 200
+                ? tool.description?.substring(0, 197) + "..."
+                : tool.description}
+            </span>
+          </div>
+        ))}
+      </ul>
+      <br />
+
       <b className={classes.postsTitle}>ARCHIVES</b>
+      <p className={classes.postDescription}>
+        Preview curated references on our research areas. Expand each section or click the link to view the full channel.
+      </p>
       <ul className={"f5 pl2 flex flex-column gap-2"}>
         {/* {JSON.stringify((new Map(channels.map(channel => [channel.title, channel])).values().toArray())
           ?.slice(0, 10), null, 2) */}
@@ -157,7 +198,7 @@ export const HomePageContent: React.FC<types.PageProps> = ({
              channel.collaborators?.some(collaborator => collaborator.slug === "suruleredotdev")) */
           )
           .map((channel, i) => (
-            <ArenaChannel channel={channel} />
+            <ArenaChannel channel={channel} key={i} />
           ))}
       </ul>
     </div>

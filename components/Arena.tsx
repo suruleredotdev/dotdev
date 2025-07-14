@@ -40,7 +40,7 @@ export const ArenaChannel = (props: { channel: Arena.Channel }) => {
           target="_blank"
           rel="noreferrer"
         >
-          <div className="grey flex flex-row flex-column-m gap-2">
+          <div className="grey flex flex-row-ns flex-column gap-2">
             <div className="f5">{props.channel?.title}</div>
             <span
               className="f7 pa1 overflow-x-hidden o-70"

@@ -16,7 +16,7 @@ export const layoutDefaultClasses: StyleClasses = {
   postsTitle: "f5 title",
   postsList: "f5 pl0 pl4-ns",
   postLink: "link dim",
-  postDate: "f7 pv2",
+  postDate: "pv2",
   postTag: "tag f7 dim no-ul",
   footer: "ph3 dn db-ns bg-transparent flex flex-row fixed",
   socialBlock: "w-10 tl mv2 pointer flex flex-row",
@@ -27,5 +27,5 @@ export const layoutDefaultClasses: StyleClasses = {
   settingsBlock: "w-33-ns tr mv2 pointer flex flex-column absolute",
   settingsBlockAction: "link dim ph3 pv2 hide",
   settingsBlockDropdown: "link dim ph3 pv2 underline",
-  postDescription: "f7 pa1 pl2 gray",
+  postDescription: "f7 pv1 gray",
 };

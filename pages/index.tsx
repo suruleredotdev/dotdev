@@ -105,13 +105,8 @@ export const HomePageContent: React.FC<types.PageProps> = ({
               >
                 {post.title}
               </a>
-              <span className={classes.postDescription}>
-                {post.description?.length > 200
-                  ? post.description?.substring(0, 197) + "..."
-                  : post.description}
-              </span>
 
-              <small className={classes.postDate}>
+              <small className={classes.postDate} style={{fontSize: ".60rem"}}>
                 &nbsp; &mdash;{" "}
                 {new Date(post.published).toLocaleDateString("en-US", {
                   year: "numeric",
@@ -119,6 +114,14 @@ export const HomePageContent: React.FC<types.PageProps> = ({
                   day: "numeric",
                 })}
               </small>
+
+              <br/>
+
+              <span className={classes.postDescription}>
+                {post.description?.length > 200
+                  ? post.description?.substring(0, 197) + "..."
+                  : post.description}
+              </span>
               {post.tags ? (
                 <>
                   {/* TODO: implement tags

@@ -33,6 +33,7 @@ jobs:
       ARENA_SECRET: ${{ secrets.ARENA_SECRET }}
       ARENA_PERSONAL_ACCESS_TOKEN: ${{ secrets.ARENA_PERSONAL_ACCESS_TOKEN }}
       SUBSTACK_API_KEY: ${{ secrets.SUBSTACK_API_KEY }}
+      SUBSTACK_HANDLE: ${{ vars.SUBSTACK_HANDLE }}
       NEXT_PUBLIC_BASE_PATH: ${{ vars.NEXT_PUBLIC_BASE_PATH }}
       NODE_ENV: production
       LOG_LEVEL: error

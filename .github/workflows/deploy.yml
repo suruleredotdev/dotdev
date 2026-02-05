@@ -35,7 +35,7 @@ jobs:
       SUBSTACK_API_KEY: ${{ secrets.SUBSTACK_API_KEY }}
       NEXT_PUBLIC_BASE_PATH: ${{ vars.NEXT_PUBLIC_BASE_PATH }}
       NODE_ENV: production
-      DEBUG: info
+      DEBUG: debug
 
     steps:
       - uses: actions/checkout@v2

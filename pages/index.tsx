@@ -6,6 +6,7 @@ import { getSitePosts } from "lib/get-site-posts";
 import * as config from "lib/config";
 import { resolveNotionPage } from "lib/resolve-notion-page";
 import { resolveArenaChannels } from "lib/resolve-arena-channels";
+import { getSubstackEssays, SubstackEssay } from "lib/get-substack-essays";
 import { useDarkMode } from "lib/use-dark-mode";
 import { mapPageUrl } from "lib/map-page-url";
 import { getLayoutProps } from "lib/get-layout-props";
@@ -14,6 +15,7 @@ import { getSiteMap } from "lib/get-site-map";
 import { LayoutDefault } from "components/LayoutDefault";
 import { Footer } from "components/Footer";
 import { ArenaChannel } from "components/Arena";
+import { ExternalLinkIcon } from "components/ExternalLinkIcon";
 // NOTE: simple styling classlist strings w tachyons. may upgrade to be more configurable
 import {
   globalClasses,
@@ -32,13 +34,27 @@ export const getStaticProps = async () => {
     const notionProps = await resolveNotionPage(config.domain);
     const channels = await resolveArenaChannels();
     const siteMap = await getSiteMap();
+
+    // Fetch Substack essays - use environment variables for Substack handle and API key
+    const substackHandle = process.env.SUBSTACK_HANDLE || "suruleredotdev";
+    const substackApiKey = process.env.SUBSTACK_API_KEY;
+    let substackEssays: SubstackEssay[] = [];
+    if (substackHandle) {
+      substackEssays = await getSubstackEssays(
+        substackHandle,
+        10,
+        substackApiKey
+      );
+    }
+
     const props = {
       ...notionProps,
       channels,
       siteMap,
+      substackEssays,
     };
 
-    return { props, revalidate: 1 };
+    return { props, revalidate: 3600 }; // Revalidate every hour for fresh Substack content
   } catch (err) {
     console.error("page error", config.domain, err);
 
@@ -61,12 +77,17 @@ const homePageText = [
 ];
 const textVersion = 0;
 
-export const HomePageContent: React.FC<types.PageProps> = ({
+interface HomePageContentProps extends types.PageProps {
+  substackEssays?: SubstackEssay[];
+}
+
+export const HomePageContent: React.FC<HomePageContentProps> = ({
   site,
   recordMap,
   pageId,
   channels,
   siteMap,
+  substackEssays = [],
 }) => {
   // TODO: render from root page block
   const posts = getSitePosts({
@@ -94,39 +115,57 @@ export const HomePageContent: React.FC<types.PageProps> = ({
       <b className={classes.postsTitle}>ESSAYS</b>
       {/* {JSON.stringify(posts.slice(0, 3), null, 2)} */}
       <ul className={classes.postsList}>
-        {posts
+        {/* Combine and sort local posts with Substack essays by publication date */}
+        {[
+          ...posts
+            ?.filter((post) => post.public == true)
+            .map((post) => ({ ...post, isExternal: false })),
+          ...substackEssays.map((essay) => ({
+            ...essay,
+            title: essay.title,
+            description: essay.description,
+            published: essay.published,
+            isExternal: true,
+            id: `substack-${essay.id}`,
+          })),
+        ]
           ?.sort((a, b) => b.published - a.published)
-          .filter((post) => post.public == true)
-          .map((post, i) => (
+          .map((item: any, i) => (
             <p key={i}>
               <a
                 className={classes.postLink}
-                href={"/" + idToPagePath[post.id]}
+                href={item.isExternal ? item.url : "/" + idToPagePath[item.id]}
+                target={item.isExternal ? "_blank" : undefined}
+                rel={item.isExternal ? "noopener noreferrer" : undefined}
               >
-                {post.title}
+                {item.title}
+                {item.isExternal && <ExternalLinkIcon />}
               </a>
 
-              <small className={classes.postDate} style={{fontSize: ".60rem"}}>
+              <small
+                className={classes.postDate}
+                style={{ fontSize: ".60rem" }}
+              >
                 &nbsp; &mdash;{" "}
-                {new Date(post.published).toLocaleDateString("en-US", {
+                {new Date(item.published).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
                 })}
               </small>
 
-              <br/>
+              <br />
 
               <span className={classes.postDescription}>
-                {post.description?.length > 200
-                  ? post.description?.substring(0, 197) + "..."
-                  : post.description}
+                {item.description?.length > 200
+                  ? item.description?.substring(0, 197) + "..."
+                  : item.description}
               </span>
-              {post.tags ? (
+              {item.tags && !item.isExternal ? (
                 <>
                   {/* TODO: implement tags
                   <br />
-                  {post.tags?.map((tag, i) => (
+                  {item.tags?.map((tag, i) => (
                     <a
                       key={i}
                       className={classes.postTag}
@@ -160,14 +199,23 @@ export const HomePageContent: React.FC<types.PageProps> = ({
             description: "Simple tool to view and share maps on the web.",
           },
         ].map((tool, i) => (
-          <div key={i} className={`pa1 flex flex-column w-50-ns w-100 mb1 mt1 pr4-l`}>
+          <div
+            key={i}
+            className={`pa1 flex flex-column w-50-ns w-100 mb1 mt1 pr4-l`}
+          >
             <a
               className={classes.postLink + " flex flex-column gap-2 pa1"}
               href={tool.url}
               target="_blank"
             >
-              <div style={{ width: "100%", height: "175px", overflow: "hidden" }}>
-                <img src={tool.image} alt={tool.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <div
+                style={{ width: "100%", height: "175px", overflow: "hidden" }}
+              >
+                <img
+                  src={tool.image}
+                  alt={tool.title}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
               </div>
               <span className={classes.postLink}>{tool.title}</span>
             </a>
@@ -184,16 +232,24 @@ export const HomePageContent: React.FC<types.PageProps> = ({
 
       <b className={classes.postsTitle}>ARCHIVES</b>
       <p className={classes.postDescription}>
-        Preview curated references on our research areas. Expand each section or click the link to view the full channel.
+        Preview curated references on our research areas. Expand each section or
+        click the link to view the full channel.
       </p>
       <ul className={"f5 pl2 flex flex-column gap-2"}>
         {/* {JSON.stringify((new Map(channels.map(channel => [channel.title, channel])).values().toArray())
           ?.slice(0, 10), null, 2) */}
-        {[...new Map(channels.map(channel => [channel.title, channel])).values()]
+        {[
+          ...new Map(
+            channels.map((channel) => [channel.title, channel])
+          ).values(),
+        ]
           .slice(0, 10)
-          ?.filter((channel) => 
-            !!channel && 
-            channel.contents?.some(block => block.base_class === "Block") /* &&
+          ?.filter(
+            (channel) =>
+              !!channel &&
+              channel.contents?.some(
+                (block) => block.base_class === "Block"
+              ) /* &&
             (channel.user?.slug === "suruleredotdev" || 
              channel.collaborators?.some(collaborator => collaborator.slug === "suruleredotdev")) */
           )
@@ -205,7 +261,17 @@ export const HomePageContent: React.FC<types.PageProps> = ({
   );
 };
 
-const IndexPage: React.FC<any> = (props) => {
+interface IndexPageProps {
+  site: any;
+  recordMap: any;
+  error?: any;
+  pageId?: string;
+  channels: any;
+  siteMap: any;
+  substackEssays?: SubstackEssay[];
+}
+
+const IndexPage: React.FC<IndexPageProps> = (props) => {
   const {
     site,
     recordMap,
@@ -213,6 +279,7 @@ const IndexPage: React.FC<any> = (props) => {
     pageId,
     channels: arenaChannels,
     siteMap,
+    substackEssays,
   } = props;
 
   const { isDarkMode } = useDarkMode();
@@ -249,6 +316,7 @@ const IndexPage: React.FC<any> = (props) => {
           pageId={pageId}
           rootPageBlock={block}
           channels={arenaChannels}
+          substackEssays={substackEssays}
         ></HomePageContent>
         <Footer page={undefined} isBlogPost={isBlogPost}></Footer>
       </NotionContextProvider>

@@ -39,6 +39,7 @@ export async function getSubstackEssays(
     if (!response.ok) {
       log("ERROR", `Failed to fetch Substack essays from ${substackHandle}`, {
         status: response.status,
+        response: await response.text(),
       });
       return [];
     }

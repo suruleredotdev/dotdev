@@ -187,6 +187,12 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
       <ul className={"f5 pl2 flex flex-row gap-2 flex-wrap w-100"}>
         {[
           {
+            title: "African Artifacts Index",
+            url: "https://artifacts-index.surulere.dev",
+            image: "/artifacts-index-preview.png",
+            description: "Cross-cultural index of museum collections for discovery and comparative analysis",
+          },
+          {
             title: "Archive 3D",
             url: "https://archive-3d.surulere.dev",
             image: "/archive-3d-preview.jpeg",

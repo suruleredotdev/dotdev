@@ -22,6 +22,7 @@ import {
   layoutDefaultClasses,
   StyleClasses,
 } from "components/styles";
+import { log } from "lib/log";
 
 const classes: StyleClasses = {
   ...globalClasses,
@@ -39,12 +40,14 @@ export const getStaticProps = async () => {
     const substackHandle = process.env.SUBSTACK_HANDLE || "suruleredotdev";
     const substackApiKey = process.env.SUBSTACK_API_KEY;
     let substackEssays: SubstackEssay[] = [];
-    if (substackHandle) {
+    if (substackHandle && substackApiKey) {
       substackEssays = await getSubstackEssays(
         substackHandle,
         10,
         substackApiKey
       );
+    } else {
+      log("ERROR", "Missing Substack handle or API key")
     }
 
     const props = {

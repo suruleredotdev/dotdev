@@ -1,0 +1,14 @@
+[build]
+  command = "npm run build && npm run export"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NODE_ENV = "production"
+
+# Deploy previews for all PRs
+[context.deploy-preview]
+  command = "npm run build && npm run export"
+
+[context.branch-deploy]
+  command = "npm run build && npm run export"

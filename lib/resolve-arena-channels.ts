@@ -8,7 +8,7 @@ import { log } from "./log";
 const ARENA_USER = {
   slug: "korede-aderele",
   id: 60392,
-  token: getEnv("ARENA_PERSONAL_ACCESS_TOKEN"),
+  token: getEnv("ARENA_PERSONAL_ACCESS_TOKEN", ""),
 };
 
 export const all_channels: Record<number, Arena.Channel> = {};

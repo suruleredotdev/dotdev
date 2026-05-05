@@ -127,10 +127,80 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
           })),
         ].sort((a, b) => b.published - a.published);
 
-        if (allItems.length === 0) {
-          // Fallback: Substack embed iframe when no essay data is available
-          return (
-            <div style={{ margin: "1rem 0" }}>
+        return (
+          <>
+            {allItems.length > 0 && (
+              <ul className={classes.postsList} style={{ listStyle: "none", padding: 0 }}>
+                {allItems.map((item: any, i) => {
+                  const href = item.isExternal ? item.url : "/" + idToPagePath[item.id];
+                  const dateStr = new Date(item.published).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  });
+
+                  return (
+                    <li key={i} style={{ marginBottom: "1.5rem" }}>
+                      <a
+                        href={href}
+                        target={item.isExternal ? "_blank" : undefined}
+                        rel={item.isExternal ? "noopener noreferrer" : undefined}
+                        style={{ textDecoration: "none", display: "flex", gap: "0.75rem", alignItems: "flex-start" }}
+                      >
+                        {item.image && (
+                          <img
+                            src={item.image}
+                            alt=""
+                            style={{
+                              width: "72px",
+                              height: "56px",
+                              objectFit: "cover",
+                              flexShrink: 0,
+                              borderRadius: "2px",
+                              marginTop: "2px",
+                            }}
+                          />
+                        )}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <span className={classes.postLink} style={{ display: "inline" }}>
+                            {item.title}
+                            {item.isExternal && <ExternalLinkIcon />}
+                          </span>
+                          <span className={classes.postDate} style={{ fontSize: ".60rem", marginLeft: "0.4rem" }}>
+                            &mdash; {dateStr}
+                          </span>
+                          {item.isExternal && (
+                            <span
+                              style={{
+                                display: "inline-block",
+                                fontSize: "0.55rem",
+                                letterSpacing: "0.05em",
+                                textTransform: "uppercase",
+                                border: "1px solid currentColor",
+                                borderRadius: "2px",
+                                padding: "0 3px",
+                                marginLeft: "0.4rem",
+                                opacity: 0.5,
+                                verticalAlign: "middle",
+                              }}
+                            >
+                              Substack
+                            </span>
+                          )}
+                          <br />
+                          <span className={classes.postDescription}>
+                            {item.description?.length > 200
+                              ? item.description?.substring(0, 197) + "..."
+                              : item.description}
+                          </span>
+                        </div>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+            {substackEssays.length === 0 && (
               <iframe
                 src={`https://${substackHandle}.substack.com/embed`}
                 width="100%"
@@ -140,84 +210,13 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
                   background: "white",
                   maxWidth: "480px",
                   display: "block",
+                  margin: "1rem 0",
                 }}
                 frameBorder="0"
                 scrolling="no"
               />
-            </div>
-          );
-        }
-
-        return (
-          <ul className={classes.postsList} style={{ listStyle: "none", padding: 0 }}>
-            {allItems.map((item: any, i) => {
-              const href = item.isExternal ? item.url : "/" + idToPagePath[item.id];
-              const dateStr = new Date(item.published).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              });
-
-              return (
-                <li key={i} style={{ marginBottom: "1.5rem" }}>
-                  <a
-                    href={href}
-                    target={item.isExternal ? "_blank" : undefined}
-                    rel={item.isExternal ? "noopener noreferrer" : undefined}
-                    style={{ textDecoration: "none", display: "flex", gap: "0.75rem", alignItems: "flex-start" }}
-                  >
-                    {item.image && (
-                      <img
-                        src={item.image}
-                        alt=""
-                        style={{
-                          width: "72px",
-                          height: "56px",
-                          objectFit: "cover",
-                          flexShrink: 0,
-                          borderRadius: "2px",
-                          marginTop: "2px",
-                        }}
-                      />
-                    )}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <span className={classes.postLink} style={{ display: "inline" }}>
-                        {item.title}
-                        {item.isExternal && <ExternalLinkIcon />}
-                      </span>
-                      <span className={classes.postDate} style={{ fontSize: ".60rem", marginLeft: "0.4rem" }}>
-                        &mdash; {dateStr}
-                      </span>
-                      {item.isExternal && (
-                        <span
-                          style={{
-                            display: "inline-block",
-                            fontSize: "0.55rem",
-                            letterSpacing: "0.05em",
-                            textTransform: "uppercase",
-                            border: "1px solid currentColor",
-                            borderRadius: "2px",
-                            padding: "0 3px",
-                            marginLeft: "0.4rem",
-                            opacity: 0.5,
-                            verticalAlign: "middle",
-                          }}
-                        >
-                          Substack
-                        </span>
-                      )}
-                      <br />
-                      <span className={classes.postDescription}>
-                        {item.description?.length > 200
-                          ? item.description?.substring(0, 197) + "..."
-                          : item.description}
-                      </span>
-                    </div>
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+            )}
+          </>
         );
       })()}
       <br />

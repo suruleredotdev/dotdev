@@ -1,0 +1,50 @@
+name: PR Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    env:
+      NOTION_SECRET: ${{ secrets.NOTION_SECRET }}
+      ARENA_UID: ${{ secrets.ARENA_UID }}
+      ARENA_SECRET: ${{ secrets.ARENA_SECRET }}
+      ARENA_PERSONAL_ACCESS_TOKEN: ${{ secrets.ARENA_PERSONAL_ACCESS_TOKEN }}
+      SUBSTACK_API_KEY: ${{ secrets.SUBSTACK_API_KEY }}
+      SUBSTACK_HANDLE: ${{ vars.SUBSTACK_HANDLE }}
+      NODE_ENV: production
+      LOG_LEVEL: error
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js 22.9.0
+        if: github.event.action != 'closed'
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22.9.0'
+
+      - name: Install dependencies
+        if: github.event.action != 'closed'
+        run: npm install --include=dev
+
+      - name: Build
+        if: github.event.action != 'closed'
+        run: npm run build && npm run export
+        env:
+          # Set base path to the PR preview subdir so assets resolve correctly
+          NEXT_PUBLIC_BASE_PATH: /pr-preview/pr-${{ github.event.pull_request.number }}
+
+      - name: Deploy / remove preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./out
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: auto

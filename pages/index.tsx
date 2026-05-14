@@ -22,8 +22,6 @@ import {
   layoutDefaultClasses,
   StyleClasses,
 } from "components/styles";
-import { log } from "lib/log";
-
 const classes: StyleClasses = {
   ...globalClasses,
   ...layoutDefaultClasses,
@@ -36,18 +34,16 @@ export const getStaticProps = async () => {
     const channels = await resolveArenaChannels();
     const siteMap = await getSiteMap();
 
-    // Fetch Substack essays - use environment variables for Substack handle and API key
+    // Fetch Substack essays - public API works without a key; key is optional enhancement
     const substackHandle = process.env.SUBSTACK_HANDLE || "suruleredotdev";
     const substackApiKey = process.env.SUBSTACK_API_KEY;
     let substackEssays: SubstackEssay[] = [];
-    if (substackHandle && substackApiKey) {
+    if (substackHandle) {
       substackEssays = await getSubstackEssays(
         substackHandle,
         10,
         substackApiKey
       );
-    } else {
-      log("ERROR", "Missing Substack handle or API key")
     }
 
     const props = {
@@ -55,6 +51,7 @@ export const getStaticProps = async () => {
       channels,
       siteMap,
       substackEssays,
+      substackHandle,
     };
 
     return { props, revalidate: 3600 }; // Revalidate every hour for fresh Substack content
@@ -82,6 +79,7 @@ const textVersion = 0;
 
 interface HomePageContentProps extends types.PageProps {
   substackEssays?: SubstackEssay[];
+  substackHandle?: string;
 }
 
 export const HomePageContent: React.FC<HomePageContentProps> = ({
@@ -91,6 +89,7 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
   channels,
   siteMap,
   substackEssays = [],
+  substackHandle = "suruleredotdev",
 }) => {
   // TODO: render from root page block
   const posts = getSitePosts({
@@ -116,74 +115,110 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
       </div>
 
       <b className={classes.postsTitle}>ESSAYS</b>
-      {/* {JSON.stringify(posts.slice(0, 3), null, 2)} */}
-      <ul className={classes.postsList}>
-        {/* Combine and sort local posts with Substack essays by publication date */}
-        {[
+      {(() => {
+        const allItems = [
           ...posts
             ?.filter((post) => post.public == true)
-            .map((post) => ({ ...post, isExternal: false })),
+            .map((post) => ({ ...post, isExternal: false, image: undefined as string | undefined })),
           ...substackEssays.map((essay) => ({
             ...essay,
-            title: essay.title,
-            description: essay.description,
-            published: essay.published,
             isExternal: true,
             id: `substack-${essay.id}`,
           })),
-        ]
-          ?.sort((a, b) => b.published - a.published)
-          .map((item: any, i) => (
-            <p key={i}>
-              <a
-                className={classes.postLink}
-                href={item.isExternal ? item.url : "/" + idToPagePath[item.id]}
-                target={item.isExternal ? "_blank" : undefined}
-                rel={item.isExternal ? "noopener noreferrer" : undefined}
-              >
-                {item.title}
-                {item.isExternal && <ExternalLinkIcon />}
-              </a>
+        ].sort((a, b) => b.published - a.published);
 
-              <small
-                className={classes.postDate}
-                style={{ fontSize: ".60rem" }}
-              >
-                &nbsp; &mdash;{" "}
-                {new Date(item.published).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
+        return (
+          <>
+            {allItems.length > 0 && (
+              <ul className={classes.postsList} style={{ listStyle: "none", padding: 0 }}>
+                {allItems.map((item: any, i) => {
+                  const href = item.isExternal ? item.url : "/" + idToPagePath[item.id];
+                  const dateStr = new Date(item.published).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  });
+
+                  return (
+                    <li key={i} style={{ marginBottom: "1.5rem" }}>
+                      <a
+                        href={href}
+                        target={item.isExternal ? "_blank" : undefined}
+                        rel={item.isExternal ? "noopener noreferrer" : undefined}
+                        style={{ textDecoration: "none", display: "flex", gap: "0.75rem", alignItems: "flex-start" }}
+                      >
+                        {item.image && (
+                          <img
+                            src={item.image}
+                            alt=""
+                            style={{
+                              width: "72px",
+                              height: "56px",
+                              objectFit: "cover",
+                              flexShrink: 0,
+                              borderRadius: "2px",
+                              marginTop: "2px",
+                            }}
+                          />
+                        )}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <span className={classes.postLink} style={{ display: "inline" }}>
+                            {item.title}
+                            {item.isExternal && <ExternalLinkIcon />}
+                          </span>
+                          <span className={classes.postDate} style={{ fontSize: ".60rem", marginLeft: "0.4rem" }}>
+                            &mdash; {dateStr}
+                          </span>
+                          {item.isExternal && (
+                            <span
+                              style={{
+                                display: "inline-block",
+                                fontSize: "0.55rem",
+                                letterSpacing: "0.05em",
+                                textTransform: "uppercase",
+                                border: "1px solid currentColor",
+                                borderRadius: "2px",
+                                padding: "0 3px",
+                                marginLeft: "0.4rem",
+                                opacity: 0.5,
+                                verticalAlign: "middle",
+                              }}
+                            >
+                              Substack
+                            </span>
+                          )}
+                          <br />
+                          <span className={classes.postDescription}>
+                            {item.description?.length > 200
+                              ? item.description?.substring(0, 197) + "..."
+                              : item.description}
+                          </span>
+                        </div>
+                      </a>
+                    </li>
+                  );
                 })}
-              </small>
-
-              <br />
-
-              <span className={classes.postDescription}>
-                {item.description?.length > 200
-                  ? item.description?.substring(0, 197) + "..."
-                  : item.description}
-              </span>
-              {item.tags && !item.isExternal ? (
-                <>
-                  {/* TODO: implement tags
-                  <br />
-                  {item.tags?.map((tag, i) => (
-                    <a
-                      key={i}
-                      className={classes.postTag}
-                      href={"/blog/tag/" + tag}
-                    >
-                      <em>{tag}</em>
-                    </a>
-                  ))} */}
-                </>
-              ) : (
-                <></>
-              )}
-            </p>
-          ))}
-      </ul>
+              </ul>
+            )}
+            {substackEssays.length === 0 && (
+              <iframe
+                src={`https://${substackHandle}.substack.com/embed`}
+                width="100%"
+                height="320"
+                style={{
+                  border: "1px solid #eee",
+                  background: "white",
+                  maxWidth: "480px",
+                  display: "block",
+                  margin: "1rem 0",
+                }}
+                frameBorder="0"
+                scrolling="no"
+              />
+            )}
+          </>
+        );
+      })()}
       <br />
 
       <b className={classes.postsTitle}>TOOLS</b>
@@ -278,6 +313,7 @@ interface IndexPageProps {
   channels: any;
   siteMap: any;
   substackEssays?: SubstackEssay[];
+  substackHandle?: string;
 }
 
 const IndexPage: React.FC<IndexPageProps> = (props) => {
@@ -289,6 +325,7 @@ const IndexPage: React.FC<IndexPageProps> = (props) => {
     channels: arenaChannels,
     siteMap,
     substackEssays,
+    substackHandle,
   } = props;
 
   const { isDarkMode } = useDarkMode();
@@ -326,6 +363,7 @@ const IndexPage: React.FC<IndexPageProps> = (props) => {
           rootPageBlock={block}
           channels={arenaChannels}
           substackEssays={substackEssays}
+          substackHandle={substackHandle}
         ></HomePageContent>
         <Footer page={undefined} isBlogPost={isBlogPost}></Footer>
       </NotionContextProvider>

@@ -10,8 +10,8 @@ export default class MyDocument extends Document {
       <IconContext.Provider value={{ style: { verticalAlign: "middle" } }}>
         <Html lang="en">
           <Head>
-            {getEnv("NODE_ENV") === "production" ? (
-              <base href={getEnv("NEXT_PUBLIC_BASE_PATH")} />
+            {getEnv("NODE_ENV") === "production" && getEnv("NEXT_PUBLIC_BASE_PATH", "") ? (
+              <base href={getEnv("NEXT_PUBLIC_BASE_PATH", "")} />
             ) : (
               <></>
             )}

@@ -13,15 +13,19 @@ on:
         type: string
 
 permissions:
-  contents: write
+  contents: read
+  actions: write
+  id-token: write
+  pages: write      # to deploy to Pages
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [22.9.0]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     env:
       NOTION_SECRET: ${{ secrets.NOTION_SECRET }}
@@ -46,9 +50,24 @@ jobs:
       - run: npm install --include=dev
       - run: DEBUG=1 VERBOSE=1 npm run build
       - run: npm run export
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out
-          cname: surulere.dev
+          path: ./out
+
+  # Deploy job
+  deploy:
+    # Add a dependency to the build job
+    needs: build
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    # Specify runner + deployment step
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

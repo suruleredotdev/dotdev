@@ -46,7 +46,7 @@ export function getSitePosts(args: {
   if (!collection) return [];
 
   const collectionId = collection.id,
-    collectionTitle = collection.name[0][0],
+    collectionTitle = collection.name?.[0]?.[0],
     collectionSchema = collection.schema;
 
   if (!collectionId || collectionTitle !== POSTS_COLLECTION_TITLE) return [];

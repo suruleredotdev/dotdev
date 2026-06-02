@@ -6,6 +6,7 @@ import { getSitePosts } from "lib/get-site-posts";
 import * as config from "lib/config";
 import { resolveNotionPage } from "lib/resolve-notion-page";
 import { resolveArenaChannels } from "lib/resolve-arena-channels";
+import { getSubstackEssays, SubstackEssay } from "lib/get-substack-essays";
 import { useDarkMode } from "lib/use-dark-mode";
 import { mapPageUrl } from "lib/map-page-url";
 import { getLayoutProps } from "lib/get-layout-props";
@@ -34,12 +35,15 @@ export const getStaticProps = async () => {
     const siteMap = await getSiteMap();
 
     const substackHandle = process.env.SUBSTACK_HANDLE || "suruleredotdev";
+    const substackApiKey = process.env.SUBSTACK_API_KEY;
+    const substackEssays = await getSubstackEssays(substackHandle, 10, substackApiKey);
 
     const props = {
       ...notionProps,
       channels,
       siteMap,
       substackHandle,
+      substackEssays,
     };
 
     return { props, revalidate: 3600 }; // Revalidate every hour for fresh Substack content
@@ -67,6 +71,7 @@ const textVersion = 0;
 
 interface HomePageContentProps extends types.PageProps {
   substackHandle?: string;
+  substackEssays?: SubstackEssay[];
 }
 
 export const HomePageContent: React.FC<HomePageContentProps> = ({
@@ -76,6 +81,7 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
   channels,
   siteMap,
   substackHandle = "suruleredotdev",
+  substackEssays = [],
 }) => {
   // TODO: render from root page block
   const posts = getSitePosts({
@@ -110,46 +116,67 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
       >
         Read on Substack <ExternalLinkIcon />
       </a>
-      {posts?.filter((post) => post.public == true).length > 0 && (
-        <ul className={classes.postsList} style={{ listStyle: "none", padding: 0 }}>
-          {posts
-            .filter((post) => post.public == true)
-            .sort((a: any, b: any) => b.published - a.published)
-            .map((item: any, i) => (
-              <li key={i} style={{ marginBottom: "1.5rem" }}>
-                <a
-                  href={"/" + idToPagePath[item.id]}
-                  style={{ textDecoration: "none" }}
-                >
-                  <span className={classes.postLink}>{item.title}</span>
-                  <span className={classes.postDate} style={{ fontSize: ".60rem", marginLeft: "0.4rem" }}>
-                    &mdash; {new Date(item.published).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                  </span>
-                </a>
-                <br />
-                <span className={classes.postDescription}>
-                  {item.description?.length > 200
-                    ? item.description?.substring(0, 197) + "..."
-                    : item.description}
-                </span>
-              </li>
-            ))}
-        </ul>
-      )}
-      <iframe
-        src={`https://${substackHandle}.substack.com/embed`}
-        width="100%"
-        height="320"
-        style={{
-          border: "1px solid #eee",
-          background: "white",
-          maxWidth: "480px",
-          display: "block",
-          margin: "1rem 0",
-        }}
-        frameBorder="0"
-        scrolling="no"
-      />
+      {(() => {
+        const allItems = [
+          ...posts
+            ?.filter((post: any) => post.public == true)
+            .map((post: any) => ({ ...post, isExternal: false })),
+          ...substackEssays.map((essay) => ({
+            ...essay,
+            isExternal: true,
+            id: `substack-${essay.id}`,
+          })),
+        ].sort((a: any, b: any) => b.published - a.published);
+
+        return (
+          <>
+            {allItems.length > 0 && (
+              <ul className={classes.postsList} style={{ listStyle: "none", padding: 0 }}>
+                {allItems.map((item: any, i) => (
+                  <li key={i} style={{ marginBottom: "1.5rem" }}>
+                    <a
+                      href={item.isExternal ? item.url : "/" + idToPagePath[item.id]}
+                      target={item.isExternal ? "_blank" : undefined}
+                      rel={item.isExternal ? "noopener noreferrer" : undefined}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <span className={classes.postLink}>
+                        {item.title}
+                        {item.isExternal && <ExternalLinkIcon />}
+                      </span>
+                      <span className={classes.postDate} style={{ fontSize: ".60rem", marginLeft: "0.4rem" }}>
+                        &mdash; {new Date(item.published).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                      </span>
+                    </a>
+                    <br />
+                    <span className={classes.postDescription}>
+                      {item.description?.length > 200
+                        ? item.description?.substring(0, 197) + "..."
+                        : item.description}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {substackEssays.length === 0 && (
+              <iframe
+                src={`https://${substackHandle}.substack.com/embed`}
+                width="100%"
+                height="320"
+                style={{
+                  border: "1px solid #eee",
+                  background: "white",
+                  maxWidth: "480px",
+                  display: "block",
+                  margin: "1rem 0",
+                }}
+                frameBorder="0"
+                scrolling="no"
+              />
+            )}
+          </>
+        );
+      })()}
       <br />
 
       <b className={classes.postsTitle}>TOOLS</b>
@@ -244,6 +271,7 @@ interface IndexPageProps {
   channels: any;
   siteMap: any;
   substackHandle?: string;
+  substackEssays?: SubstackEssay[];
 }
 
 const IndexPage: React.FC<IndexPageProps> = (props) => {
@@ -255,6 +283,7 @@ const IndexPage: React.FC<IndexPageProps> = (props) => {
     channels: arenaChannels,
     siteMap,
     substackHandle,
+    substackEssays,
   } = props;
 
   const { isDarkMode } = useDarkMode();
@@ -292,6 +321,7 @@ const IndexPage: React.FC<IndexPageProps> = (props) => {
           rootPageBlock={block}
           channels={arenaChannels}
           substackHandle={substackHandle}
+          substackEssays={substackEssays}
         ></HomePageContent>
         <Footer page={undefined} isBlogPost={isBlogPost}></Footer>
       </NotionContextProvider>

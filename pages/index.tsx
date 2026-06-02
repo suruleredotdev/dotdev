@@ -115,6 +115,15 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
       </div>
 
       <b className={classes.postsTitle}>ESSAYS</b>
+      <a
+        href={`https://${substackHandle}.substack.com/`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={classes.postDescription}
+        style={{ display: "inline-block", marginBottom: "1rem", opacity: 0.7 }}
+      >
+        Read on Substack <ExternalLinkIcon />
+      </a>
       {(() => {
         const allItems = [
           ...posts

@@ -37,18 +37,23 @@ export async function getSubstackEssays(
     const response = await fetch(apiUrl, { headers });
 
     if (!response.ok) {
-      log("ERROR", `Failed to fetch Substack essays from ${substackHandle}`, {
-        status: response.status,
-        response: await response.text(),
-      });
+      const body = await response.text();
+      console.error(`[substack] fetch failed: ${response.status}`, body.slice(0, 200));
       return [];
     }
 
     const data = await response.json();
 
-    // Extract essays from the Substack API response
-    const essays = (data || [])
-      .filter((post: any) => post.is_published === true) // Only published posts
+    if (!Array.isArray(data)) {
+      console.error(`[substack] unexpected response shape`, JSON.stringify(data).slice(0, 200));
+      return [];
+    }
+
+    // Extract essays from the Substack API response.
+    // The public endpoint already filters to published posts; avoid strict
+    // is_published === true which drops posts where the field is absent.
+    const essays = data
+      .filter((post: any) => post.is_published !== false)
       .map((post: any) => ({
         id: String(post.id),
         title: post.title || "",
@@ -62,16 +67,10 @@ export async function getSubstackEssays(
         image: post.cover_image || undefined,
       })) as SubstackEssay[];
 
-    log("DEBUG", "Fetched Substack essays", {
-      count: essays.length,
-      substackHandle,
-    });
+    console.error(`[substack] fetched ${essays.length} essays from ${substackHandle}`);
     return essays;
   } catch (err) {
-    log("ERROR", "Error fetching Substack essays", {
-      error: err,
-      substackHandle,
-    });
+    console.error(`[substack] fetch threw`, err);
     return [];
   }
 }

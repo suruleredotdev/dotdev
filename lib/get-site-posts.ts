@@ -23,33 +23,31 @@ export function getSitePosts(args: {
 }): Array<object> {
   const { recordMap } = args;
 
-  log("DEBUG", ">>> getSitePosts 0", {
-    recordMap,
-    blocks: Object.values(recordMap.block).map((i) => {
-      const v: Block = i?.value;
-      return v ? { props: v.properties, type: v.type } : null;
-    }),
-  });
+  const allCollections = Object.values(recordMap.collection ?? {});
+  console.error(`[getSitePosts] collections found: ${allCollections.length}`, allCollections.map(c => c?.value?.name?.[0]?.[0]));
 
-  /*
-    Get "Posts" collection, get page blocks of articles to render
-   */
-  const collection: Collection = (
-      Object.values(recordMap.collection)[0] as CollectionMap[string]
-    )?.value,
-    collectionView: CollectionView = (
-      Object.values(recordMap.collection_view)[0] as CollectionViewMap[string]
-    )?.value,
-    // _ = log("DEBUG", {collection, collectionView, query: Object.keys(recordMap)}),
-    collectionQueryResult: CollectionQueryResult =
-      recordMap.collection_query[collection?.id]?.[collectionView?.id];
+  if (!allCollections.length) return [];
+
+  // Find the "Posts" collection by name; fall back to the first collection
+  const targetEntry =
+    allCollections.find(c => c?.value?.name?.[0]?.[0] === POSTS_COLLECTION_TITLE) ??
+    allCollections[0];
+
+  const collection: Collection = (targetEntry as CollectionMap[string])?.value;
   if (!collection) return [];
 
-  const collectionId = collection.id,
-    collectionTitle = collection.name?.[0]?.[0],
-    collectionSchema = collection.schema;
+  const collectionView: CollectionView = (
+    Object.values(recordMap.collection_view ?? {})[0] as CollectionViewMap[string]
+  )?.value;
 
-  if (!collectionId || collectionTitle !== POSTS_COLLECTION_TITLE) return [];
+  const collectionQueryResult: CollectionQueryResult =
+    recordMap.collection_query?.[collection?.id]?.[collectionView?.id];
+
+  const collectionId = collection.id;
+  const collectionTitle = collection.name?.[0]?.[0];
+  const collectionSchema = collection.schema;
+
+  console.error(`[getSitePosts] using collection: "${collectionTitle}" (id: ${collectionId})`);
 
   /*
     Get blocks for pages in "Posts" collection via query
@@ -66,6 +64,8 @@ export function getSitePosts(args: {
     })
     .map((b: BlockMap[string]) => b.value);
 
+  console.error(`[getSitePosts] post blocks found: ${postBlocks.length}`);
+
   /*
     Construct posts pointer including { id, slug, title, [properties]... }
    */
@@ -73,19 +73,17 @@ export function getSitePosts(args: {
     id: p?.id,
     slug: getCanonicalPageId(p?.id, recordMap),
     title: p?.properties?.title,
-    ...Object.keys(p?.properties)?.reduce(
+    ...Object.keys(p?.properties ?? {})?.reduce(
       (acc, propId) => ({
         ...acc,
-        [collectionSchema[propId].name?.toLowerCase()?.replace(/\s/g, "_")]:
-          getPageProperty(collectionSchema[propId].name, p, recordMap),
+        [collectionSchema[propId]?.name?.toLowerCase()?.replace(/\s/g, "_")]:
+          getPageProperty(collectionSchema[propId]?.name, p, recordMap),
       }),
       {}
     ),
   }));
 
-  log("DEBUG", ">>> getSitePosts 2", {
-    posts,
-  });
+  console.error(`[getSitePosts] posts: ${posts.length}`, posts.map((p: any) => ({ title: p.title, public: p.public, published: p.published })));
 
   return posts;
 }

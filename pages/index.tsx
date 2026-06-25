@@ -112,7 +112,7 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
         target="_blank"
         rel="noopener noreferrer"
         className={classes.postDescription}
-        style={{ display: "inline-block", marginBottom: "1rem", opacity: 0.7 }}
+        style={{ display: "inline-block", marginBottom: "1rem", opacity: 0.7, marginLeft: "10px" }}
       >
         Read on Substack <ExternalLinkIcon />
       </a>

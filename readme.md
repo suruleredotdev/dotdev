@@ -58,6 +58,42 @@ In order to find your Notion workspace ID (optional), just load any of your site
 
 I recommend setting up a collection on your home page that contains all of your articles / projects / content. There are no structural constraints on your Notion workspace, however, so feel free to add content as you normally would in Notion.
 
+## Content Snapshot
+
+Both Notion's private `api/v3` and Substack's public API sit behind Cloudflare,
+which returns a 403 challenge page to GitHub Actions runners. So CI does not
+fetch content — it builds from a snapshot of the raw upstream data committed
+under [`data/`](./data).
+
+Refresh it from a developer machine whenever you publish or edit a post:
+
+```bash
+npm run fetch-content              # both sources
+npm run fetch-content -- --only=notion
+npm run fetch-content -- --only=substack
+```
+
+Then commit `data/notion.json` and `data/substack.json`. The files hold raw
+recordMaps and raw Substack post objects; all parsing still happens at build
+time, so a stale snapshot only means stale content, never a stale layout.
+
+Builds pick their source via `CONTENT_SOURCE`:
+
+| value                | behaviour                                                        |
+| -------------------- | ---------------------------------------------------------------- |
+| `auto` (default)     | use `data/` when present, otherwise fetch live — good for local dev |
+| `snapshot`           | use `data/` only, and fail the build if it's missing or incomplete |
+| `live`               | ignore `data/` and always fetch                                    |
+
+Both workflows in [.github/workflows](./.github/workflows) set
+`CONTENT_SOURCE=snapshot` so a missing snapshot fails loudly instead of
+silently deploying an empty site.
+
+Notion pages must be **public** for the unauthenticated crawl to work. For
+private pages, set `NOTION_TOKEN_V2` to the `token_v2` cookie from a logged-in
+browser session — note this is *not* the `ntn_`/`secret_` token issued to an
+official Notion integration, which `notion-client` cannot use.
+
 ## URL Paths
 
 The app defaults to slightly different URL paths in dev vs prod (though pasting any dev pathname into prod will work and vice-versa).

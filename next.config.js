@@ -70,5 +70,6 @@ module.exports = {
 
   experimental: {
     largePageDataBytes: 512 * 100000,
+    swcMinify: true,
   },
 };

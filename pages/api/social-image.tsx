@@ -4,6 +4,7 @@ import { withOGImage } from 'next-api-og-image'
 import {
   getBlockTitle,
   getBlockIcon,
+  getBlockValue,
   getPageProperty,
   isUrl,
   parsePageId
@@ -37,7 +38,7 @@ export default withOGImage<'query', 'id'>({
       const recordMap = await notion.getPage(pageId)
 
       const keys = Object.keys(recordMap?.block || {})
-      const block = recordMap?.block?.[keys[0]]?.value
+      const block = getBlockValue(recordMap?.block?.[keys[0]])
 
       if (!block) {
         throw new Error('Invalid recordMap for page')

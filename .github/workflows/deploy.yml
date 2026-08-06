@@ -38,6 +38,10 @@ jobs:
       NODE_ENV: production
       LOG_LEVEL: error
       DEBUG: error
+      # Notion and Substack both sit behind Cloudflare, which blocks Actions
+      # runners. Build from the snapshot committed under data/ (refreshed with
+      # `npm run fetch-content` on a dev machine) and fail loudly if it's absent.
+      CONTENT_SOURCE: snapshot
 
     steps:
       - uses: actions/checkout@v2

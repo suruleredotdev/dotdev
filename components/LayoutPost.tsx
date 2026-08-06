@@ -2,8 +2,8 @@ import * as React from "react";
 
 import * as types from "lib/types";
 
-import { Block, BlockMap, PageBlock, ExtendedRecordMap } from "lib/types";
-import { getPageProperty } from "notion-utils";
+import { Block, PageBlock, ExtendedRecordMap } from "lib/types";
+import { getBlockValue, getPageProperty } from "notion-utils";
 
 import { log } from "lib/log";
 /*
@@ -97,16 +97,16 @@ function getPageFromRecords(args: {
     };
   }
 
-  const postRootBlock = (
-    Object.values(recordMap?.block).find((block: BlockMap[string]) => {
-      return block?.value?.id === pageId;
-    }) as BlockMap[string]
-  )?.value as PageBlock;
-  const postContentBlocks = Object.values(recordMap?.block)
-    .filter((block: BlockMap[string]) => {
-      return block?.value?.parent_id === pageId;
-    })
-    .map((b: BlockMap[string]) => b?.value) as Array<Block>;
+  const blocks = Object.values(recordMap?.block).map((entry) =>
+    getBlockValue(entry)
+  );
+
+  const postRootBlock = blocks.find(
+    (block) => block?.id === pageId
+  ) as PageBlock;
+  const postContentBlocks = blocks.filter(
+    (block) => block?.parent_id === pageId
+  ) as Array<Block>;
 
   const page = pageFromBlock({ recordMap, block: postRootBlock });
   return {

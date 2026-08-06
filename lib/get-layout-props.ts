@@ -1,9 +1,11 @@
+import { getBlockValue } from "notion-utils";
+
 import { parsePageId } from "components/LayoutDefault";
 import { getComponents } from "components/NotionComponents";
 
 export function getLayoutProps({ site, recordMap, pageId }) {
   const keys = Object.keys(recordMap?.block || {});
-  const block = recordMap?.block?.[pageId || keys[0]]?.value;
+  const block = getBlockValue(recordMap?.block?.[pageId || keys[0]]);
 
   const isRootPage =
     parsePageId(block?.id) === parsePageId(site?.rootNotionPageId); // ||

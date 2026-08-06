@@ -10,7 +10,12 @@ import { PageBlock } from "notion-types";
 import TweetEmbed from "react-tweet-embed";
 
 // utils
-import { getBlockTitle, getPageProperty, formatDate } from "notion-utils";
+import {
+  getBlockTitle,
+  getBlockValue,
+  getPageProperty,
+  formatDate,
+} from "notion-utils";
 import { mapPageUrl, getCanonicalPageUrl } from "lib/map-page-url";
 import { mapImageUrl } from "lib/map-image-url";
 import { useDarkMode } from "lib/use-dark-mode";
@@ -172,7 +177,7 @@ export const NotionPage: React.FC<types.PageProps> = ({
   const { isDarkMode } = useDarkMode();
 
   const keys = Object.keys(recordMap?.block || {});
-  const block = recordMap?.block?.[keys[0]]?.value;
+  const block = getBlockValue(recordMap?.block?.[keys[0]]);
 
   if (router.isFallback) {
     return <Loading />;

@@ -1,9 +1,10 @@
 import pMap from "p-map";
 import pMemoize from "p-memoize";
 import { ExtendedRecordMap, SearchParams, SearchResults } from "notion-types";
-import { mergeRecordMaps } from "notion-utils";
+import { mergeRecordMaps, parsePageId, uuidToId } from "notion-utils";
 
 import { notion } from "./notion-api";
+import { contentSource, readNotionSnapshot } from "./content-snapshot";
 import { getPreviewImageMap } from "./preview-images";
 import {
   isPreviewImageSupportEnabled,
@@ -37,7 +38,34 @@ const getNavigationLinkPages = pMemoize(
   }
 );
 
+/**
+ * Looks a page up in the committed snapshot. Callers hand us page ids in both
+ * dashed-uuid and bare-hex form, while the snapshot is keyed by dashed uuid.
+ */
+function getSnapshotPage(pageId: string): ExtendedRecordMap | null {
+  const pages = readNotionSnapshot()?.pages;
+  if (!pages) return null;
+
+  const candidates = [pageId, parsePageId(pageId, { uuid: true }), uuidToId(pageId)];
+
+  for (const candidate of candidates) {
+    if (candidate && pages[candidate]) return pages[candidate];
+  }
+
+  return null;
+}
+
 export async function getPage(pageId: string): Promise<ExtendedRecordMap> {
+  const snapshotPage = getSnapshotPage(pageId);
+  if (snapshotPage) return snapshotPage;
+
+  if (contentSource === "snapshot") {
+    throw new Error(
+      `Page "${pageId}" is missing from the content snapshot. Re-run ` +
+        `\`npm run fetch-content\` and commit data/.`
+    );
+  }
+
   let recordMap = await notion.getPage(pageId, {
     chunkLimit: 100,
   });

@@ -4,7 +4,12 @@ import Image from "next/image";
 import { useSearchParam } from "react-use";
 
 import { NotionRenderer, NotionComponents, Text } from "react-notion-x";
-import { getBlockTitle, getPageProperty, formatDate } from "notion-utils";
+import {
+  getBlockTitle,
+  getBlockValue,
+  getPageProperty,
+  formatDate,
+} from "notion-utils";
 import { Block, ExtendedRecordMap } from "notion-types";
 
 // utils
@@ -74,8 +79,7 @@ export const getNotionProps = ({ site, recordMap, pageId }): any => {
   }, [site, recordMap, lite]);
 
   const keys = Object.keys(recordMap?.block || {});
-  const block = recordMap?.block?.[keys[0]]?.value;
-  console.log({ keys, block });
+  const block = getBlockValue(recordMap?.block?.[keys[0]]);
 
   // const isRootPage =
   //   parsePageId(block?.id) === parsePageId(site?.rootNotionPageId)

@@ -20,6 +20,9 @@ jobs:
       SUBSTACK_HANDLE: ${{ vars.SUBSTACK_HANDLE }}
       NODE_ENV: production
       LOG_LEVEL: error
+      # see deploy.yml — Cloudflare blocks Actions runners, so builds read the
+      # content snapshot committed under data/
+      CONTENT_SOURCE: snapshot
 
     steps:
       - uses: actions/checkout@v2

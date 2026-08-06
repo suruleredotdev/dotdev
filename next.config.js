@@ -3,7 +3,8 @@ const basePath = isProd ? process.env.NEXT_PUBLIC_BASE_PATH || "" : "";
 
 module.exports = {
   basePath,
-  assetPrefix: basePath,
+  // next rejects an empty string here — omit it entirely when there's no base path
+  assetPrefix: basePath || undefined,
 
   trailingSlash: true,
 
@@ -11,7 +12,7 @@ module.exports = {
   images: {
     // unoptimized: true,
     loader: "akamai",
-    path: "",
+    path: "/",
     domains: [
       "www.notion.so",
       "notion.so",
@@ -68,8 +69,10 @@ module.exports = {
     ];
   },
 
+  // next 12 moved this out of `experimental`; it was a silent no-op there
+  swcMinify: true,
+
   experimental: {
     largePageDataBytes: 512 * 100000,
-    swcMinify: true,
   },
 };

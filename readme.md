@@ -94,6 +94,44 @@ private pages, set `NOTION_TOKEN_V2` to the `token_v2` cookie from a logged-in
 browser session — note this is *not* the `ntn_`/`secret_` token issued to an
 official Notion integration, which `notion-client` cannot use.
 
+### Publishing a post
+
+Because nothing is fetched at build time, **publishing is a two-step process**.
+Writing in Notion or Substack is not enough — the site will not change until the
+snapshot is refreshed:
+
+```bash
+npm run fetch-content
+git add data/ && git commit -m "content: refresh snapshot"
+```
+
+Notion also signs file-attachment URLs with a short expiry, baked in at fetch
+time. Links to uploaded files (PDFs and the like) go stale within hours of a
+refresh. Images are unaffected — they route through the `notion.so/image/`
+proxy with unsigned source URLs.
+
+## Netlify Deploys
+
+Deploy previews build on Netlify. Its settings live in the Netlify UI rather
+than in this repo, and four of them are load-bearing — a fresh Netlify site
+wired to this repo will fail without all four:
+
+| Setting                    | Value                            | Why                                                                                          |
+| -------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------- |
+| Build command              | `npm run build && npm run export` | Must run `export`, since the publish directory is `out/`. Do **not** add `npm install` here — Netlify already installs, and a second install inherits `NODE_ENV=production` and prunes devDependencies, deleting `typescript`. |
+| Publish directory          | `out`                            | Static export target.                                                                          |
+| `NPM_FLAGS`                | `--include=dev`                  | `NODE_ENV=production` makes Netlify's own install step skip devDependencies, so `next build` cannot find `typescript`. |
+| `NETLIFY_NEXT_PLUGIN_SKIP` | `true`                           | `@netlify/plugin-nextjs` expects a `.next` SSR build to wrap in functions and fails on a static export. |
+
+Also set `CONTENT_SOURCE=snapshot` so a missing snapshot fails the build rather
+than deploying an empty site, and keep [.nvmrc](./.nvmrc) in sync with the Node
+version in [.github/workflows](./.github/workflows) — Netlify otherwise defaults
+to a Node older than this project's `engines` field.
+
+GitHub Pages is the production deploy and is fully configured in
+[.github/workflows/deploy.yml](./.github/workflows/deploy.yml); it needs none of
+the above.
+
 ## URL Paths
 
 The app defaults to slightly different URL paths in dev vs prod (though pasting any dev pathname into prod will work and vice-versa).

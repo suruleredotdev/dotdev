@@ -3,6 +3,7 @@ import { getAllPagesInSpace, uuidToId } from "notion-utils";
 
 import { includeNotionIdInUrls } from "./config";
 import { notion } from "./notion-api";
+import { readNotionSnapshot } from "./content-snapshot";
 import { getCanonicalPageId } from "./get-canonical-page-id";
 import * as config from "./config";
 import * as types from "./types";
@@ -29,31 +30,62 @@ const getAllPages = config.usePMemo
     })
   : getAllPagesImpl;
 
-async function getAllPagesImpl(
+/**
+ * Walks every page reachable from the root page and returns their recordMaps.
+ *
+ * This hits Notion directly, so it only runs on a developer machine — see
+ * scripts/fetch-content.ts. Builds read the committed snapshot instead.
+ */
+export async function crawlNotionSpace(
   rootNotionPageId: string,
-  rootNotionSpaceId: string
-): Promise<Partial<types.SiteMap>> {
+  rootNotionSpaceId: string | null
+): Promise<types.PageMap> {
   const getPage = async (pageId: string, ...args) => {
     try {
       log("DEBUG", "\nnotion.getPage", uuidToId(pageId));
-      return notion.getPage(pageId, ...args);
+      return await notion.getPage(pageId, ...args);
     } catch (e) {
       log("ERROR", "\ncaught error on notion.getPage", e);
       log("DEBUG", "\n...skipping page", pageId);
     }
   };
 
-  const pageMap = await getAllPagesInSpace(
-    rootNotionPageId,
-    rootNotionSpaceId,
-    getPage
-  );
+  return getAllPagesInSpace(rootNotionPageId, rootNotionSpaceId, getPage, {
+    concurrency: 2,
+  });
+}
+
+async function getPageMap(
+  rootNotionPageId: string,
+  rootNotionSpaceId: string
+): Promise<types.PageMap> {
+  const snapshot = readNotionSnapshot();
+
+  if (snapshot?.pages) {
+    log(
+      "INFO",
+      `[snapshot] site map from ${
+        Object.keys(snapshot.pages).length
+      } pages (fetched ${snapshot.fetchedAt})`
+    );
+    return snapshot.pages;
+  }
+
+  return crawlNotionSpace(rootNotionPageId, rootNotionSpaceId);
+}
+
+async function getAllPagesImpl(
+  rootNotionPageId: string,
+  rootNotionSpaceId: string
+): Promise<Partial<types.SiteMap>> {
+  const pageMap = await getPageMap(rootNotionPageId, rootNotionSpaceId);
 
   const canonicalPageMap = Object.keys(pageMap).reduce(
     (map, pageId: string) => {
       const recordMap = pageMap[pageId];
       if (!recordMap) {
-        throw new Error(`Error loading page "${pageId}"`);
+        console.warn(`Skipping page "${pageId}" — failed to load`);
+        return map;
       }
 
       const canonicalPageId = getCanonicalPageId(pageId, recordMap, {

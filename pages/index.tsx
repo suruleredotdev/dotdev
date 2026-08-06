@@ -96,6 +96,18 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
     {}
   );
 
+  const allItems = [
+    ...posts
+      ?.filter((post: any) => post.public == true)
+      .map((post: any) => ({ ...post, isExternal: false })),
+    ...substackEssays.map((essay) => ({
+      ...essay,
+      isExternal: true,
+      id: `substack-${essay.id}`,
+    })),
+  ].sort((a: any, b: any) => b.published - a.published);
+
+
   return (
     <div id="content" className={classes.content}>
       <div id="about pb5">
@@ -116,67 +128,52 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
       >
         Read on Substack <ExternalLinkIcon />
       </a>
-      {(() => {
-        const allItems = [
-          ...posts
-            ?.filter((post: any) => post.public == true)
-            .map((post: any) => ({ ...post, isExternal: false })),
-          ...substackEssays.map((essay) => ({
-            ...essay,
-            isExternal: true,
-            id: `substack-${essay.id}`,
-          })),
-        ].sort((a: any, b: any) => b.published - a.published);
-
-        return (
-          <>
-            {allItems.length > 0 && (
-              <ul className={classes.postsList} style={{ listStyle: "none", padding: 0 }}>
-                {allItems.map((item: any, i) => (
-                  <li key={i} style={{ marginBottom: "1.5rem" }}>
-                    <a
-                      href={item.isExternal ? item.url : "/" + idToPagePath[item.id]}
-                      target={item.isExternal ? "_blank" : undefined}
-                      rel={item.isExternal ? "noopener noreferrer" : undefined}
-                      style={{ textDecoration: "none" }}
-                    >
-                      <span className={classes.postLink}>
-                        {item.title}
-                        {item.isExternal && <ExternalLinkIcon />}
-                      </span>
-                      <span className={classes.postDate} style={{ fontSize: ".60rem", marginLeft: "0.4rem" }}>
-                        &mdash; {new Date(item.published).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                      </span>
-                    </a>
-                    <br />
-                    <span className={classes.postDescription}>
-                      {item.description?.length > 200
-                        ? item.description?.substring(0, 197) + "..."
-                        : item.description}
+        <>
+          {allItems.length > 0 && (
+            <ul className={classes.postsList} style={{ listStyle: "none", padding: 0 }}>
+              {allItems.map((item: any, i) => (
+                <li key={i} style={{ marginBottom: "1.5rem" }}>
+                  <a
+                    href={item.isExternal ? item.url : "/" + idToPagePath[item.id]}
+                    target={item.isExternal ? "_blank" : undefined}
+                    rel={item.isExternal ? "noopener noreferrer" : undefined}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <span className={classes.postLink}>
+                      {item.title}
+                      {item.isExternal && <ExternalLinkIcon />}
                     </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-            {substackEssays.length === 0 && (
-              <iframe
-                src={`https://${substackHandle}.substack.com/embed`}
-                width="100%"
-                height="320"
-                style={{
-                  border: "1px solid #eee",
-                  background: "white",
-                  maxWidth: "480px",
-                  display: "block",
-                  margin: "1rem 0",
-                }}
-                frameBorder="0"
-                scrolling="no"
-              />
-            )}
-          </>
-        );
-      })()}
+                    <span className={classes.postDate} style={{ fontSize: ".60rem", marginLeft: "0.4rem" }}>
+                      &mdash; {new Date(item.published).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                    </span>
+                  </a>
+                  <br />
+                  <span className={classes.postDescription}>
+                    {item.description?.length > 200
+                      ? item.description?.substring(0, 197) + "..."
+                      : item.description}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {substackEssays.length === 0 && (
+            <iframe
+              src={`https://${substackHandle}.substack.com/embed`}
+              width="100%"
+              height="320"
+              style={{
+                border: "1px solid #eee",
+                background: "white",
+                maxWidth: "480px",
+                display: "block",
+                margin: "1rem 0",
+              }}
+              frameBorder="0"
+              scrolling="no"
+            />
+          )}
+        </>
       <br />
 
       <b className={classes.postsTitle}>TOOLS</b>

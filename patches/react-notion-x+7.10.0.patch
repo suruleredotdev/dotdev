@@ -1,0 +1,23 @@
+diff --git a/node_modules/react-notion-x/build/index.js b/node_modules/react-notion-x/build/index.js
+index cbcb3b3..641519f 100644
+--- a/node_modules/react-notion-x/build/index.js
++++ b/node_modules/react-notion-x/build/index.js
+@@ -3178,7 +3178,8 @@ function Block(props) {
+           }
+         }
+       }
+-      return /* @__PURE__ */ jsx32("div", { className: "notion-row", children: /* @__PURE__ */ jsxs14(
++      const caption = block.properties.caption;
++      return /* @__PURE__ */ jsxs14(Fragment6, { children: [ /* @__PURE__ */ jsx32("div", { className: "notion-row", children: /* @__PURE__ */ jsxs14(
+         components.Link,
+         {
+           target: "_blank",
+@@ -3216,7 +3217,7 @@ function Block(props) {
+             ) })
+           ]
+         }
+-      ) });
++      ) }), caption && /* @__PURE__ */ jsx32("figcaption", { className: "notion-asset-caption", children: /* @__PURE__ */ jsx32(Text, { value: caption, block }) }) ] });
+     }
+     case "toggle":
+       return /* @__PURE__ */ jsxs14("details", { className: cs("notion-toggle", blockId), children: [

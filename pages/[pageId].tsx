@@ -2,7 +2,7 @@ import * as React from "react";
 import { GetStaticProps } from "next";
 import { ExtendedRecordMap } from "notion-types";
 import NextHead from "next/head";
-import { getPageProperty } from "notion-utils";
+import { getBlockValue, getPageProperty } from "notion-utils";
 
 import { NotionRenderer, NotionComponents } from "react-notion-x";
 
@@ -80,7 +80,7 @@ export const PostRenderer: React.FC<{
   components: Partial<NotionComponents>;
 }> = ({ level = 0, blockId, recordMap, components }) => {
   const id = blockId || Object.keys(recordMap?.block || {})[0];
-  const block = recordMap?.block[id]?.value;
+  const block = getBlockValue(recordMap?.block[id]);
 
   log("DEBUG", "PostRenderer 0", {
     id,
@@ -99,7 +99,7 @@ export const PostRenderer: React.FC<{
 
   log("DEBUG", "PostRenderer", {
     content: block?.content?.map((contentId) => {
-      return recordMap?.block[contentId]?.value; //{ id, parent_id, type }
+      return getBlockValue(recordMap?.block[contentId]); //{ id, parent_id, type }
     }),
   });
 

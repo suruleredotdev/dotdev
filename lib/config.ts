@@ -26,10 +26,10 @@ if (!rootNotionPageId) {
 }
 
 // if you want to restrict pages to a single notion workspace (optional)
-export const rootNotionSpaceId: string | null = parsePageId(
-  getSiteConfig("rootNotionSpaceId", null),
-  { uuid: true }
-);
+// parsePageId returns undefined when unset, which getStaticProps can't
+// serialize — normalize to null.
+export const rootNotionSpaceId: string | null =
+  parsePageId(getSiteConfig("rootNotionSpaceId", null), { uuid: true }) ?? null;
 
 export const pageUrlOverrides = cleanPageUrlMap(
   getSiteConfig("pageUrlOverrides", {}) || {},

@@ -69,6 +69,28 @@ const homePageText = [
 ];
 const textVersion = 0;
 
+const tools = [
+  {
+    title: "African Artifacts Index",
+    url: "https://artifacts-index.surulere.dev",
+    image: "/artifacts-index-preview.png",
+    description:
+      "Cross-cultural index of museum collections for discovery and comparative analysis",
+  },
+  {
+    title: "Archive 3D",
+    url: "https://archive-3d.surulere.dev",
+    image: "/archive-3d-preview.jpeg",
+    description: "Visualize and explore vector-similar archives in 3D",
+  },
+  {
+    title: "Map Tool",
+    url: "https://map-tool.surulere.dev",
+    image: "/map-tool-preview.png",
+    description: "Simple tool to view and share maps on the web.",
+  },
+];
+
 interface HomePageContentProps extends types.PageProps {
   substackHandle?: string;
   substackEssays?: SubstackEssay[];
@@ -110,7 +132,7 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
 
   return (
     <div id="content" className={classes.content}>
-      <div id="about pb5">
+      <div id="about">
         <p className={classes.tagline}>{homePageText[textVersion].tagline}</p>
 
         <p className={classes.description}>
@@ -118,17 +140,18 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
         </p>
       </div>
 
-      <b className={classes.postsTitle}>ESSAYS</b>
-      <a
-        href={`https://${substackHandle}.substack.com/`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={classes.postDescription}
-        style={{ display: "inline-block", marginBottom: "1rem", opacity: 0.7, marginLeft: "10px" }}
-      >
-        Read on Substack <ExternalLinkIcon />
-      </a>
-        <>
+      <div className={classes.splitSections}>
+        <section id="essays" className={classes.essaysSection}>
+          <b className={classes.postsTitle}>ESSAYS</b>
+          <a
+            href={`https://${substackHandle}.substack.com/`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={classes.postDescription}
+            style={{ display: "inline-block", marginBottom: "1rem", opacity: 0.7, marginLeft: "10px" }}
+          >
+            Read on Substack <ExternalLinkIcon />
+          </a>
           {allItems.length > 0 && (
             <ul className={classes.postsList} style={{ listStyle: "none", padding: 0 }}>
               {allItems.map((item: any, i) => (
@@ -173,61 +196,34 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
               scrolling="no"
             />
           )}
-        </>
-      <br />
+        </section>
 
-      <b className={classes.postsTitle}>TOOLS</b>
-      <ul className={"f5 pl2 flex flex-row gap-2 flex-wrap w-100"}>
-        {[
-          {
-            title: "African Artifacts Index",
-            url: "https://artifacts-index.surulere.dev",
-            image: "/artifacts-index-preview.png",
-            description: "Cross-cultural index of museum collections for discovery and comparative analysis",
-          },
-          {
-            title: "Archive 3D",
-            url: "https://archive-3d.surulere.dev",
-            image: "/archive-3d-preview.jpeg",
-            description: "Visualize and explore vector-similar archives in 3D",
-          },
-          {
-            title: "Map Tool",
-            url: "https://map-tool.surulere.dev",
-            image: "/map-tool-preview.png",
-            description: "Simple tool to view and share maps on the web.",
-          },
-        ].map((tool, i) => (
-          <div
-            key={i}
-            className={`pa1 flex flex-column w-50-ns w-100 mb1 mt1 pr4-l`}
-          >
-            <a
-              className={classes.postLink + " flex flex-column gap-2 pa1"}
-              href={tool.url}
-              target="_blank"
-            >
-              <div
-                style={{ width: "100%", height: "175px", overflow: "hidden" }}
-              >
-                <img
-                  src={tool.image}
-                  alt={tool.title}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              </div>
-              <span className={classes.postLink}>{tool.title}</span>
-            </a>
+        <section id="tools" className={classes.toolsSection}>
+          <b className={classes.postsTitle}>TOOLS</b>
+          <ul className={classes.toolsList}>
+            {tools.map((tool, i) => (
+              <li key={i} className={classes.toolCard}>
+                <a
+                  className={classes.postLink + " flex flex-column pa1"}
+                  href={tool.url}
+                  target="_blank"
+                >
+                  <div className={classes.toolThumb}>
+                    <img src={tool.image} alt={tool.title} />
+                  </div>
+                  <span className={classes.postLink}>{tool.title}</span>
+                </a>
 
-            <span className={classes.postDescription}>
-              {tool.description?.length > 200
-                ? tool.description?.substring(0, 197) + "..."
-                : tool.description}
-            </span>
-          </div>
-        ))}
-      </ul>
-      <br />
+                <span className={classes.postDescription}>
+                  {tool.description?.length > 200
+                    ? tool.description?.substring(0, 197) + "..."
+                    : tool.description}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
 
       <b className={classes.postsTitle}>ARCHIVES</b>
       <p className={classes.postDescription}>

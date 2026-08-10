@@ -153,6 +153,30 @@ body.DARK {
   border-color: var(--border-color),
 }
 
+/*
+ * home page tool cards
+ */
+
+.tool-thumb {
+  width: 100%;
+  height: 175px;
+  overflow: hidden;
+}
+
+.tool-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* at -l the cards share a row with the essays list, so they get a shorter crop
+   to keep all three in view without scrolling */
+@media screen and (min-width: 60em) {
+  .tool-thumb {
+    height: 140px;
+  }
+}
+
 .horizontal-scroll-shadow{
   background-image: linear-gradient(to right, transparent, transparent), linear-gradient(to right, transparent, transparent), linear-gradient(to right, rgba(0, 0, 20, .10), rgba(255, 255, 255, 0)), linear-gradient(to left, rgba(0, 0, 20, .10), rgba(255, 255, 255, 0));
   /* Shadows */

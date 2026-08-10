@@ -28,4 +28,15 @@ export const layoutDefaultClasses: StyleClasses = {
   settingsBlockAction: "link dim ph3 pv2 hide",
   settingsBlockDropdown: "link dim ph3 pv2 underline",
   postDescription: "f7 pv1 gray",
+
+  // The intro promises "essays and visualizations", so on desktop the two sit
+  // side by side and both land above the fold. Below -l they stack back into
+  // source order: essays, then tools.
+  splitSections: "flex-l flex-row-l items-start-l mb4",
+  essaysSection: "w-100 w-60-l pr4-l",
+  toolsSection: "w-100 w-40-l",
+  toolsList: "f5 list pl2 pl0-l flex flex-row flex-wrap w-100",
+  // full width inside the narrow desktop column, two-up on tablet
+  toolCard: "pa1 flex flex-column w-100 w-50-ns w-100-l mb1 mt1",
+  toolThumb: "tool-thumb",
 };

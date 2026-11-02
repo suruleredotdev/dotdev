@@ -1,0 +1,101 @@
+/* surulere.dev UI v1 — tokens.
+ *
+ * Every site links this file first. It only defines custom properties, the
+ * system font stacks and a few base element rules, so it is safe to drop
+ * into a page that still has its own stylesheet.
+ *
+ * Theme: light is the base. Dark applies when the OS asks for it, unless the
+ * page forces a theme. Forcing works three ways so every existing site keeps
+ * its current switch: `.LIGHT` / `.DARK` (all current sites), or
+ * `data-theme="light|dark"` on any ancestor (new pages).
+ */
+
+:root,
+.LIGHT,
+[data-theme="light"] {
+  color-scheme: light;
+  --su-ground: #e5e5e5;
+  --su-ink: #232922;          /* headings, primary text, solid buttons */
+  --su-text: #3c4439;         /* body copy */
+  --su-muted: #5a6458;        /* meta, unselected pills: 5.3:1 on ground */
+  --su-line: #3f493d40;       /* hairlines, card gaps */
+  --su-line-strong: #3f493d;  /* dashed/solid control borders: >3:1 */
+  --su-accent: #751a42;       /* hover, focus ring, current marker. Nothing else */
+  --su-pattern: #3f493d33;    /* SURU/LERE tile colour on the ground */
+  --su-scrim: #0e160c80;
+  --su-shadow-window: inset 0 1px 6px #0e160c26;
+}
+
+.DARK,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --su-ground: #0e160c;
+  --su-ink: #dfe3de;
+  --su-text: #b4b9b3;
+  --su-muted: #848b83;        /* replaces #535e52 (2.7:1, fails WCAG) */
+  --su-line: #3f493d;
+  --su-line-strong: #6b7469;
+  --su-accent: #2ca7ad;
+  --su-pattern: #3f493d80;
+  --su-scrim: #000000a6;
+  --su-shadow-window: inset 0 1px 8px #00000080;
+}
+
+/* Same values as the block above. CSS can't share a declaration block between
+   a selector and a media query, so keep the two in step (the visual check
+   renders both and fails if they drift). */
+@media (prefers-color-scheme: dark) {
+  :root:not(.LIGHT):not([data-theme="light"]) {
+    color-scheme: dark;
+    --su-ground: #0e160c;
+    --su-ink: #dfe3de;
+    --su-text: #b4b9b3;
+    --su-muted: #848b83;
+    --su-line: #3f493d;
+    --su-line-strong: #6b7469;
+    --su-accent: #2ca7ad;
+    --su-pattern: #3f493d80;
+    --su-scrim: #000000a6;
+    --su-shadow-window: inset 0 1px 8px #00000080;
+  }
+}
+
+:root {
+  /* Type: the Tachyons sans-serif stack, plus system mono. No web fonts. */
+  --su-sans: -apple-system, BlinkMacSystemFont, "avenir next", avenir,
+    "helvetica neue", helvetica, ubuntu, roboto, noto, "segoe ui", arial,
+    sans-serif;
+  --su-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  --su-fs-micro: 0.6875rem;  /* 11px: meta, labels */
+  --su-fs-small: 0.8125rem;  /* 13px: card titles, pills, buttons */
+  --su-fs-body: 0.9375rem;   /* 15px */
+  --su-fs-h2: 1.25rem;
+  --su-fs-h1: clamp(1.5rem, 4vw + 0.5rem, 2.5rem);
+  --su-track: 0.06em;        /* uppercase labels */
+
+  /* Geometry. The logo is 40px; the page pattern is half that. */
+  --su-logo: 40px;
+  --su-tile: 20px;
+  --su-bar: 40px;            /* top bar and segmented cells */
+  --su-touch: 44px;          /* min hit target on coarse pointers */
+  --su-gutter: 16px;         /* phone side gutter; grows on wider screens */
+  --su-radius: 4px;
+  --su-hair: 1px;
+  --su-max: 1200px;
+
+  /* z-index layers (from design-system.md) */
+  --su-z-topbar: 50;
+  --su-z-sheet: 60;
+}
+
+@media (min-width: 600px) {
+  :root { --su-gutter: 24px; }
+}
+@media (min-width: 1024px) {
+  :root { --su-gutter: 40px; }
+}
+@media (pointer: coarse) {
+  :root { --su-bar: var(--su-touch); }
+}

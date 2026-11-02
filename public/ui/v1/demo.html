@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>surulere.dev UI v1</title>
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <!-- The whole install for a hand-built page: two stylesheets, one optional script. -->
+  <link rel="stylesheet" href="su-tokens.css" />
+  <link rel="stylesheet" href="su-components.css" />
+  <script src="su.js" defer></script>
+  <style>
+    /* Demo-only scaffolding. Nothing here belongs in the library. */
+    .demo-frames { display: flex; gap: 24px; align-items: flex-start; overflow-x: auto; padding-bottom: 8px; }
+    .demo-frame { flex: none; }
+    .demo-frame__clip { overflow: hidden; border: 1px solid var(--su-line-strong); }
+    .demo-frame iframe { display: block; border: 0; transform-origin: 0 0; background: var(--su-ground); }
+    .demo-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+    html.is-frame .demo-only { display: none; }
+  </style>
+  <script>
+    // ?frame renders the page bare, for the width previews below.
+    // ?theme=light|dark forces a theme (the visual check uses it).
+    (function () {
+      var q = new URLSearchParams(location.search);
+      if (q.has("frame")) document.documentElement.classList.add("is-frame");
+      var t = q.get("theme");
+      if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+    })();
+  </script>
+</head>
+<body class="su-page" style="margin:0">
+
+  <header class="su-topbar">
+    <a class="su-topbar__logo" href="https://surulere.dev" aria-label="surulere.dev home"><span class="su-logo"></span></a>
+    <span class="su-topbar__site"><span>Atlas</span></span>
+    <nav class="su-seg" aria-label="Views">
+      <a class="su-seg__cell" href="#cards" aria-current="page">Map</a>
+      <a class="su-seg__cell" href="#controls">Timeline</a>
+      <button class="su-seg__cell" type="button" data-su-open="about">About</button>
+      <button class="su-seg__cell" type="button" id="theme-toggle" aria-label="Toggle theme">Theme</button>
+    </nav>
+  </header>
+
+  <section class="su-window su-window--hero">
+    <div class="su-container">
+      <div class="su-panel">
+        <span class="su-label">surulere.dev · UI v1</span>
+        <h1>One shell for every tool</h1>
+        <p>Top bar, media cards, sheet and the reveal/cover page layout, from two
+          stylesheets. The pattern behind this panel is one fixed layer; the
+          header, this hero and the footer window reveal it, and content
+          sections cover it.</p>
+        <div class="demo-row" style="margin:0">
+          <button class="su-btn su-btn--primary" type="button" data-su-open="about">Open sheet</button>
+          <a class="su-btn" href="#cards">Browse cards</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="su-cover" id="cards" aria-labelledby="cards-h">
+      <div class="su-container">
+        <h2 class="su-label" id="cards-h">Media cards · <span class="su-mono">.su-cards / .su-card</span></h2>
+        <ul class="su-cards">
+          <li><a class="su-card" href="#"><span class="su-card__media"><img src="../../artifacts-index-preview.png" alt="" loading="lazy" /></span><span class="su-card__bar"><span class="su-card__title">Artifacts Index</span><span class="su-card__meta">Tool · Historiography</span></span></a></li>
+          <li><a class="su-card" href="#"><span class="su-card__media"><img src="../../map-tool-preview.png" alt="" loading="lazy" /></span><span class="su-card__bar"><span class="su-card__title">Atlas: African states through time</span><span class="su-card__meta">Tool · Historiography</span></span></a></li>
+          <li><a class="su-card" href="#"><span class="su-card__media"><img src="../../archive-3d-preview.jpeg" alt="" loading="lazy" /></span><span class="su-card__bar"><span class="su-card__title">Archive 3D</span><span class="su-card__meta">Tool · Sensemaking</span></span></a></li>
+          <li><a class="su-card" href="#"><span class="su-card__media"><img src="../../africa_fintech.jpg" alt="" loading="lazy" /></span><span class="su-card__bar"><span class="su-card__title">A long title that has to wrap onto a second line and then clamp before it runs into a third</span><span class="su-card__meta">Essay · Technology · 2024</span></span></a></li>
+          <li><button class="su-card su-card--contain" type="button" data-su-open="about"><span class="su-card__media"><img src="../../suruleredotdev.png" alt="" loading="lazy" /></span><span class="su-card__bar"><span class="su-card__title">Contain variant (museum objects)</span><span class="su-card__meta">Opens the sheet</span></span></button></li>
+          <li><a class="su-card" href="#"><span class="su-card__media"></span><span class="su-card__bar"><span class="su-card__title">No image yet</span><span class="su-card__meta">Placeholder ground</span></span></a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="su-cover" id="controls" aria-labelledby="controls-h">
+      <div class="su-container">
+        <h2 class="su-label" id="controls-h">Buttons and pills · dashed = available, solid = selected</h2>
+        <div class="demo-row">
+          <button class="su-btn su-btn--primary" type="button">Search</button>
+          <button class="su-btn" type="button">Share</button>
+          <button class="su-btn" type="button" disabled>Disabled</button>
+        </div>
+        <ul class="su-pills" aria-label="Culture filter">
+          <li><button class="su-pill" type="button" aria-pressed="true">Yoruba</button></li>
+          <li><button class="su-pill" type="button" aria-pressed="false">Edo</button></li>
+          <li><button class="su-pill" type="button" aria-pressed="false">Akan</button></li>
+          <li><button class="su-pill" type="button" aria-pressed="true">Kongo</button></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="su-cover demo-only" aria-labelledby="widths-h">
+      <div class="su-container">
+        <h2 class="su-label" id="widths-h">This page at phone (390px) and desktop (1280px) widths</h2>
+        <div class="demo-frames">
+          <div class="demo-frame" data-w="390" data-h="780" data-scale="0.75"></div>
+          <div class="demo-frame" data-w="1280" data-h="900" data-scale="0.45"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="su-window su-window--footer" aria-hidden="true"></div>
+  <footer class="su-footer">
+    <div class="su-container">surulere.dev · essays, tools and archives on African futures</div>
+  </footer>
+
+  <dialog class="su-sheet" id="about" aria-labelledby="about-title">
+    <form method="dialog" class="su-sheet__head">
+      <h2 class="su-sheet__title" id="about-title">About this atlas</h2>
+      <button class="su-sheet__close" value="close" aria-label="Close">×</button>
+    </form>
+    <div class="su-sheet__body">
+      <p>A centred modal on desktop and a bottom sheet on phone. It is a native
+        <code>&lt;dialog&gt;</code>, so focus is trapped and Escape closes it
+        without any script; <code>su.js</code> adds backdrop-click to close.</p>
+      <p>Long content scrolls inside the body while the head stays put.</p>
+      <ul class="su-pills"><li><span class="su-pill" aria-current="true">Historiography</span></li><li><span class="su-pill">1350–1900</span></li></ul>
+    </div>
+    <form method="dialog" class="su-sheet__foot">
+      <button class="su-btn" value="cancel">Cancel</button>
+      <button class="su-btn su-btn--primary" value="ok">Done</button>
+    </form>
+  </dialog>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      document.getElementById("theme-toggle").addEventListener("click", function () {
+        var dark = root.dataset.theme
+          ? root.dataset.theme === "dark"
+          : matchMedia("(prefers-color-scheme: dark)").matches;
+        root.dataset.theme = dark ? "light" : "dark";
+      });
+      document.querySelectorAll(".su-pill[aria-pressed]").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          pill.setAttribute("aria-pressed", String(pill.getAttribute("aria-pressed") !== "true"));
+        });
+      });
+      if (root.classList.contains("is-frame")) return;
+      document.querySelectorAll(".demo-frame").forEach(function (box) {
+        var w = +box.dataset.w, h = +box.dataset.h, s = +box.dataset.scale;
+        var clip = document.createElement("div");
+        clip.className = "demo-frame__clip";
+        clip.style.width = w * s + "px";
+        clip.style.height = h * s + "px";
+        var f = document.createElement("iframe");
+        f.title = "Demo at " + w + "px";
+        f.loading = "lazy";
+        f.width = w; f.height = h;
+        f.style.transform = "scale(" + s + ")";
+        f.src = "demo.html?frame" + (root.dataset.theme ? "&theme=" + root.dataset.theme : "");
+        clip.appendChild(f);
+        var cap = document.createElement("span");
+        cap.className = "su-label";
+        cap.style.marginTop = "6px";
+        cap.textContent = w + "px";
+        box.append(clip, cap);
+      });
+    })();
+  </script>
+</body>
+</html>

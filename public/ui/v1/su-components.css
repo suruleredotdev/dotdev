@@ -1,0 +1,462 @@
+/* surulere.dev UI v1 — components.
+ *
+ * Needs su-tokens.css first. Everything is a `su-*` class and nothing styles
+ * bare elements outside `.su-page`, so a site can adopt one component at a
+ * time next to its existing CSS (Tachyons, Tailwind or hand-written).
+ *
+ *   .su-page              page ground + the fixed SURU/LERE pattern
+ *   .su-window            a section that reveals the pattern (header, hero, footer)
+ *   .su-cover             a section that covers it with solid ground (content)
+ *   .su-container         max width + responsive side gutter
+ *   .su-topbar            logo / Tool name / segmented bar (.su-seg)
+ *   .su-cards, .su-card   media cards: image first, title + meta bar below
+ *   .su-sheet             <dialog>: centred modal on desktop, bottom sheet on phone
+ *   .su-btn, .su-pill     dashed = available, solid = selected
+ *   .su-label             small uppercase section label
+ */
+
+/* ── Page ground and pattern ─────────────────────────────────────────── */
+
+.su-page {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--su-ground);
+  color: var(--su-text);
+  font-family: var(--su-sans);
+  font-size: var(--su-fs-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* One pattern layer for the whole page, fixed to the viewport, so every
+   window that reveals it lines up. A fixed pseudo-element rather than
+   `background-attachment: fixed`, which iOS Safari ignores. The tile is a
+   mask, so one SVG serves both themes (and the logo). */
+.su-page::before,
+.su-topbar::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--su-pattern);
+  -webkit-mask: url("su-mark.svg") 0 0 / var(--su-tile) var(--su-tile) repeat;
+  mask: url("su-mark.svg") 0 0 / var(--su-tile) var(--su-tile) repeat;
+}
+
+.su-page *,
+.su-page *::before,
+.su-page *::after { box-sizing: border-box; }
+
+.su-page :where(h1, h2, h3) { color: var(--su-ink); line-height: 1.2; margin: 0 0 0.5em; }
+.su-page :where(h1) { font-size: var(--su-fs-h1); letter-spacing: -0.01em; }
+.su-page :where(h2) { font-size: var(--su-fs-h2); }
+.su-page :where(p) { margin: 0 0 1em; max-width: 68ch; }
+.su-page :where(a) { color: inherit; text-decoration-color: var(--su-line-strong); text-underline-offset: 3px; }
+.su-page :where(a:hover) { color: var(--su-accent); text-decoration-color: currentColor; }
+.su-page :where(a, button, [tabindex], summary):focus-visible {
+  outline: 2px solid var(--su-accent);
+  outline-offset: 2px;
+}
+.su-page :where(code, kbd, .su-mono) { font-family: var(--su-mono); font-size: 0.92em; }
+
+.su-container {
+  width: 100%;
+  max-width: calc(var(--su-max) + 2 * var(--su-gutter));
+  margin-inline: auto;
+  padding-inline: var(--su-gutter);
+}
+
+/* Windows are transparent: the page pattern shows through, with an inset
+   shadow so they read as openings rather than gaps. */
+.su-window {
+  box-shadow: var(--su-shadow-window);
+  padding-block: calc(var(--su-tile) * 2);
+}
+.su-window--hero { padding-block: calc(var(--su-tile) * 4); }
+.su-window--footer { padding-block: calc(var(--su-tile) * 2); }
+
+/* Text inside a window sits on a solid panel so it never fights the pattern. */
+.su-panel {
+  display: inline-block;
+  max-width: 100%;
+  background: var(--su-ground);
+  border: var(--su-hair) solid var(--su-line);
+  padding: 16px 20px;
+}
+.su-panel > :last-child { margin-bottom: 0; }
+
+.su-cover {
+  background: var(--su-ground);
+  padding-block: 32px;
+}
+.su-cover + .su-cover { border-top: var(--su-hair) solid var(--su-line); }
+
+.su-footer {
+  background: var(--su-ground);
+  border-top: var(--su-hair) solid var(--su-line);
+  padding-block: 16px;
+  font-size: var(--su-fs-micro);
+  color: var(--su-muted);
+}
+
+.su-label {
+  display: block;
+  margin: 0 0 12px;
+  font-size: var(--su-fs-micro);
+  font-weight: 600;
+  letter-spacing: var(--su-track);
+  text-transform: uppercase;
+  color: var(--su-muted);
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────── */
+/* [logo 40px] / Tool name ················ [cell|cell|cell] ← flush right */
+
+.su-topbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--su-z-topbar);
+  isolation: isolate;
+  display: flex;
+  align-items: stretch;
+  min-height: var(--su-bar);
+  /* Sticky, so content scrolls beneath it: it carries its own copy of the
+     pattern over solid ground instead of being see-through. Its ::before is
+     fixed to the viewport (see above), so the tiles line up with the page. */
+  background: var(--su-ground);
+  border-bottom: var(--su-hair) solid var(--su-line);
+  color: var(--su-ink);
+  font-family: var(--su-sans);
+  font-size: var(--su-fs-small);
+  /* clip-path keeps the fixed ::before inside the bar */
+  clip-path: inset(0);
+}
+
+.su-topbar__logo {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--su-bar);
+  color: var(--su-ink);
+  text-decoration: none;
+}
+.su-topbar__logo:hover { color: var(--su-accent); }
+
+.su-logo {
+  display: block;
+  width: var(--su-logo);
+  height: var(--su-logo);
+  background-color: currentColor;
+  -webkit-mask: url("su-mark.svg") center / contain no-repeat;
+  mask: url("su-mark.svg") center / contain no-repeat;
+}
+
+.su-topbar__site {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  min-width: 0;
+  padding-inline: 4px 12px;
+  background: var(--su-ground);
+  font-weight: 600;
+  letter-spacing: var(--su-track);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.su-topbar__site::before { content: "/"; color: var(--su-muted); font-weight: 400; }
+.su-topbar__site > span { overflow: hidden; text-overflow: ellipsis; }
+
+/* The segmented bar: one strip of full-height cells hugging the right edge. */
+.su-seg {
+  display: flex;
+  align-items: stretch;
+  margin-left: auto;
+  border-left: var(--su-hair) solid var(--su-line);
+  background: var(--su-ground);
+}
+.su-seg__cell {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--su-bar);
+  margin: 0;
+  padding: 0 14px;
+  border: 0;
+  border-right: var(--su-hair) solid var(--su-line);
+  background: transparent;
+  color: var(--su-muted);
+  font: inherit;
+  letter-spacing: var(--su-track);
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.su-seg__cell:last-child { border-right: 0; }
+.su-seg__cell:hover { color: var(--su-accent); }
+.su-seg__cell:focus-visible { outline: 2px solid var(--su-accent); outline-offset: -2px; }
+/* Current = ink text plus a small accent marker. */
+.su-seg__cell[aria-current]:not([aria-current="false"]),
+.su-seg__cell[aria-pressed="true"] {
+  color: var(--su-ink);
+  box-shadow: inset 0 -2px 0 var(--su-accent);
+}
+
+/* Phone: the segmented bar drops to its own full-width row; cells share it. */
+@media (max-width: 599px) {
+  .su-topbar { flex-wrap: wrap; }
+  .su-topbar__site { flex: 1; }
+  .su-seg {
+    flex: 1 0 100%;
+    margin-left: 0;
+    border-left: 0;
+    border-top: var(--su-hair) solid var(--su-line);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .su-seg__cell { flex: 1 0 auto; padding: 0 12px; }
+}
+
+/* ── Media cards ─────────────────────────────────────────────────────── */
+/* Tiles sit flush with hairline gaps: each card draws a 1px ring and the
+   grid gap is 1px, so the rings meet. Unlike a coloured grid background,
+   a part-filled last row leaves no stray lines. */
+
+.su-cards {
+  --su-card-min: 150px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--su-card-min)), 1fr));
+  gap: var(--su-hair);
+  margin: 0;
+  padding: var(--su-hair);
+  list-style: none;
+}
+@media (min-width: 600px) { .su-cards { --su-card-min: 200px; } }
+@media (min-width: 1024px) { .su-cards { --su-card-min: 230px; } }
+.su-cards > li { display: contents; }
+
+.su-card {
+  --su-card-ratio: 4 / 5;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--su-ground);
+  box-shadow: 0 0 0 var(--su-hair) var(--su-line);
+  color: inherit;
+  text-decoration: none;
+}
+.su-card--square { --su-card-ratio: 1 / 1; }
+.su-card--wide { --su-card-ratio: 3 / 2; }
+
+.su-card__media {
+  display: block;
+  aspect-ratio: var(--su-card-ratio);
+  overflow: hidden;
+  background: var(--su-line);
+}
+.su-card__media > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Museum objects: show the whole thing, never crop. */
+.su-card--contain .su-card__media { background: transparent; padding: 8px; }
+.su-card--contain .su-card__media > img { object-fit: contain; }
+
+.su-card__bar {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px 10px;
+}
+.su-card__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: 0;
+  color: var(--su-ink);
+  font-size: var(--su-fs-small);
+  font-weight: 600;
+  line-height: 1.3;
+}
+.su-card__meta {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--su-muted);
+  font-size: var(--su-fs-micro);
+  letter-spacing: 0.02em;
+}
+
+a.su-card:hover .su-card__title,
+button.su-card:hover .su-card__title { color: var(--su-accent); }
+.su-card:focus-visible { outline: 2px solid var(--su-accent); outline-offset: -2px; }
+button.su-card {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* ── Sheet (modal) ───────────────────────────────────────────────────── */
+/* A native <dialog> opened with showModal(): focus trap, Escape and the
+   top layer come free. Desktop: centred. Phone: docked to the bottom. */
+
+.su-sheet {
+  width: min(720px, 100% - 2 * var(--su-gutter));
+  max-width: none;
+  max-height: min(85vh, 900px);
+  padding: 0;
+  border: var(--su-hair) solid var(--su-line-strong);
+  border-radius: var(--su-radius);
+  background: var(--su-ground);
+  color: var(--su-text);
+  font-family: var(--su-sans);
+  font-size: var(--su-fs-body);
+  line-height: 1.5;
+  overscroll-behavior: contain;
+}
+.su-sheet[open] { display: flex; flex-direction: column; }
+/* ::backdrop does not inherit custom properties in every browser still in
+   use, so the scrim colour is written out. */
+.su-sheet::backdrop { background: rgb(14 22 12 / 0.55); }
+
+.su-sheet__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--su-bar);
+  margin: 0;
+  padding-left: 16px;
+  border-bottom: var(--su-hair) solid var(--su-line);
+}
+.su-sheet__title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--su-ink);
+  font-size: var(--su-fs-small);
+  font-weight: 600;
+  letter-spacing: var(--su-track);
+  text-transform: uppercase;
+}
+.su-sheet__close {
+  appearance: none;
+  align-self: stretch;
+  width: var(--su-bar);
+  margin: 0;
+  border: 0;
+  border-left: var(--su-hair) solid var(--su-line);
+  background: transparent;
+  color: var(--su-muted);
+  font: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.su-sheet__close:hover { color: var(--su-accent); }
+.su-sheet__close:focus-visible { outline: 2px solid var(--su-accent); outline-offset: -2px; }
+.su-sheet__body { overflow: auto; padding: 16px; }
+.su-sheet__body > :last-child { margin-bottom: 0; }
+.su-sheet__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 16px;
+  border-top: var(--su-hair) solid var(--su-line);
+}
+
+@media (max-width: 599px) {
+  .su-sheet {
+    width: 100%;
+    max-height: 90vh;
+    max-height: 90dvh;
+    margin: auto 0 0;
+    border-width: var(--su-hair) 0 0;
+    border-radius: var(--su-radius) var(--su-radius) 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .su-sheet[open] { animation: su-sheet-in 160ms ease-out; }
+  @media (max-width: 599px) {
+    .su-sheet[open] { animation-name: su-sheet-up; animation-duration: 200ms; }
+  }
+}
+@keyframes su-sheet-in { from { opacity: 0; transform: translateY(8px); } }
+@keyframes su-sheet-up { from { transform: translateY(100%); } }
+
+/* ── Buttons and pills ───────────────────────────────────────────────── */
+/* Dashed = available, solid = selected. Main action: solid ink.
+   The accent never fills anything; it only marks hover and focus. */
+
+.su-btn,
+.su-pill {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  border: var(--su-hair) dashed var(--su-line-strong);
+  border-radius: var(--su-radius);
+  background: transparent;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.su-btn {
+  min-height: 32px;
+  padding: 0 12px;
+  color: var(--su-ink);
+  font-size: var(--su-fs-small);
+  letter-spacing: var(--su-track);
+  text-transform: uppercase;
+}
+.su-btn--primary {
+  border-style: solid;
+  border-color: var(--su-ink);
+  background: var(--su-ink);
+  color: var(--su-ground);
+}
+.su-pill {
+  min-height: 26px;
+  padding: 0 10px;
+  color: var(--su-muted);
+  font-size: var(--su-fs-micro);
+}
+.su-pill[aria-pressed="true"],
+.su-pill[aria-current]:not([aria-current="false"]) {
+  border-style: solid;
+  border-color: currentColor;
+  color: var(--su-ink);
+  font-weight: 600;
+}
+.su-btn:hover,
+.su-pill:hover { color: var(--su-accent); border-color: var(--su-accent); }
+.su-btn--primary:hover { color: var(--su-ground); border-color: var(--su-ink); outline: 1px solid var(--su-accent); outline-offset: 2px; }
+.su-btn:focus-visible,
+.su-pill:focus-visible { outline: 2px solid var(--su-accent); outline-offset: 2px; }
+.su-btn:disabled { cursor: not-allowed; opacity: 0.5; }
+
+.su-pills { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+
+@media (pointer: coarse) {
+  .su-btn { min-height: var(--su-touch); }
+  .su-pill { min-height: 36px; }
+}

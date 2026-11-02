@@ -21,6 +21,7 @@
     "test": "mocha 'src/test/**/*.ts'",
     "dev": "next",
     "fetch-content": "tsx scripts/fetch-content.ts",
+    "ui:check": "node scripts/ui-visual-check.mjs",
     "build": "next build",
     "start": "next start",
     "export": "next export",

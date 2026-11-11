@@ -81,13 +81,13 @@
   --su-bar: 40px;            /* top bar and segmented cells */
   --su-touch: 44px;          /* min hit target on coarse pointers */
   --su-gutter: 16px;         /* phone side gutter; grows on wider screens */
-  --su-radius: 4px;
+  --su-radius: 0;            /* square corners everywhere */
   --su-hair: 1px;
   --su-max: 1200px;
 
   /* z-index layers (from design-system.md) */
   --su-z-topbar: 50;
-  --su-z-sheet: 60;
+  --su-z-modal: 60;
 }
 
 @media (min-width: 600px) {

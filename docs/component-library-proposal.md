@@ -10,11 +10,11 @@ The proof of concept is in this branch:
 | Path | What it is |
 |---|---|
 | `public/ui/v1/su-tokens.css` | Colour, type and geometry tokens; light/dark; works with the `.LIGHT`/`.DARK` classes every site already uses |
-| `public/ui/v1/su-components.css` | Page ground and pattern, reveal/cover layout, top bar, media cards, sheet, buttons, pills |
-| `public/ui/v1/su.js` | Optional, 30 lines: `data-su-open` to open a sheet, and backdrop click to close it |
+| `public/ui/v1/su-components.css` | Page ground and pattern, reveal/cover layout, top bar, media cards, modal, buttons, pills. Square corners throughout |
+| `public/ui/v1/su.js` | Optional, 30 lines: `data-su-open` to open a modal, and backdrop click to close it |
 | `public/ui/v1/su-mark.svg` | The SURU/LERE mark, used as a CSS mask for both the 40px logo and the 20px page pattern, in both themes |
 | `public/ui/v1/demo.html` | One page with every component, plus live previews of itself at 390px and 1280px |
-| `components/su/*.tsx` | React wrappers: `TopBar`, `MediaCard`/`MediaCards`, `Sheet`, `Page`/`Window`/`Cover`/`Container`/`Panel`/`Footer`, `SuStyles` |
+| `components/su/*.tsx` | React wrappers: `TopBar`, `MediaCard`/`MediaCards`, `Modal`, `Page`/`Window`/`Cover`/`Container`/`Panel`/`Footer`, `SuStyles` |
 | `pages/ui-demo.tsx` | The same demo through the React wrappers (`/ui-demo/`, marked `noindex`, not linked) |
 | `scripts/ui-visual-check.mjs` | Playwright check at phone and desktop widths in both themes (below) |
 
@@ -115,7 +115,7 @@ Web components are a **might** for exactly one case: a `<su-topbar>` for hand-bu
 |---|---|---|
 | dotdev | `<SuStyles base={process.env.NEXT_PUBLIC_BASE_PATH \|\| ""} />` in `_document`, same origin, so PR previews test their own copy | Wrappers live here first |
 | african-artifacts, Archive 3D | Two `<link>`s in `index.html` (replacing the broken `<script>` tag), copy `components/su/` | Tailwind stays for layout; colours and borders move to tokens |
-| atlas, akb `ui/` | Two `<link>`s, plus `su.js` with `defer` if using sheets | Delete re-typed tokens and chrome |
+| atlas, akb `ui/` | Two `<link>`s, plus `su.js` with `defer` if using modals | Delete re-typed tokens and chrome |
 | motif export | `export_interpretation_site.py` fetches a pinned version (`/ui/v1.x.y/`) at build and inlines it | The page has to stay one offline file |
 
 **Musts for hosting:**
@@ -136,7 +136,8 @@ Web components are a **might** for exactly one case: a `<su-topbar>` for hand-bu
 - fails on any sideways scroll, the most common phone-width breakage;
 - fails if the segmented bar doesn't hug the right edge, if the top bar isn't one 40px row on desktop, or if it doesn't wrap to two rows on phone;
 - fails if forced-theme tokens differ from OS-theme tokens;
-- opens the sheet and checks it docks to the bottom on phone and is a centred modal on desktop, then that Escape closes it;
+- opens both modals (720px and 1200px) and checks each docks to the bottom on phone and is centred on desktop, has square corners, locks the page scroll, shows icon-only action cells on phone and labelled ones on desktop, and closes on Escape;
+- fails if buttons have rounded corners;
 - writes eight screenshots for review.
 
 It asserts layout facts, not pixels, so it doesn't flake on font rendering across machines.
@@ -159,14 +160,17 @@ It asserts layout facts, not pixels, so it doesn't flake on font rendering acros
 | Reveal / cover | `.su-window` (`--hero`, `--footer`), `.su-cover`, `.su-panel`, `.su-container`, `.su-footer` | `<Window>`, `<Cover>`, `<Panel>`, `<Container>`, `<Footer>` | Gutter is 16px under 600px, 24px to 1024px, 40px above |
 | Top bar | `.su-topbar`, `__logo`, `__site`, `.su-seg`, `.su-seg__cell` | `<TopBar site items>` | The segmented bar drops to its own full-width row; cells share it and scroll if there are many. Cells grow to 44px on touch screens |
 | Media card | `.su-cards`, `.su-card` (`--contain`, `--square`, `--wide`), `__media`, `__bar`, `__title`, `__meta` | `<MediaCards>`, `<MediaCard>` | Two columns at 390px (min 150px), auto-fill above |
-| Sheet | `dialog.su-sheet`, `__head`, `__title`, `__close`, `__body`, `__foot` | `<Sheet open onClose title>` | Centred modal on desktop; full-width bottom sheet at 90dvh on phone, safe-area padded |
+| Modal | `dialog.su-modal` (`--lg`), `__head`, `__title`, `__count`, `__cell`, `__cell-text`, `__close`, `__body`, `__foot` | `<Modal open onClose title actions size scrollKey labelledBy footer>` | Centred on desktop (720px, or 1200px for `lg`); full width and docked to the bottom at 92dvh on phone, safe-area padded. Action cells show only their icons |
 | Buttons, pills | `.su-btn` (`--primary`), `.su-pill` + `aria-pressed`, `.su-pills`, `.su-label` | Plain classes | 44px targets on coarse pointers |
 
 ### Design details worth knowing
 
 - **The sticky top bar** can't be a see-through window, because content scrolls under it. It carries its own copy of the pattern over solid ground. That copy is also fixed to the viewport and clipped to the bar, so its tiles line up exactly with the page's.
 - **Flush cards with hairlines:** each card draws a 1px ring with `box-shadow` and the grid gap is 1px, so rings meet. A coloured grid background would leave stray lines in a part-filled last row; this doesn't.
-- **The sheet is a native `<dialog>`.** Focus trap, Escape, top layer and `inert` background come from the browser. React only mirrors `open`. Plain pages get backdrop-click from `su.js`.
+- **The modal is a native `<dialog>`.** Focus trap, Escape, top layer and `inert` background come from the browser. React only mirrors `open`. Plain pages get backdrop-click from `su.js`. `html:has(.su-modal[open])` locks the page scroll behind it.
+- **The modal header is a bar of cells**, like the top bar: title (with an optional `__count` such as "12 / 48"), then `actions` cells such as ‹ PREV / NEXT ›, then close. The cells sit in the header, so they never scroll away. `scrollKey` returns the body to the top when its content changes.
+- **Same API in both repos.** `components/su/Modal.tsx` matches `Modal` in african-artifacts PR #85 (props `open`, `onClose`, `title`, `children`, `footer`, `actions`, `size`, `closeLabel`, `labelledBy`, `scrollKey`, and the same `su-modal*` classes). It's the first component in use outside this repo; when that PR merges, its CSS can move to `/ui/v1/` and the two files stay identical.
+- **Square corners everywhere:** `--su-radius` is 0, and modals, buttons and pills have no rounding, including the modal's top edge on phones. `design-system.md` still says 4px and should be updated with the next library PR there.
 - **State follows ARIA attributes:** `aria-current` and `aria-pressed` drive the selected styles, not extra classes, so a correctly labelled control is also correctly styled.
 
 ### Values I picked that need a yes
@@ -187,14 +191,15 @@ npm run ui:check    # writes screenshots to ui-screens/ (git-ignored)
 npm run dev         # React version at /ui-demo/
 ```
 
-Both pass today: the visual check is green at both widths and in both themes. The React demo renders the same markup with no console errors and no sideways scroll, and its sheet opens and closes by Escape and by backdrop click. The wrappers type-check under `--strict`.
+Both pass today: the visual check is green at both widths and in both themes. The React demo renders the same markup with no console errors and no sideways scroll, its modals open and close by Escape and backdrop click, and prev/next steps through the large one. The wrappers type-check under `--strict`.
 
 Screenshots from this run are in `docs/ui-screens/`:
 
 | | |
 |---|---|
 | ![Desktop, light](ui-screens/desktop-light.png) | ![Phone, dark](ui-screens/phone-dark.png) |
-| ![Phone sheet, light](ui-screens/phone-light-sheet.png) | ![Desktop sheet, dark](ui-screens/desktop-dark-sheet.png) |
+| ![Phone modal, light](ui-screens/phone-light-modal-about.png) | ![Desktop large modal, light](ui-screens/desktop-light-modal-detail.png) |
+| ![Phone large modal, dark](ui-screens/phone-dark-modal-detail.png) | ![Desktop modal, dark](ui-screens/desktop-dark-modal-about.png) |
 | ![React demo, desktop](ui-screens/react-desktop.png) | |
 
 ---
@@ -208,12 +213,12 @@ Screenshots from this run are in `docs/ui-screens/`:
 | 1 | dotdev | Land `public/ui/v1/`, `components/su/`, the visual check and a CI job for `public/ui/**` (this branch) | Yes | S |
 | 2 | african-artifacts | Link `su-tokens.css` and `su-components.css` (fix the `<script>` tag). Point old variables at new tokens (`--bg-color: var(--su-ground)` …) so the whole app picks up the corrected palette and contrast at once | Yes | S |
 | 3 | african-artifacts | The media-card PR uses `su-card` markup. Its CSS moves to the library, and `MuseumObjectCard` keeps only data and `ImageWithPlaceholder` | Yes | S, coordinated with the parallel PR |
-| 4 | african-artifacts | `ModalLayout` becomes `<Sheet>`, which fixes the white modal in dark mode | Yes | S |
-| 5 | atlas | Swap re-typed tokens and texture for `su-tokens.css`. Header becomes `su-topbar`. `#about` becomes `su-sheet` | Yes | S |
+| 4 | african-artifacts | `ModalLayout` becomes `<Modal>`, which fixes the white modal in dark mode. **In progress:** PR #85 | Yes | S |
+| 5 | atlas | Swap re-typed tokens and texture for `su-tokens.css`. Header becomes `su-topbar`. `#about` becomes `su-modal` | Yes | S |
 | 6 | dotdev | Homepage on the shell: `LayoutDefault` uses `<Page>`/`<TopBar>`; hero `<Window>`; tools as `<MediaCards>`; `<Footer>`. Remove `components/styles.ts`. Check Notion pages on `<Cover>` | Yes | M, split across two PRs: shell, then sections |
 | 7 | african-artifacts | Header becomes `<TopBar site="Artifacts Index">`; FILE/VIEW become segmented cells; restyle `SearchHero` buttons and culture pills to `su-btn`/`su-pill` | Yes | M |
 | 8 | symbolic-motif-analysis | `export_interpretation_site.py` inlines a pinned `/ui/v1.x.y/`; template chrome becomes `su-topbar`/`su-card` | Yes | S–M |
-| 9 | archive-knowledge-base | Tokens, top bar, `ModalLayout` and `CommentarySettingsPopup` become `<Sheet>`. Graph keeps its dark stage | Yes | M |
+| 9 | archive-knowledge-base | Tokens, top bar, `ModalLayout` and `CommentarySettingsPopup` become `<Modal>` (copied from african-artifacts). Graph keeps its dark stage | Yes | M |
 | 10 | akb | Re-token from indigo, top bar, `.result-card` becomes `.su-card`/rows | Yes, but last: lowest traffic, biggest visual change | M |
 | – | all | Share `su-analytics.js` and `data-track` (from the plan) | Might, but cheap once the bars are shared | S |
 
@@ -228,7 +233,7 @@ The order puts the parallel card PR and the dark-mode modal bug early, which are
 - System fonts only; the accent only for hover, focus and current markers; dashed means available, solid means selected.
 - One fixed page pattern at one tile size, revealed by windows and covered by content.
 - The same top bar shape on every site.
-- Works at 390px with no sideways scroll and 44px touch targets; sheets become bottom sheets on phone.
+- Works at 390px with no sideways scroll and 44px touch targets; modals dock to the bottom on phone.
 - Dark mode passes WCAG AA for text (≥4.5:1) and UI borders (≥3:1).
 - `v1` is additive only; breaking changes go in `v2`.
 - The visual check gates changes to `public/ui/`.
@@ -241,13 +246,13 @@ The order puts the parallel card PR and the dark-mode modal bug early, which are
 - `@surulere/ui` on npm once a third React app needs it.
 - Logo-window slide and hero slide motion (`bg-slide` moved onto the 40px logo cell).
 - A `su-compat.css` that maps every old variable name, for sites that can't touch their CSS yet.
-- Sheet open and close transitions with `@starting-style`.
+- Modal open and close transitions with `@starting-style`.
 
 ---
 
 ## Summary
 
-**Recommend:** one plain-CSS library (`su-tokens.css` plus `su-components.css`) served from `surulere.dev/ui/v1/`, with thin React wrappers copied into each React repo. It serves Next, esbuild and hand-built HTML from one file, adopts one component at a time, and needs no build or publish step. The cost is that `v1` changes reach every site at once. That's made safe by an additive-only rule within `v1` and a Playwright check at 390px and 1280px in both themes. The proof of concept (tokens, top bar, media card, sheet, reveal/cover layout, demo page and React demo) is in this branch.
+**Recommend:** one plain-CSS library (`su-tokens.css` plus `su-components.css`) served from `surulere.dev/ui/v1/`, with thin React wrappers copied into each React repo. It serves Next, esbuild and hand-built HTML from one file, adopts one component at a time, and needs no build or publish step. The cost is that `v1` changes reach every site at once. That's made safe by an additive-only rule within `v1` and a Playwright check at 390px and 1280px in both themes. The proof of concept (tokens, top bar, media card, modal, reveal/cover layout, demo page and React demo) is in this branch.
 
 **Need decided:**
 1. **Pattern tile size:** 20px (the brief, half the logo; used in the PoC) or 50px (the plan doc and every site today)?

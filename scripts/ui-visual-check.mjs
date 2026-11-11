@@ -6,8 +6,9 @@
 // desktop (1280px) widths in light and dark, and for each:
 //   - fails if the page scrolls sideways (the usual phone-width breakage)
 //   - fails if the forced-dark tokens drift from the OS-dark tokens
-//   - fails if the top bar or a sheet loses its shape
-//   - writes a full-page screenshot, plus one with the sheet open
+//   - fails if the top bar or a modal loses its shape (docking, width,
+//     square corners, page scroll lock, icon-only action cells on phone)
+//   - writes a full-page screenshot, plus one per modal open
 // Needs Playwright with Chromium (`npx playwright install chromium` in CI).
 // Screenshots are for a human to look at or diff; the script itself only
 // asserts layout facts, so it doesn't flake on font rendering. (Chromium's
@@ -89,22 +90,38 @@ for (const scheme of ["light", "dark"]) {
 
     await page.screenshot({ path: join(outDir, `${label}.png`), fullPage: true });
 
-    await page.click('[data-su-open="about"]');
-    const sheet = await page.evaluate(async () => {
-      const d = document.getElementById("about");
-      await Promise.all(d.getAnimations().map((a) => a.finished));
-      const r = d.getBoundingClientRect();
-      return { open: d.open, bottom: r.bottom, left: r.left, width: r.width, vh: innerHeight, vw: innerWidth };
-    });
-    check(sheet.open, `${label}: sheet did not open`);
-    if (vp.name === "phone") {
-      check(Math.abs(sheet.bottom - sheet.vh) < 1 && sheet.left === 0, `${label}: sheet should dock to the bottom edge`);
-    } else {
-      check(sheet.width <= 720 && sheet.bottom < sheet.vh, `${label}: sheet should be a centred modal`);
+    // Both modals: medium (720px) and large (1200px, with header action cells).
+    for (const [id, maxWidth] of [["about", 720], ["detail", 1200]]) {
+      await page.click(`[data-su-open="${id}"]`);
+      const modal = await page.evaluate(async (id) => {
+        const d = document.getElementById(id);
+        await Promise.all(d.getAnimations().map((a) => a.finished));
+        const r = d.getBoundingClientRect();
+        const cellText = d.querySelector(".su-modal__cell-text");
+        return {
+          open: d.open, bottom: r.bottom, left: r.left, width: r.width, vh: innerHeight,
+          radius: getComputedStyle(d).borderTopLeftRadius,
+          pageLocked: getComputedStyle(document.documentElement).overflow === "hidden",
+          cellTextShown: cellText ? cellText.offsetWidth > 0 : null,
+        };
+      }, id);
+      const name = `${label} ${id} modal`;
+      check(modal.open, `${name}: did not open`);
+      check(modal.radius === "0px", `${name}: corners should be square, got ${modal.radius}`);
+      check(modal.pageLocked, `${name}: the page behind should not scroll`);
+      if (vp.name === "phone") {
+        check(Math.abs(modal.bottom - modal.vh) < 1 && modal.left === 0, `${name}: should dock to the bottom edge`);
+        if (modal.cellTextShown !== null) check(!modal.cellTextShown, `${name}: action cells should show only icons`);
+      } else {
+        check(modal.width <= maxWidth && modal.bottom < modal.vh, `${name}: should be centred and at most ${maxWidth}px`);
+        if (modal.cellTextShown !== null) check(modal.cellTextShown, `${name}: action cells should show their words`);
+      }
+      await page.screenshot({ path: join(outDir, `${label}-modal-${id}.png`) });
+      await page.keyboard.press("Escape");
+      check(!(await page.evaluate((id) => document.getElementById(id).open, id)), `${name}: Escape did not close it`);
     }
-    await page.screenshot({ path: join(outDir, `${label}-sheet.png`) });
-    await page.keyboard.press("Escape");
-    check(!(await page.evaluate(() => document.getElementById("about").open)), `${label}: Escape did not close the sheet`);
+    const btnRadius = await page.evaluate(() => getComputedStyle(document.querySelector(".su-btn")).borderTopLeftRadius);
+    check(btnRadius === "0px", `${label}: buttons should have square corners, got ${btnRadius}`);
     await page.close();
   }
 }

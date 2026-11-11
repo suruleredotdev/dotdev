@@ -47,12 +47,13 @@
       <div class="su-panel">
         <span class="su-label">surulere.dev · UI v1</span>
         <h1>One shell for every tool</h1>
-        <p>Top bar, media cards, sheet and the reveal/cover page layout, from two
+        <p>Top bar, media cards, modal and the reveal/cover page layout, from two
           stylesheets. The pattern behind this panel is one fixed layer; the
           header, this hero and the footer window reveal it, and content
           sections cover it.</p>
         <div class="demo-row" style="margin:0">
-          <button class="su-btn su-btn--primary" type="button" data-su-open="about">Open sheet</button>
+          <button class="su-btn su-btn--primary" type="button" data-su-open="about">Open modal</button>
+          <button class="su-btn" type="button" data-su-open="detail">Large modal</button>
           <a class="su-btn" href="#cards">Browse cards</a>
         </div>
       </div>
@@ -68,7 +69,7 @@
           <li><a class="su-card" href="#"><span class="su-card__media"><img src="../../map-tool-preview.png" alt="" loading="lazy" /></span><span class="su-card__bar"><span class="su-card__title">Atlas: African states through time</span><span class="su-card__meta">Tool · Historiography</span></span></a></li>
           <li><a class="su-card" href="#"><span class="su-card__media"><img src="../../archive-3d-preview.jpeg" alt="" loading="lazy" /></span><span class="su-card__bar"><span class="su-card__title">Archive 3D</span><span class="su-card__meta">Tool · Sensemaking</span></span></a></li>
           <li><a class="su-card" href="#"><span class="su-card__media"><img src="../../africa_fintech.jpg" alt="" loading="lazy" /></span><span class="su-card__bar"><span class="su-card__title">A long title that has to wrap onto a second line and then clamp before it runs into a third</span><span class="su-card__meta">Essay · Technology · 2024</span></span></a></li>
-          <li><button class="su-card su-card--contain" type="button" data-su-open="about"><span class="su-card__media"><img src="../../suruleredotdev.png" alt="" loading="lazy" /></span><span class="su-card__bar"><span class="su-card__title">Contain variant (museum objects)</span><span class="su-card__meta">Opens the sheet</span></span></button></li>
+          <li><button class="su-card su-card--contain" type="button" data-su-open="detail"><span class="su-card__media"><img src="../../suruleredotdev.png" alt="" loading="lazy" /></span><span class="su-card__bar"><span class="su-card__title">Contain variant (museum objects)</span><span class="su-card__meta">Opens the large modal</span></span></button></li>
           <li><a class="su-card" href="#"><span class="su-card__media"></span><span class="su-card__bar"><span class="su-card__title">No image yet</span><span class="su-card__meta">Placeholder ground</span></span></a></li>
         </ul>
       </div>
@@ -107,22 +108,38 @@
     <div class="su-container">surulere.dev · essays, tools and archives on African futures</div>
   </footer>
 
-  <dialog class="su-sheet" id="about" aria-labelledby="about-title">
-    <form method="dialog" class="su-sheet__head">
-      <h2 class="su-sheet__title" id="about-title">About this atlas</h2>
-      <button class="su-sheet__close" value="close" aria-label="Close">×</button>
+  <dialog class="su-modal" id="about" aria-labelledby="about-title">
+    <form method="dialog" class="su-modal__head">
+      <h2 class="su-modal__title" id="about-title">About this atlas</h2>
+      <button class="su-modal__cell su-modal__close" value="close" aria-label="Close" title="Close (Esc)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </form>
-    <div class="su-sheet__body">
-      <p>A centred modal on desktop and a bottom sheet on phone. It is a native
-        <code>&lt;dialog&gt;</code>, so focus is trapped and Escape closes it
-        without any script; <code>su.js</code> adds backdrop-click to close.</p>
-      <p>Long content scrolls inside the body while the head stays put.</p>
+    <div class="su-modal__body">
+      <p>Centred on desktop and docked to the bottom on phone, with square
+        corners. It is a native <code>&lt;dialog&gt;</code>, so focus is trapped
+        and Escape closes it without any script; <code>su.js</code> adds
+        backdrop-click to close, and the page behind doesn't scroll.</p>
       <ul class="su-pills"><li><span class="su-pill" aria-current="true">Historiography</span></li><li><span class="su-pill">1350–1900</span></li></ul>
     </div>
-    <form method="dialog" class="su-sheet__foot">
+    <form method="dialog" class="su-modal__foot">
       <button class="su-btn" value="cancel">Cancel</button>
       <button class="su-btn su-btn--primary" value="ok">Done</button>
     </form>
+  </dialog>
+
+  <dialog class="su-modal su-modal--lg" id="detail" aria-labelledby="detail-title">
+    <form method="dialog" class="su-modal__head">
+      <h2 class="su-modal__title" id="detail-title">Artifact <span class="su-modal__count">12 / 48</span></h2>
+      <button class="su-modal__cell" type="button" aria-label="Previous">‹ <span class="su-modal__cell-text">Prev</span></button>
+      <button class="su-modal__cell" type="button" aria-label="Next"><span class="su-modal__cell-text">Next</span> ›</button>
+      <button class="su-modal__cell su-modal__close" value="close" aria-label="Close" title="Close (Esc)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </form>
+    <div class="su-modal__body">
+      <img src="../../artifacts-index-preview.png" alt="" style="display:block;width:100%;max-height:60vh;object-fit:contain" />
+      <h2>Large modal with header actions</h2>
+      <p><code>.su-modal--lg</code> is 1200px wide. Action cells sit left of
+        close so they never scroll away; on phones their words hide and only
+        the arrows show.</p>
+    </div>
   </dialog>
 
   <script>

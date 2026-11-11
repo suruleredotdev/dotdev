@@ -14,6 +14,6 @@ export { TopBar } from "./TopBar";
 export type { TopBarItem, TopBarProps } from "./TopBar";
 export { MediaCard, MediaCards } from "./MediaCard";
 export type { MediaCardProps } from "./MediaCard";
-export { Sheet } from "./Sheet";
-export type { SheetProps } from "./Sheet";
+export { Modal } from "./Modal";
+export type { ModalProps } from "./Modal";
 export { Page, Window, Cover, Container, Footer, Panel, Label } from "./Page";

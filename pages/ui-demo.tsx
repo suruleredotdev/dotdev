@@ -5,7 +5,7 @@ import {
   TopBar,
   MediaCard,
   MediaCards,
-  Sheet,
+  Modal,
   Page,
   Window,
   Cover,
@@ -30,7 +30,10 @@ const tools = [
 
 export default function UiDemo() {
   const [view, setView] = React.useState<"cards" | "about">("cards");
-  const [sheetOpen, setSheetOpen] = React.useState(false);
+  const [aboutOpen, setAboutOpen] = React.useState(false);
+  // Index of the tool open in the large modal, or null.
+  const [detail, setDetail] = React.useState<number | null>(null);
+  const step = (by: number) => setDetail((i) => (i === null ? i : (i + by + tools.length) % tools.length));
 
   return (
     <>
@@ -48,7 +51,7 @@ export default function UiDemo() {
           navLabel="Views"
           items={[
             { label: "Cards", current: view === "cards", onClick: () => setView("cards") },
-            { label: "About", onClick: () => setSheetOpen(true), track: "about" },
+            { label: "About", onClick: () => setAboutOpen(true), track: "about" },
             { label: "Home", href: "/" },
           ]}
         />
@@ -58,8 +61,8 @@ export default function UiDemo() {
               <Label>surulere.dev · UI v1 · React</Label>
               <h1>Same classes, from React</h1>
               <p>These wrappers render the markup in demo.html. The CSS is shared; React only owns state.</p>
-              <button className="su-btn su-btn--primary" type="button" onClick={() => setSheetOpen(true)}>
-                Open sheet
+              <button className="su-btn su-btn--primary" type="button" onClick={() => setAboutOpen(true)}>
+                Open modal
               </button>
             </Panel>
           </Container>
@@ -69,25 +72,60 @@ export default function UiDemo() {
             <Label as="h2">Tools and essays</Label>
             <MediaCards>
               {tools.map((t) => (
-                <MediaCard key={t.title} {...t} />
+                <MediaCard
+                  key={t.title}
+                  title={t.title}
+                  meta={t.meta}
+                  image={t.image}
+                  onClick={() => setDetail(tools.indexOf(t))}
+                />
               ))}
-              <MediaCard title="Contain variant" meta="Opens the sheet" image={`${base}/suruleredotdev.png`} fit="contain" onClick={() => setSheetOpen(true)} />
+              <MediaCard title="Contain variant" meta="Opens the modal" image={`${base}/suruleredotdev.png`} fit="contain" onClick={() => setAboutOpen(true)} />
             </MediaCards>
           </Container>
         </Cover>
         <Footer>surulere.dev · essays, tools and archives on African futures</Footer>
-        <Sheet
-          open={sheetOpen}
-          onClose={() => setSheetOpen(false)}
+        <Modal
+          open={aboutOpen}
+          onClose={() => setAboutOpen(false)}
           title="About"
           footer={
-            <button className="su-btn su-btn--primary" type="button" onClick={() => setSheetOpen(false)}>
+            <button className="su-btn su-btn--primary" type="button" onClick={() => setAboutOpen(false)}>
               Done
             </button>
           }
         >
-          <p>A native dialog: modal on desktop, bottom sheet on phone.</p>
-        </Sheet>
+          <p>A native dialog: centred on desktop, docked to the bottom on phone.</p>
+        </Modal>
+        {detail !== null ? (
+          <Modal
+            size="lg"
+            onClose={() => setDetail(null)}
+            scrollKey={detail}
+            title={
+              <>
+                Tool <span className="su-modal__count">{detail + 1} / {tools.length}</span>
+              </>
+            }
+            actions={
+              <>
+                <button type="button" className="su-modal__cell" onClick={() => step(-1)} aria-label="Previous">
+                  ‹ <span className="su-modal__cell-text">Prev</span>
+                </button>
+                <button type="button" className="su-modal__cell" onClick={() => step(1)} aria-label="Next">
+                  <span className="su-modal__cell-text">Next</span> ›
+                </button>
+              </>
+            }
+          >
+            <img src={tools[detail].image} alt="" style={{ display: "block", width: "100%", maxHeight: "60vh", objectFit: "contain" }} />
+            <h2>{tools[detail].title}</h2>
+            <p>{tools[detail].meta}</p>
+            <a className="su-btn" href={tools[detail].href}>
+              Open
+            </a>
+          </Modal>
+        ) : null}
       </Page>
     </>
   );

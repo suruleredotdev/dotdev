@@ -70,7 +70,9 @@
       {
         "name": "Permaculture",
         "channel": "permaculture",
-        "links": []
+        "links": [
+          { "label": "Nigeria Agriculture", "url": "https://surulere.dev/nigeria-agriculture/" }
+        ]
       },
       {
         "name": "Technology",
@@ -78,6 +80,8 @@
         "links": [
           { "label": "Indexing African Artifacts", "url": "https://suruleredotdev.substack.com/p/indexing-african-artifacts" },
           { "label": "Archiving with Are.na", "url": "https://suruleredotdev.substack.com/p/archiving-with-arena" },
+          { "label": "Naira Stablecoins", "url": "https://surulere.dev/naira-stablecoins/" },
+          { "label": "Blockchain In Africa", "url": "https://surulere.dev/blockchain-in-africa/" },
           { "label": "African Artifacts Index", "url": "https://artifacts-index.surulere.dev" }
         ]
       }

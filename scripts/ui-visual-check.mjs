@@ -92,7 +92,7 @@ for (const scheme of ["light", "dark"]) {
       const gap = (id) => parseFloat(getComputedStyle(document.getElementById(id)).columnGap);
       return { spaced: gap("cards-spaced"), flush: gap("cards-flush") };
     });
-    const wantGap = vp.name === "phone" ? 8 : 12;
+    const wantGap = vp.name === "phone" ? 1 : 12;
     check(gaps.spaced === wantGap, `${label}: cards should sit ${wantGap}px apart, got ${gaps.spaced}px`);
     check(gaps.flush === 1, `${label}: flush cards should sit a hairline apart, got ${gaps.flush}px`);
 

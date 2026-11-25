@@ -75,8 +75,8 @@ export function MediaCard({
 }
 
 /**
- * The card grid: tiles a small gap apart (8px on phones, 12px wider).
- * `flush` closes the gap to a hairline for dense galleries.
+ * The card grid: tiles flush (a hairline apart) on phones, 12px apart from
+ * 600px up. `flush` keeps the hairline gap at every width, for dense galleries.
  * Children are MediaCards; each is wrapped in an <li>.
  */
 export function MediaCards({

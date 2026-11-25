@@ -10,7 +10,7 @@
  *   .su-container         max width + responsive side gutter
  *   .su-topbar            logo / Tool name / segmented bar (.su-seg)
  *   .su-cards, .su-card   media cards: image first, title + meta bar below;
- *                         spaced by default, .su-cards--flush for hairline tiles
+ *                         flush on phones, spaced from 600px; --flush at all widths
  *   .su-modal             <dialog>: centred on desktop, docked to the bottom on phone
  *   .su-btn, .su-pill     dashed = available, solid = selected
  *   .su-label             small uppercase section label
@@ -224,15 +224,16 @@
 }
 
 /* ── Media cards ─────────────────────────────────────────────────────── */
-/* Tiles sit a small gap apart, each in its own 1px ring, so a grid of
+/* On phones tiles sit flush, a hairline apart, so small screens keep as
+   much image as possible. From 600px up they sit 12px apart, so a grid of
    cards spaces like the other groups on the page (pills, buttons, panels).
-   The ring is a box-shadow, so a part-filled last row leaves no stray lines.
-   .su-cards--flush closes the gap to a hairline: the rings meet and the
-   tiles read as one sheet, for dense galleries. */
+   Each tile draws its own 1px ring (a box-shadow), so a part-filled last
+   row leaves no stray lines. .su-cards--flush keeps the hairline gap at
+   every width, for dense galleries. Same as the Artifacts Index grid. */
 
 .su-cards {
   --su-card-min: 150px;
-  --su-card-gap: 8px;
+  --su-card-gap: var(--su-hair);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--su-card-min)), 1fr));
   gap: var(--su-card-gap);

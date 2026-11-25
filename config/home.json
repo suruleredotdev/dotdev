@@ -1,0 +1,38 @@
+{
+  "hero": {
+    "tagline": "A space for critical thinking on African future",
+    "description": "Essays and visualizations to help us think critically about our ever-changing reality in the 2020s and build a better future for ourselves."
+  },
+  "essays": {
+    "title": "ESSAYS",
+    "substackLinkLabel": "Read on Substack"
+  },
+  "tools": {
+    "title": "TOOLS",
+    "items": [
+      {
+        "title": "African Artifacts Index",
+        "url": "https://artifacts-index.surulere.dev",
+        "image": "/artifacts-index-preview.png",
+        "description": "Cross-cultural index of museum collections for discovery and comparative analysis"
+      },
+      {
+        "title": "Archive 3D",
+        "url": "https://archive-3d.surulere.dev",
+        "image": "/archive-3d-preview.jpeg",
+        "description": "Visualize and explore vector-similar archives in 3D"
+      },
+      {
+        "title": "Map Tool",
+        "url": "https://map-tool.surulere.dev",
+        "image": "/map-tool-preview.png",
+        "description": "Simple tool to view and share maps on the web."
+      }
+    ]
+  },
+  "archives": {
+    "title": "ARCHIVES",
+    "intro": "Preview curated references on our research areas. Expand each section or click the link to view the full channel.",
+    "maxChannels": 10
+  }
+}

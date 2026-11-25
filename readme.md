@@ -58,6 +58,12 @@ In order to find your Notion workspace ID (optional), just load any of your site
 
 I recommend setting up a collection on your home page that contains all of your articles / projects / content. There are no structural constraints on your Notion workspace, however, so feel free to add content as you normally would in Notion.
 
+## Home Page Copy
+
+Everything on the home page that doesn't come from Notion, Substack or Are.na lives in [`config/home.json`](./config/home.json): the tagline and intro, section titles and labels, the tool cards, and the archive settings. Edit the file and rebuild (`npm run dev` picks changes up on reload).
+
+The build validates it (`lib/home-config.ts`) and fails with a list of every bad field, for example `tools.items[2].url should start with https://`, so a typo can't ship as a broken page. Tool images are paths under `public/`.
+
 ## Content Snapshot
 
 Both Notion's private `api/v3` and Substack's public API sit behind Cloudflare,

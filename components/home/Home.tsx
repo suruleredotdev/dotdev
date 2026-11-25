@@ -373,14 +373,14 @@ export function Tools() {
         <MediaCards>
           {tools.map((t) => (
             <MediaCard
-              key={t.code}
+              key={t.title}
               href={t.url}
               newTab
               ratio="wide"
               image={asset(t.image)}
               imageAlt={t.alt}
               title={t.title}
-              meta={`${t.code} · ${areaTitle(t.area)} ↗`}
+              meta={`${areaTitle(t.area)} ↗`}
               description={t.description}
               data-track="tool_open"
             />

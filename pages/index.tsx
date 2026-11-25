@@ -35,13 +35,20 @@ export const getStaticProps = async () => {
     );
     const notionPosts: HomeEssay[] = (getSitePosts({ recordMap: (notionProps as any).recordMap }) || [])
       .filter((post: any) => post.public == true && pathForId[post.id])
-      .map((post: any) => ({
-        id: post.id,
-        title: post.title,
-        href: `${base}/${pathForId[post.id]}`,
-        external: false,
-        published: post.published,
-      }));
+      .map((post: any) => {
+        // Paths can carry the page id ("nigeria-agriculture-3996a2a9…"); the
+        // mapping uses the readable part.
+        const area = essayAreas[pathForId[post.id].replace(/-[0-9a-f]{32}$/, "")];
+        return {
+          id: post.id,
+          // Notion titles are rich text: [["Title", …decorations]]
+          title: Array.isArray(post.title) ? post.title.map((part: any) => part[0]).join("") : String(post.title || ""),
+          href: `${base}/${pathForId[post.id]}`,
+          external: false,
+          published: post.published,
+          ...(area ? { area } : {}),
+        };
+      });
     const substack: HomeEssay[] = substackEssays.map((e) => {
       const slug = e.url.split("/p/")[1]?.replace(/[/?#].*$/, "") || "";
       const area = essayAreas[slug];

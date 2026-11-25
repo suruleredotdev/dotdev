@@ -81,7 +81,11 @@ export const areas: Area[] = [
   },
 ];
 
-/** Substack post slug → research area. A first guess from the design review; edit freely. */
+/**
+ * Essay → research area, keyed by the Substack post slug or, for posts on
+ * this site, the Notion page path. A first guess from the design review;
+ * edit freely.
+ */
 export const essayAreas: Record<string, AreaKey> = {
   "how-we-understanding-archives-in": "sensemaking",
   "african-symbolism-inquiry": "sensemaking",
@@ -90,13 +94,14 @@ export const essayAreas: Record<string, AreaKey> = {
   "on-yoruba-art-as-historic-storytelling": "historiography",
   "indexing-african-artifacts": "technology",
   "archiving-with-arena": "technology",
+  // Notion posts on surulere.dev
+  "nigeria-agriculture": "permaculture",
 };
 
 export const areaTitle = (key?: AreaKey) => areas.find((a) => a.key === key)?.title;
 
 export const tools = [
   {
-    code: "T.01",
     area: "technology" as AreaKey,
     title: "African Artifacts Index",
     url: "https://artifacts-index.surulere.dev",
@@ -105,7 +110,6 @@ export const tools = [
     description: "Cross-cultural index of museum collections for discovery and comparative analysis.",
   },
   {
-    code: "T.02",
     area: "technology" as AreaKey,
     title: "Archive 3D",
     url: "https://archive-3d.surulere.dev",
@@ -114,7 +118,6 @@ export const tools = [
     description: "Visualize and explore vector-similar archives in 3D.",
   },
   {
-    code: "T.03",
     area: "technology" as AreaKey,
     title: "Map Tool",
     url: "https://map-tool.surulere.dev",

@@ -74,14 +74,19 @@ export function MediaCard({
   );
 }
 
-/** The flush grid. Children are MediaCards; each is wrapped in an <li>. */
+/**
+ * The card grid: tiles a small gap apart (8px on phones, 12px wider).
+ * `flush` closes the gap to a hairline for dense galleries.
+ * Children are MediaCards; each is wrapped in an <li>.
+ */
 export function MediaCards({
   children,
   className,
+  flush = false,
   ...rest
-}: React.HTMLAttributes<HTMLUListElement>) {
+}: React.HTMLAttributes<HTMLUListElement> & { flush?: boolean }) {
   return (
-    <ul {...rest} className={["su-cards", className].filter(Boolean).join(" ")}>
+    <ul {...rest} className={["su-cards", flush && "su-cards--flush", className].filter(Boolean).join(" ")}>
       {React.Children.map(children, (child) => (child == null ? null : <li>{child}</li>))}
     </ul>
   );

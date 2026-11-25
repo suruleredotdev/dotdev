@@ -9,7 +9,8 @@
  *   .su-cover             a section that covers it with solid ground (content)
  *   .su-container         max width + responsive side gutter
  *   .su-topbar            logo / Tool name / segmented bar (.su-seg)
- *   .su-cards, .su-card   media cards: image first, title + meta bar below
+ *   .su-cards, .su-card   media cards: image first, title + meta bar below;
+ *                         spaced by default, .su-cards--flush for hairline tiles
  *   .su-modal             <dialog>: centred on desktop, docked to the bottom on phone
  *   .su-btn, .su-pill     dashed = available, solid = selected
  *   .su-label             small uppercase section label
@@ -223,20 +224,24 @@
 }
 
 /* ── Media cards ─────────────────────────────────────────────────────── */
-/* Tiles sit flush with hairline gaps: each card draws a 1px ring and the
-   grid gap is 1px, so the rings meet. Unlike a coloured grid background,
-   a part-filled last row leaves no stray lines. */
+/* Tiles sit a small gap apart, each in its own 1px ring, so a grid of
+   cards spaces like the other groups on the page (pills, buttons, panels).
+   The ring is a box-shadow, so a part-filled last row leaves no stray lines.
+   .su-cards--flush closes the gap to a hairline: the rings meet and the
+   tiles read as one sheet, for dense galleries. */
 
 .su-cards {
   --su-card-min: 150px;
+  --su-card-gap: 8px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--su-card-min)), 1fr));
-  gap: var(--su-hair);
+  gap: var(--su-card-gap);
   margin: 0;
   padding: var(--su-hair);
   list-style: none;
 }
-@media (min-width: 600px) { .su-cards { --su-card-min: 200px; } }
+.su-cards--flush { --su-card-gap: var(--su-hair); }
+@media (min-width: 600px) { .su-cards { --su-card-min: 200px; } .su-cards:not(.su-cards--flush) { --su-card-gap: 12px; } }
 @media (min-width: 1024px) { .su-cards { --su-card-min: 230px; } }
 .su-cards > li { display: contents; }
 

@@ -88,6 +88,14 @@ for (const scheme of ["light", "dark"]) {
       check(forcedTokens[t] === m.tokens[t], `${label}: ${t} is ${m.tokens[t]} from the OS but ${forcedTokens[t]} when forced`);
     }
 
+    const gaps = await page.evaluate(() => {
+      const gap = (id) => parseFloat(getComputedStyle(document.getElementById(id)).columnGap);
+      return { spaced: gap("cards-spaced"), flush: gap("cards-flush") };
+    });
+    const wantGap = vp.name === "phone" ? 8 : 12;
+    check(gaps.spaced === wantGap, `${label}: cards should sit ${wantGap}px apart, got ${gaps.spaced}px`);
+    check(gaps.flush === 1, `${label}: flush cards should sit a hairline apart, got ${gaps.flush}px`);
+
     await page.screenshot({ path: join(outDir, `${label}.png`), fullPage: true });
 
     // Both modals: medium (720px) and large (1200px, with header action cells).

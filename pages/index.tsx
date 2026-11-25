@@ -11,6 +11,7 @@ import { useDarkMode } from "lib/use-dark-mode";
 import { mapPageUrl } from "lib/map-page-url";
 import { getLayoutProps } from "lib/get-layout-props";
 import { getSiteMap } from "lib/get-site-map";
+import { getHomeConfig, HomeConfig } from "lib/home-config";
 
 import { LayoutDefault } from "components/LayoutDefault";
 import { Footer } from "components/Footer";
@@ -44,6 +45,7 @@ export const getStaticProps = async () => {
       siteMap,
       substackHandle,
       substackEssays,
+      home: getHomeConfig(),
     };
 
     return { props, revalidate: 3600 }; // Revalidate every hour for fresh Substack content
@@ -56,22 +58,10 @@ export const getStaticProps = async () => {
   }
 };
 
-const homePageText = [
-  {
-    tagline: "A space for critical thinking on African future",
-    description:
-      "Essays and visualizations to help us think critically about our ever-changing reality in the 2020s and build a better future for  ourselves.",
-  },
-  {
-    tagline: "",
-    description: "",
-  },
-];
-const textVersion = 0;
-
 interface HomePageContentProps extends types.PageProps {
   substackHandle?: string;
   substackEssays?: SubstackEssay[];
+  home: HomeConfig;
 }
 
 export const HomePageContent: React.FC<HomePageContentProps> = ({
@@ -82,6 +72,7 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
   siteMap,
   substackHandle = "suruleredotdev",
   substackEssays = [],
+  home,
 }) => {
   // TODO: render from root page block
   const posts = getSitePosts({
@@ -111,14 +102,12 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
   return (
     <div id="content" className={classes.content}>
       <div id="about pb5">
-        <p className={classes.tagline}>{homePageText[textVersion].tagline}</p>
+        <p className={classes.tagline}>{home.hero.tagline}</p>
 
-        <p className={classes.description}>
-          {homePageText[textVersion].description}
-        </p>
+        <p className={classes.description}>{home.hero.description}</p>
       </div>
 
-      <b className={classes.postsTitle}>ESSAYS</b>
+      <b className={classes.postsTitle}>{home.essays.title}</b>
       <a
         href={`https://${substackHandle}.substack.com/`}
         target="_blank"
@@ -126,7 +115,7 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
         className={classes.postDescription}
         style={{ display: "inline-block", marginBottom: "1rem", opacity: 0.7, marginLeft: "10px" }}
       >
-        Read on Substack <ExternalLinkIcon />
+        {home.essays.substackLinkLabel} <ExternalLinkIcon />
       </a>
         <>
           {allItems.length > 0 && (
@@ -176,28 +165,9 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
         </>
       <br />
 
-      <b className={classes.postsTitle}>TOOLS</b>
+      <b className={classes.postsTitle}>{home.tools.title}</b>
       <ul className={"f5 pl2 flex flex-row gap-2 flex-wrap w-100"}>
-        {[
-          {
-            title: "African Artifacts Index",
-            url: "https://artifacts-index.surulere.dev",
-            image: "/artifacts-index-preview.png",
-            description: "Cross-cultural index of museum collections for discovery and comparative analysis",
-          },
-          {
-            title: "Archive 3D",
-            url: "https://archive-3d.surulere.dev",
-            image: "/archive-3d-preview.jpeg",
-            description: "Visualize and explore vector-similar archives in 3D",
-          },
-          {
-            title: "Map Tool",
-            url: "https://map-tool.surulere.dev",
-            image: "/map-tool-preview.png",
-            description: "Simple tool to view and share maps on the web.",
-          },
-        ].map((tool, i) => (
+        {home.tools.items.map((tool, i) => (
           <div
             key={i}
             className={`pa1 flex flex-column w-50-ns w-100 mb1 mt1 pr4-l`}
@@ -229,11 +199,8 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
       </ul>
       <br />
 
-      <b className={classes.postsTitle}>ARCHIVES</b>
-      <p className={classes.postDescription}>
-        Preview curated references on our research areas. Expand each section or
-        click the link to view the full channel.
-      </p>
+      <b className={classes.postsTitle}>{home.archives.title}</b>
+      <p className={classes.postDescription}>{home.archives.intro}</p>
       <ul className={"f5 pl2 flex flex-column gap-2"}>
         {/* {JSON.stringify((new Map(channels.map(channel => [channel.title, channel])).values().toArray())
           ?.slice(0, 10), null, 2) */}
@@ -242,7 +209,7 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
             channels.map((channel) => [channel.title, channel])
           ).values(),
         ]
-          .slice(0, 10)
+          .slice(0, home.archives.maxChannels)
           ?.filter(
             (channel) =>
               !!channel &&
@@ -269,6 +236,7 @@ interface IndexPageProps {
   siteMap: any;
   substackHandle?: string;
   substackEssays?: SubstackEssay[];
+  home: HomeConfig;
 }
 
 const IndexPage: React.FC<IndexPageProps> = (props) => {
@@ -281,6 +249,7 @@ const IndexPage: React.FC<IndexPageProps> = (props) => {
     siteMap,
     substackHandle,
     substackEssays,
+    home,
   } = props;
 
   const { isDarkMode } = useDarkMode();
@@ -319,6 +288,7 @@ const IndexPage: React.FC<IndexPageProps> = (props) => {
           channels={arenaChannels}
           substackHandle={substackHandle}
           substackEssays={substackEssays}
+          home={home}
         ></HomePageContent>
         <Footer page={undefined} isBlogPost={isBlogPost}></Footer>
       </NotionContextProvider>

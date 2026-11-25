@@ -1,0 +1,322 @@
+/* Homepage-only layout on top of the shared su-* library (public/ui/v1). */
+
+/* The site's older global rules draw a dashed underline on every link under
+   .LIGHT/.DARK; the homepage styles its links itself. */
+.home a {
+  border-bottom: 0;
+}
+
+/* ── Hero: intro panel + featured carousel ───────────────────────────── */
+
+.heroGrid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 24px;
+}
+.intro {
+  flex: 1 1 420px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px;
+}
+.intro h1 {
+  margin: 0;
+  font-size: clamp(1.75rem, 3.2vw + 0.75rem, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.intro p {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.eyebrow {
+  color: var(--su-muted);
+  font-family: var(--su-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.actions :global(.su-btn) {
+  min-height: 44px;
+  padding: 0 18px;
+}
+
+.carousel {
+  flex: 1 1 340px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--su-ground);
+  border: var(--su-hair) solid var(--su-line-strong);
+}
+.carouselHead {
+  display: flex;
+  align-items: stretch;
+  min-height: 48px;
+  padding-left: 20px;
+  border-bottom: var(--su-hair) solid var(--su-line);
+}
+.carouselHead .eyebrow {
+  flex: 1;
+  align-self: center;
+}
+.stepBtn {
+  appearance: none;
+  width: 48px;
+  margin: 0;
+  border: 0;
+  border-left: var(--su-hair) solid var(--su-line);
+  background: transparent;
+  color: var(--su-text);
+  font: inherit;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.stepBtn:hover {
+  color: var(--su-accent);
+}
+.stepBtn:focus-visible {
+  outline: 2px solid var(--su-accent);
+  outline-offset: -2px;
+}
+.slide {
+  flex: 1;
+  min-height: 200px;
+  display: flex;
+  gap: 16px;
+  padding: 24px 20px;
+  color: inherit;
+  text-decoration: none;
+}
+.slideText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+}
+.slideTitle {
+  color: var(--su-ink);
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+.slide:hover .slideTitle {
+  color: var(--su-accent);
+}
+.slideDesc {
+  margin: 0;
+  font-size: var(--su-fs-small);
+  line-height: 1.5;
+}
+.slideCta {
+  color: var(--su-text);
+  font-family: var(--su-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.slideImg {
+  flex: 0 0 112px;
+  width: 112px;
+  object-fit: cover;
+  object-position: top;
+  border: var(--su-hair) solid var(--su-line);
+}
+.dots {
+  display: flex;
+  gap: 4px;
+  padding: 0 20px 16px;
+}
+.dot {
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.dot::before {
+  content: "";
+  display: block;
+  height: 3px;
+  margin: 10px 0;
+  background: var(--su-line-strong);
+  opacity: 0.4;
+}
+.dot[aria-current="true"]::before {
+  background: var(--su-accent);
+  opacity: 1;
+}
+.dot:focus-visible {
+  outline: 2px solid var(--su-accent);
+  outline-offset: 0;
+}
+
+/* ── Sections ────────────────────────────────────────────────────────── */
+
+.section {
+  padding-block: 48px;
+}
+.section:first-of-type {
+  padding-top: 56px;
+}
+.lede {
+  margin: 0 0 24px;
+  max-width: 66ch;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+/* ── Research areas ──────────────────────────────────────────────────── */
+
+.areas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+  align-items: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.area {
+  display: flex;
+  flex-direction: column;
+  border: var(--su-hair) solid var(--su-line);
+}
+.areaHead {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 20px 14px;
+  border-bottom: var(--su-hair) solid var(--su-line);
+}
+.areaMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--su-muted);
+  font-family: var(--su-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.areaTitle {
+  margin: 2px 0 0;
+  color: var(--su-ink);
+  font-size: 1.3125rem;
+  font-weight: 600;
+}
+.areaSub {
+  color: var(--su-muted);
+  font-size: var(--su-fs-small);
+}
+.areaChannel {
+  margin-top: 4px;
+  color: var(--su-muted);
+  font-family: var(--su-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.areaChannel:hover {
+  color: var(--su-accent);
+}
+.areaLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 16px 20px;
+  list-style: none;
+}
+.areaLinks li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.areaLinks a {
+  color: var(--su-ink);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  text-decoration: none;
+}
+.areaLinks a:hover {
+  color: var(--su-accent);
+}
+.kind {
+  color: var(--su-muted);
+  font-family: var(--su-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.empty {
+  margin: 0;
+  color: var(--su-muted);
+  font-size: var(--su-fs-small);
+}
+.areaFoot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 20px 20px;
+}
+.blocks {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.blocks a {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: var(--su-hair) dashed var(--su-line-strong);
+  color: var(--su-muted);
+  font-size: 10px;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+}
+.blocks a:hover {
+  border-style: solid;
+  border-color: var(--su-accent);
+}
+.blocks img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.previewBtn {
+  width: 100%;
+  min-height: 44px;
+  font-family: var(--su-mono);
+  font-size: 11px;
+}
+
+/* ── Tools ───────────────────────────────────────────────────────────── */
+
+.toolsSection {
+  padding-bottom: 72px;
+}

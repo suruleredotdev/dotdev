@@ -4,12 +4,16 @@ export type MediaCardProps = {
   title: React.ReactNode;
   /** One short line under the title: kind · area · date, museum · culture … */
   meta?: React.ReactNode;
+  /** A sentence or two under the meta line. */
+  description?: React.ReactNode;
   image?: string;
   imageAlt?: string;
   /** Replace the <img> (e.g. ImageWithPlaceholder in the Artifacts Index). */
   media?: React.ReactNode;
   /** Renders a link when set; a button when only onClick is given. */
   href?: string;
+  /** Open the link in a new tab. */
+  newTab?: boolean;
   onClick?: (event: React.MouseEvent) => void;
   /** "contain" never crops: use it for museum objects. */
   fit?: "cover" | "contain";
@@ -21,10 +25,12 @@ export type MediaCardProps = {
 export function MediaCard({
   title,
   meta,
+  description,
   image,
   imageAlt = "",
   media,
   href,
+  newTab = false,
   onClick,
   fit = "cover",
   ratio = "portrait",
@@ -49,13 +55,20 @@ export function MediaCard({
       <span className="su-card__bar">
         <span className="su-card__title">{title}</span>
         {meta ? <span className="su-card__meta">{meta}</span> : null}
+        {description ? <span className="su-card__desc">{description}</span> : null}
       </span>
     </>
   );
 
   if (href) {
     return (
-      <a {...rest} className={classes} href={href} onClick={onClick}>
+      <a
+        {...rest}
+        className={classes}
+        href={href}
+        onClick={onClick}
+        {...(newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      >
         {body}
       </a>
     );

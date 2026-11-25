@@ -14,6 +14,9 @@
  *   .su-modal             <dialog>: centred on desktop, docked to the bottom on phone
  *   .su-btn, .su-pill     dashed = available, solid = selected
  *   .su-label             small uppercase section label
+ *   .su-section-head      numbered mono section label over a rule, with a link
+ *   .su-rows, .su-row     numbered link rows (essays, posts)
+ *   .su-footer__cols      footer brand line + labelled link groups
  */
 
 /* ── Page ground and pattern ─────────────────────────────────────────── */
@@ -208,9 +211,22 @@
   box-shadow: inset 0 -2px 0 var(--su-accent);
 }
 
-/* Phone: the segmented bar drops to its own full-width row; cells share it. */
+/* Cells after the bar (e.g. a theme toggle). */
+.su-topbar__actions {
+  display: flex;
+  align-items: stretch;
+  border-left: var(--su-hair) solid var(--su-line);
+  background: var(--su-ground);
+}
+.su-topbar__actions .su-seg__cell { padding: 0 12px; }
+
+/* Phone: the segmented bar drops to its own full-width row; cells share it.
+   Actions stay in the first row, at the right. */
 @media (max-width: 599px) {
   .su-topbar { flex-wrap: wrap; }
+  .su-topbar__actions { margin-left: auto; }
+  .su-topbar > .su-seg { order: 1; }
+  .su-seg__cell.su-hide-phone { display: none; }
   .su-topbar__site { flex: 1; }
   .su-seg {
     flex: 1 0 100%;
@@ -501,4 +517,109 @@ html:has(.su-modal[open]) { overflow: hidden; }
 @media (pointer: coarse) {
   .su-btn { min-height: var(--su-touch); }
   .su-pill { min-height: 36px; }
+}
+
+/* ── Section head ────────────────────────────────────────────────────── */
+/* 01  RESEARCH AREAS ··························· ALL CHANNELS ON ARE.NA ↗
+   A number (only when sections are a real sequence), a mono label and an
+   optional link, over a strong rule. */
+
+.su-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 16px;
+  margin: 0 0 16px;
+  padding-bottom: 14px;
+  border-bottom: var(--su-hair) solid var(--su-line-strong);
+  font-family: var(--su-mono);
+}
+.su-section-head__num { font-size: 12px; color: var(--su-muted); }
+.su-section-head__title {
+  margin: 0;
+  color: var(--su-ink);
+  font-family: var(--su-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.su-section-head__link {
+  margin-left: auto;
+  color: var(--su-text);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.su-section-head__link:hover { color: var(--su-accent); }
+
+/* ── Rows ────────────────────────────────────────────────────────────── */
+/* A list of links, one per row: number, title, mono meta. Essays, posts,
+   anything read top to bottom. On phones the meta drops under the title. */
+
+.su-rows { margin: 0; padding: 0; list-style: none; }
+.su-rows > li { border-bottom: var(--su-hair) solid var(--su-line); }
+.su-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 24px;
+  padding: 18px 0;
+  color: inherit;
+  text-decoration: none;
+}
+.su-row__num { flex: none; width: 32px; color: var(--su-muted); font-family: var(--su-mono); font-size: 12px; }
+.su-row__title {
+  flex: 1 1 320px;
+  min-width: 0;
+  color: var(--su-ink);
+  font-size: 1.1875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+.su-row__meta {
+  color: var(--su-muted);
+  font-family: var(--su-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.su-row:hover .su-row__title { color: var(--su-accent); }
+.su-row:focus-visible { outline: 2px solid var(--su-accent); outline-offset: 2px; }
+@media (max-width: 599px) {
+  .su-row { padding: 14px 0; }
+  .su-row__num { width: 24px; }
+  .su-row__title { flex-basis: calc(100% - 48px); font-size: 1.0625rem; }
+  .su-row__meta { padding-left: 48px; }
+}
+
+/* ── Card description ────────────────────────────────────────────────── */
+.su-card__desc {
+  margin-top: 4px;
+  color: var(--su-text);
+  font-size: var(--su-fs-small);
+  line-height: 1.45;
+}
+
+/* ── Footer columns ──────────────────────────────────────────────────── */
+/* SURULERE + one line, then a few labelled link groups. */
+
+.su-footer__cols {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) repeat(auto-fit, minmax(110px, 1fr));
+  gap: 24px 32px;
+  padding-block: 16px 24px;
+  font-size: var(--su-fs-small);
+}
+.su-footer__brand { color: var(--su-ink); font-family: var(--su-mono); font-weight: 600; letter-spacing: 0.16em; }
+.su-footer__brand + p { margin: 8px 0 0; color: var(--su-text); max-width: 36ch; }
+.su-footer__group { display: flex; flex-direction: column; gap: 6px; }
+.su-footer__group > span { color: var(--su-muted); font-family: var(--su-mono); font-size: 11px; letter-spacing: 0.12em; }
+.su-footer__group > a { color: var(--su-text); text-decoration: none; }
+.su-footer__group > a:hover { color: var(--su-accent); }
+@media (max-width: 599px) {
+  .su-footer__cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .su-footer__cols > :first-child { grid-column: 1 / -1; }
 }

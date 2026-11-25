@@ -50,3 +50,36 @@ export function Footer({ children, className, ...rest }: DivProps) {
     </>
   );
 }
+
+/** 01  LABEL ············ LINK ↗ over a strong rule. */
+export function SectionHead({
+  num,
+  title,
+  id,
+  link,
+}: {
+  /** Only when the sections are a real sequence. */
+  num?: string;
+  title: React.ReactNode;
+  /** Id for the heading, to label its section with aria-labelledby. */
+  id?: string;
+  link?: { href: string; label: React.ReactNode; external?: boolean };
+}) {
+  return (
+    <div className="su-section-head">
+      {num ? <span className="su-section-head__num">{num}</span> : null}
+      <h2 className="su-section-head__title" id={id}>
+        {title}
+      </h2>
+      {link ? (
+        <a
+          className="su-section-head__link"
+          href={link.href}
+          {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        >
+          {link.label}
+        </a>
+      ) : null}
+    </div>
+  );
+}

@@ -16,4 +16,4 @@ export { MediaCard, MediaCards } from "./MediaCard";
 export type { MediaCardProps } from "./MediaCard";
 export { Modal } from "./Modal";
 export type { ModalProps } from "./Modal";
-export { Page, Window, Cover, Container, Footer, Panel, Label } from "./Page";
+export { Page, Window, Cover, Container, Footer, Panel, Label, SectionHead } from "./Page";

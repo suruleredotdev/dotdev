@@ -60,7 +60,12 @@ I recommend setting up a collection on your home page that contains all of your 
 
 ## Home Page Copy
 
-Everything on the home page that doesn't come from Notion, Substack or Are.na lives in [`config/home.json`](./config/home.json): the tagline and intro, section titles and labels, the tool cards, and the archive settings. Edit the file and rebuild (`npm run dev` picks changes up on reload).
+Everything on the home page that doesn't come from Notion, Substack or Are.na lives in [`config/home.json`](./config/home.json). Edit the file and rebuild (`npm run dev` picks changes up on reload). It holds:
+
+- **`hero`**: the tagline and intro.
+- **`essays`**: the section title, how many essays show before "Show all" (`previewCount`), and the button labels (`{count}` becomes the number of essays).
+- **`tools`**: the tool cards, in display order.
+- **`archives`**: the research areas. Each `channel` is an Are.na channel slug or title (case ignored). Its newest blocks are previewed (`previewBlocks`, then `expandedBlocks` after "More from each"), and its `links` list the essays and tools in that area. If a channel can't be found at build time, the area still shows, with its links and no previews, and the build logs the channel slugs it did find.
 
 The build validates it (`lib/home-config.ts`) and fails with a list of every bad field, for example `tools.items[2].url should start with https://`, so a typo can't ship as a broken page. Tool images are paths under `public/`.
 

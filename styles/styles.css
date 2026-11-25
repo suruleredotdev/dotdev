@@ -414,10 +414,15 @@ body.DARK {
   padding: 0;
 }
 
+/* Titles often wrap: keep a title's own lines close and put clear space
+   between titles, so each link reads as one item. */
 .home-area-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
   margin: 0;
   padding: 0;
   list-style: none;
   font-size: 0.8rem;
-  line-height: 1.6;
+  line-height: 1.35;
 }

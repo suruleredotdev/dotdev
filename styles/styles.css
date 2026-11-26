@@ -242,6 +242,19 @@ body.DARK {
   border-style: solid;
 }
 
+/* Under an area's previews: small, full width, tied to that area. */
+.home-more--small {
+  width: 100%;
+  min-height: 28px;
+  font-size: 0.65rem;
+}
+
+@media (pointer: coarse) {
+  .home-more--small {
+    min-height: 40px;
+  }
+}
+
 .home-intro {
   margin: 0 0 1rem;
   font-size: 0.8rem;

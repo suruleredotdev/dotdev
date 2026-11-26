@@ -203,110 +203,124 @@ export const ArchivesSection = ({
 }: {
   areas: ResearchArea[];
   config: HomeConfig["archives"];
+}) => (
+  <section id="archives" aria-labelledby="archives-title" className="home-section">
+    <SectionHead id="archives" title={config.title}>
+      <a className="home-head-link" href={config.profileUrl} target="_blank" rel="noopener noreferrer">
+        {config.profileLinkLabel} <ExternalLinkIcon />
+      </a>
+    </SectionHead>
+    <p className="home-intro">{config.intro}</p>
+
+    <ul className="home-grid home-grid--areas">
+      {areas.map((area, i) => (
+        <AreaCard key={i} id={`area-${i}`} area={area} config={config} />
+      ))}
+    </ul>
+  </section>
+);
+
+/** One research area. Its "Show more" sits under its own previews. */
+const AreaCard = ({
+  id,
+  area,
+  config,
+}: {
+  id: string;
+  area: ResearchArea;
+  config: HomeConfig["archives"];
 }) => {
   const [open, setOpen] = React.useState(false);
   const shown = open ? config.expandedBlocks : config.previewBlocks;
-  const hasMore = areas.some(
-    (a) => a.blocks.length > config.previewBlocks
-  );
+  const hasMore = area.blocks.length > config.previewBlocks;
+  const blocksId = `${id}-blocks`;
 
   return (
-    <section id="archives" aria-labelledby="archives-title" className="home-section">
-      <SectionHead id="archives" title={config.title}>
-        <a className="home-head-link" href={config.profileUrl} target="_blank" rel="noopener noreferrer">
-          {config.profileLinkLabel} <ExternalLinkIcon />
-        </a>
-        {hasMore && (
-          <ToggleButton
-            open={open}
-            onToggle={() => setOpen(!open)}
-            closedLabel={config.showMoreLabel}
-            openLabel={config.showFewerLabel}
-            controls="archives-areas"
-          />
+    <li className="home-area">
+      <div className="home-area-head">
+        <h3 className="home-tile-title">{area.name}</h3>
+        {area.subtitle && <span className="home-tile-text">{area.subtitle}</span>}
+        {/* One channel: "See all (N)". Several: one link per channel. */}
+        {area.channels.length === 1 && (
+          <a
+            className="home-meta home-area-channel"
+            href={area.channels[0].url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {fillCount(config.channelLinkLabel, area.channels[0].blockCount)} <ExternalLinkIcon />
+          </a>
         )}
-      </SectionHead>
-      <p className="home-intro">{config.intro}</p>
-
-      <ul id="archives-areas" className="home-grid home-grid--areas">
-        {areas.map((area, i) => (
-          <li key={i} className="home-area">
-            <div className="home-area-head">
-              <h3 className="home-tile-title">{area.name}</h3>
-              {area.subtitle && <span className="home-tile-text">{area.subtitle}</span>}
-              {/* One channel: "See all (N)". Several: one link per channel. */}
-              {area.channels.length === 1 && (
+        {area.channels.length > 1 && (
+          <ul className="home-area-channels">
+            {area.channels.map((ch) => (
+              <li key={ch.url}>
                 <a
                   className="home-meta home-area-channel"
-                  href={area.channels[0].url}
+                  href={ch.url}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {fillCount(config.channelLinkLabel, area.channels[0].blockCount)} <ExternalLinkIcon />
+                  {ch.title}{" "}
+                  {/* The count and arrow stay with the end of the name. */}
+                  <span className="nowrap">
+                    ({ch.blockCount}) <ExternalLinkIcon />
+                  </span>
                 </a>
-              )}
-              {area.channels.length > 1 && (
-                <ul className="home-area-channels">
-                  {area.channels.map((ch) => (
-                    <li key={ch.url}>
-                      <a
-                        className="home-meta home-area-channel"
-                        href={ch.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {ch.title}{" "}
-                        {/* The count and arrow stay with the end of the name. */}
-                        <span className="nowrap">
-                          ({ch.blockCount}) <ExternalLinkIcon />
-                        </span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-            {area.blocks.length > 0 && (
-              <ul className="home-blocks">
-                {area.blocks.slice(0, shown).map((block, j) => (
-                  <li key={block.id}>
-                    {/* The newest block leads, larger; each image carries its
-                        title in a caption strip, so you know what it opens. */}
-                    <a
-                      className={`home-block${j === 0 ? " home-block--lead" : ""}`}
-                      href={block.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {block.image ? (
-                        <>
-                          <img src={block.image} alt="" loading="lazy" />
-                          <span className="home-block-caption">{block.title}</span>
-                        </>
-                      ) : (
-                        <span>{clip(block.title, 60)}</span>
-                      )}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
+      {area.blocks.length > 0 && (
+        <ul className="home-blocks" id={blocksId}>
+          {area.blocks.slice(0, shown).map((block, j) => (
+            <li key={block.id}>
+              {/* The newest block leads, larger; each image carries its
+                  title in a caption strip, so you know what it opens. */}
+              <a
+                className={`home-block${j === 0 ? " home-block--lead" : ""}`}
+                href={block.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {block.image ? (
+                  <>
+                    <img src={block.image} alt="" loading="lazy" />
+                    <span className="home-block-caption">{block.title}</span>
+                  </>
+                ) : (
+                  <span>{clip(block.title, 60)}</span>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+      {hasMore && (
+        <button
+          type="button"
+          className="home-more home-more--small"
+          aria-expanded={open}
+          aria-controls={blocksId}
+          onClick={() => setOpen(!open)}
+        >
+          {open ? `${config.showFewerLabel} ↑` : `${config.showMoreLabel} ↓`}
+        </button>
+      )}
 
-            {area.links.length > 0 && (
-              <ul className="home-area-links">
-                {area.links.map((link, j) => (
-                  <li key={j}>
-                    <a href={link.url} target="_blank" rel="noopener noreferrer">
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-      </ul>
-    </section>
+      {area.links.length > 0 && (
+        <ul className="home-area-links">
+          {area.links.map((link, j) => (
+            <li key={j}>
+              <a href={link.url} target="_blank" rel="noopener noreferrer">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </li>
   );
 };

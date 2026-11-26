@@ -47,11 +47,12 @@
     "channelLinkLabel": "See all ({count})",
     "previewBlocks": 3,
     "expandedBlocks": 7,
-    "showMoreLabel": "More from each",
-    "showFewerLabel": "Fewer",
+    "showMoreLabel": "Show more",
+    "showFewerLabel": "Show less",
     "areas": [
       {
         "name": "Historiography",
+        "subtitle": "Reading how the past is written",
         "channels": [
           "https://www.are.na/suruleredotdev/historiography-kr29u84pivs",
           "https://www.are.na/suruleredotdev/african-empires-states"
@@ -61,7 +62,7 @@
       },
       {
         "name": "Sensemaking",
-        "subtitle": "Knowledge Systems",
+        "subtitle": "Knowledge systems that built and evolve society",
         "channels": [
           "https://www.are.na/suruleredotdev/symbolism-bwuyw96jhpu",
           "https://www.are.na/suruleredotdev/sensemaking-tools"
@@ -72,12 +73,14 @@
       },
       {
         "name": "Permaculture",
+        "subtitle": "Sustainable, resource-efficient ecosystems and agriculture",
         "channel": "https://www.are.na/suruleredotdev/permaculture-gndkdg_ckpc",
         "links": [
         ]
       },
       {
         "name": "Technology",
+        "subtitle": "Computation and engineering tools and execution",
         "channels": [
           "https://www.are.na/suruleredotdev/cloud-computing-c6yrctevufs"
         ],

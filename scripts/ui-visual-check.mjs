@@ -1,0 +1,144 @@
+// Visual check for public/ui/v1.
+//
+//   node scripts/ui-visual-check.mjs [outDir]
+//
+// Serves public/ on a local port, opens ui/v1/demo.html at phone (390px) and
+// desktop (1280px) widths in light and dark, and for each:
+//   - fails if the page scrolls sideways (the usual phone-width breakage)
+//   - fails if the forced-dark tokens drift from the OS-dark tokens
+//   - fails if the top bar or a modal loses its shape (docking, width,
+//     square corners, page scroll lock, icon-only action cells on phone)
+//   - writes a full-page screenshot, plus one per modal open
+// Needs Playwright with Chromium (`npx playwright install chromium` in CI).
+// Screenshots are for a human to look at or diff; the script itself only
+// asserts layout facts, so it doesn't flake on font rendering. (Chromium's
+// full-page capture paints fixed layers once, at the top, so the footer
+// window looks blank in those images; it's fine in a real scroll.)
+
+import { createServer } from "node:http";
+import { readFile, mkdir } from "node:fs/promises";
+import { extname, join, normalize } from "node:path";
+import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
+
+// require() rather than import so a globally installed Playwright resolves too.
+const { chromium } = createRequire(import.meta.url)("playwright");
+
+const root = fileURLToPath(new URL("../public/", import.meta.url));
+const outDir = process.argv[2] || "ui-screens";
+const types = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript",
+  ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".ico": "image/x-icon" };
+
+const server = createServer(async (req, res) => {
+  const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname));
+  try {
+    const body = await readFile(join(root, path));
+    res.writeHead(200, { "content-type": types[extname(path)] || "application/octet-stream" });
+    res.end(body);
+  } catch {
+    res.writeHead(404).end();
+  }
+}).listen(0);
+const base = `http://localhost:${server.address().port}/ui/v1/demo.html`;
+
+const TOKENS = ["--su-ground", "--su-ink", "--su-text", "--su-muted", "--su-line",
+  "--su-line-strong", "--su-accent", "--su-pattern"];
+const widths = [{ name: "phone", width: 390, height: 844 }, { name: "desktop", width: 1280, height: 900 }];
+const failures = [];
+const check = (ok, msg) => { if (!ok) failures.push(msg); };
+
+await mkdir(outDir, { recursive: true });
+const browser = await chromium.launch();
+
+for (const scheme of ["light", "dark"]) {
+  for (const vp of widths) {
+    const label = `${vp.name}-${scheme}`;
+    const page = await browser.newPage({ viewport: vp, colorScheme: scheme });
+    page.on("pageerror", (e) => failures.push(`${label}: page error ${e.message}`));
+    await page.goto(`${base}?frame`, { waitUntil: "networkidle" });
+    // Park the pointer off the top bar so the logo isn't caught mid-hover.
+    await page.mouse.move(vp.width / 2, vp.height - 2);
+
+    const m = await page.evaluate((tokens) => {
+      const doc = document.documentElement;
+      const bar = document.querySelector(".su-topbar").getBoundingClientRect();
+      const seg = document.querySelector(".su-seg").getBoundingClientRect();
+      const css = getComputedStyle(doc);
+      return {
+        overflow: doc.scrollWidth - doc.clientWidth,
+        barTop: bar.top, barHeight: bar.height, segRight: seg.right, segTop: seg.top, vw: doc.clientWidth,
+        tokens: Object.fromEntries(tokens.map((t) => [t, css.getPropertyValue(t).trim()])),
+      };
+    }, TOKENS);
+
+    check(m.overflow <= 0, `${label}: page scrolls sideways by ${m.overflow}px`);
+    check(Math.abs(m.segRight - m.vw) < 1, `${label}: segmented bar doesn't hug the right edge`);
+    if (vp.name === "desktop") check(m.barHeight <= 41, `${label}: top bar is ${m.barHeight}px, want one 40px row`);
+    else check(m.segTop >= 40, `${label}: segmented bar should drop to its own row on phone`);
+
+    // Forced theme must match the OS theme exactly.
+    const forced = await browser.newPage({ viewport: vp, colorScheme: scheme === "dark" ? "light" : "dark" });
+    await forced.goto(`${base}?frame&theme=${scheme}`, { waitUntil: "domcontentloaded" });
+    const forcedTokens = await forced.evaluate((tokens) => {
+      const css = getComputedStyle(document.documentElement);
+      return Object.fromEntries(tokens.map((t) => [t, css.getPropertyValue(t).trim()]));
+    }, TOKENS);
+    await forced.close();
+    for (const t of TOKENS) {
+      check(forcedTokens[t] === m.tokens[t], `${label}: ${t} is ${m.tokens[t]} from the OS but ${forcedTokens[t]} when forced`);
+    }
+
+    const gaps = await page.evaluate(() => {
+      const gap = (id) => parseFloat(getComputedStyle(document.getElementById(id)).columnGap);
+      return { spaced: gap("cards-spaced"), flush: gap("cards-flush") };
+    });
+    const wantGap = vp.name === "phone" ? 1 : 12;
+    check(gaps.spaced === wantGap, `${label}: cards should sit ${wantGap}px apart, got ${gaps.spaced}px`);
+    check(gaps.flush === 1, `${label}: flush cards should sit a hairline apart, got ${gaps.flush}px`);
+
+    await page.screenshot({ path: join(outDir, `${label}.png`), fullPage: true });
+
+    // Both modals: medium (720px) and large (1200px, with header action cells).
+    for (const [id, maxWidth] of [["about", 720], ["detail", 1200]]) {
+      await page.click(`[data-su-open="${id}"]`);
+      const modal = await page.evaluate(async (id) => {
+        const d = document.getElementById(id);
+        await Promise.all(d.getAnimations().map((a) => a.finished));
+        const r = d.getBoundingClientRect();
+        const cellText = d.querySelector(".su-modal__cell-text");
+        return {
+          open: d.open, bottom: r.bottom, left: r.left, width: r.width, vh: innerHeight,
+          radius: getComputedStyle(d).borderTopLeftRadius,
+          pageLocked: getComputedStyle(document.documentElement).overflow === "hidden",
+          cellTextShown: cellText ? cellText.offsetWidth > 0 : null,
+        };
+      }, id);
+      const name = `${label} ${id} modal`;
+      check(modal.open, `${name}: did not open`);
+      check(modal.radius === "0px", `${name}: corners should be square, got ${modal.radius}`);
+      check(modal.pageLocked, `${name}: the page behind should not scroll`);
+      if (vp.name === "phone") {
+        check(Math.abs(modal.bottom - modal.vh) < 1 && modal.left === 0, `${name}: should dock to the bottom edge`);
+        if (modal.cellTextShown !== null) check(!modal.cellTextShown, `${name}: action cells should show only icons`);
+      } else {
+        check(modal.width <= maxWidth && modal.bottom < modal.vh, `${name}: should be centred and at most ${maxWidth}px`);
+        if (modal.cellTextShown !== null) check(modal.cellTextShown, `${name}: action cells should show their words`);
+      }
+      await page.screenshot({ path: join(outDir, `${label}-modal-${id}.png`) });
+      await page.keyboard.press("Escape");
+      check(!(await page.evaluate((id) => document.getElementById(id).open, id)), `${name}: Escape did not close it`);
+    }
+    const btnRadius = await page.evaluate(() => getComputedStyle(document.querySelector(".su-btn")).borderTopLeftRadius);
+    check(btnRadius === "0px", `${label}: buttons should have square corners, got ${btnRadius}`);
+    await page.close();
+  }
+}
+
+await browser.close();
+server.close();
+
+if (failures.length) {
+  console.error(failures.map((f) => `✗ ${f}`).join("\n"));
+  process.exit(1);
+}
+console.log(`✓ ui/v1 demo: ${widths.length * 2} viewports, no overflow, themes in step. Screenshots in ${outDir}/`);

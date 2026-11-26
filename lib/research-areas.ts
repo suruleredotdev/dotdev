@@ -1,4 +1,5 @@
 import Arena from "are.na";
+import fetch from "node-fetch";
 
 import { HomeArea, HomeConfig, HomeLink } from "./home-config";
 import { log } from "./log";
@@ -9,60 +10,133 @@ export interface AreaBlock {
   /** Square-ish thumbnail; null for text blocks. */
   image: string | null;
   url: string;
+  /** ISO time it was added to the channel; orders blocks across channels. */
+  connectedAt: string | null;
+}
+
+export interface AreaChannel {
+  title: string;
+  url: string;
+  blockCount: number;
 }
 
 export interface ResearchArea {
   name: string;
   subtitle: string | null;
   links: HomeLink[];
-  /** The Are.na channel, or null when it wasn't found at build time. */
-  channel: {
-    url: string;
-    blockCount: number;
-    /** Most recent first, up to archives.expandedBlocks. */
-    blocks: AreaBlock[];
-  } | null;
+  /** The channels found at build time; empty when none were. */
+  channels: AreaChannel[];
+  /** Newest across all its channels, up to archives.expandedBlocks. */
+  blocks: AreaBlock[];
 }
 
 /**
- * Joins each configured research area to its Are.na channel, keeping only
+ * Joins each configured research area to its Are.na channels, keeping only
  * what the page shows, so the full channel contents never reach the client.
- * An area whose channel can't be found (no token, or a renamed channel) still
- * renders, with its links and no previews.
+ *
+ * Each channel is a URL, a slug or a title. A URL or slug that isn't among
+ * the account's fetched channels (the account list is one page long) is
+ * fetched by itself from the public API. A channel that still can't be found
+ * is skipped and logged; the area renders with whatever was found.
  */
-export function buildResearchAreas(
+export async function buildResearchAreas(
   channels: Arena.Channel[],
   archives: HomeConfig["archives"]
-): ResearchArea[] {
-  return archives.areas.map((area) => {
-    const channel = findChannel(channels, area);
-    if (!channel && channels.length) {
-      log("ERROR", "research area has no matching Are.na channel", {
-        area: area.name,
-        channel: area.channel,
-        available: channels.map((c) => c.slug),
-      });
-    }
-    return {
-      name: area.name,
-      subtitle: area.subtitle ?? null,
-      links: area.links,
-      channel: channel
-        ? {
-            url: `https://www.are.na/${channel.user?.slug}/${channel.slug}`,
-            blockCount: channel.length ?? channel.contents?.length ?? 0,
-            blocks: recentBlocks(channel, archives.expandedBlocks),
+): Promise<ResearchArea[]> {
+  return Promise.all(
+    archives.areas.map(async (area) => {
+      const found = await Promise.all(
+        area.channels.map(async (value) => {
+          const ref = parseChannelRef(value);
+          const channel =
+            findChannel(channels, ref) ||
+            (ref.slug ? await fetchChannel(ref.slug, archives.expandedBlocks) : null);
+          if (!channel) {
+            log("ERROR", "research area channel not found on Are.na", {
+              area: area.name,
+              channel: value,
+              available: channels.map((c) => c.slug),
+            });
           }
-        : null,
-    };
-  });
+          return channel ? { ref, channel } : null;
+        })
+      );
+      const hits = found.filter(Boolean) as { ref: ChannelRef; channel: Arena.Channel }[];
+      const seen = new Set<number>();
+      const blocks = hits
+        .flatMap(({ channel }) => recentBlocks(channel, archives.expandedBlocks))
+        .sort((a, b) => time(b.connectedAt) - time(a.connectedAt))
+        .filter((b) => !seen.has(b.id) && seen.add(b.id))
+        .slice(0, archives.expandedBlocks);
+      return {
+        name: area.name,
+        subtitle: area.subtitle ?? null,
+        links: area.links,
+        channels: hits.map(({ ref, channel }) => ({
+          title: channel.title,
+          // A URL in the config is used as written.
+          url: ref.url || `https://www.are.na/${channel.user?.slug}/${channel.slug}`,
+          blockCount: channel.length ?? channel.contents?.length ?? 0,
+        })),
+        blocks,
+      };
+    })
+  );
 }
 
-function findChannel(channels: Arena.Channel[], area: HomeArea) {
-  const want = area.channel.trim().toLowerCase();
+type ChannelRef = { url: string | null; slug: string | null; name: string };
+
+/** "https://www.are.na/<owner>/<slug>", "<slug>" (has a dash) or a title. */
+export function parseChannelRef(value: string): ChannelRef {
+  const v = value.trim();
+  const m = v.match(/^https?:\/\/(?:www\.)?are\.na\/[^/]+\/([^/?#]+)/i);
+  if (m) return { url: v, slug: m[1].toLowerCase(), name: m[1].toLowerCase() };
+  return { url: null, slug: v.includes("-") ? v.toLowerCase() : null, name: v.toLowerCase() };
+}
+
+function findChannel(channels: Arena.Channel[], ref: ChannelRef) {
   return channels.find(
-    (c) => c?.slug?.toLowerCase() === want || c?.title?.trim().toLowerCase() === want
+    (c) =>
+      c?.slug?.toLowerCase() === ref.name ||
+      (ref.slug && c?.slug?.toLowerCase() === ref.slug) ||
+      c?.title?.trim().toLowerCase() === ref.name
   );
+}
+
+const ARENA_API = "https://api.are.na/v2";
+
+/**
+ * One channel straight from the public API: its length, then the last page
+ * of its contents (blocks are listed oldest first, so that page is newest).
+ */
+async function fetchChannel(slug: string, newest: number): Promise<Arena.Channel | null> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  const token = process.env.ARENA_PERSONAL_ACCESS_TOKEN;
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  try {
+    const metaRes = await fetch(`${ARENA_API}/channels/${encodeURIComponent(slug)}?per=1`, { headers });
+    if (!metaRes.ok) throw new Error(`HTTP ${metaRes.status}`);
+    const meta: any = await metaRes.json();
+    const per = Math.max(newest, 50);
+    const lastPage = Math.max(1, Math.ceil((meta.length || 0) / per));
+    const getPage = async (n: number) => {
+      const res = await fetch(
+        `${ARENA_API}/channels/${encodeURIComponent(slug)}/contents?per=${per}&page=${n}`,
+        { headers }
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return ((await res.json()) as any).contents || [];
+    };
+    let contents = await getPage(lastPage);
+    // The last page can be short (754 blocks at 50 a page leaves 4).
+    if (contents.length < newest && lastPage > 1) {
+      contents = [...(await getPage(lastPage - 1)), ...contents];
+    }
+    return { ...meta, contents } as Arena.Channel;
+  } catch (e) {
+    log("ERROR", "could not fetch Are.na channel", { slug, error: String(e) });
+    return null;
+  }
 }
 
 function recentBlocks(channel: Arena.Channel, limit: number): AreaBlock[] {
@@ -75,6 +149,7 @@ function recentBlocks(channel: Arena.Channel, limit: number): AreaBlock[] {
       title: b.title || b.generated_title || b.source?.url || "Untitled",
       image: b.image?.square?.url || b.image?.thumb?.url || b.image?.display?.url || null,
       url: `https://www.are.na/block/${b.id}`,
+      connectedAt: b.connected_at || null,
     }));
 }
 

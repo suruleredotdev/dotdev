@@ -25,9 +25,12 @@ export interface HomeLink {
 export interface HomeArea {
   name: string;
   subtitle?: string;
-  /** Are.na channel slug or title (either matches, case ignored). */
-  channel: string;
-  /** Essays and tools that belong to this area. */
+  /**
+   * Are.na channels the area collects: each a URL, slug or title (case
+   * ignored). A URL is also that channel's link. Empty for an area with none.
+   */
+  channels: string[];
+  /** Tools and research that grew out of this area (essays live in the Essays section). */
   links: HomeLink[];
 }
 
@@ -47,13 +50,19 @@ export interface HomeConfig {
   };
   tools: {
     title: string;
+    /** Cards per row on desktop; 0 fits as many as the width allows. */
+    columns: number;
     items: HomeTool[];
   };
   archives: {
     title: string;
+    /** Areas per row on desktop; 0 fits as many as the width allows. */
+    columns: number;
     intro: string;
     profileUrl: string;
     profileLinkLabel: string;
+    /** Link for an area with one channel; "{count}" is its number of blocks. */
+    channelLinkLabel: string;
     /** Block previews per area before "More from each", and after. */
     previewBlocks: number;
     expandedBlocks: number;
@@ -92,6 +101,7 @@ export function validateHomeConfig(raw: unknown): HomeConfig {
     },
     tools: {
       title: c.string(tools.title, "tools.title"),
+      columns: c.count(tools.columns, "tools.columns"),
       items: c.array(tools.items, "tools.items").map((item, i) => {
         const at = `tools.items[${i}]`;
         const tool = c.object(item, at);
@@ -105,9 +115,11 @@ export function validateHomeConfig(raw: unknown): HomeConfig {
     },
     archives: {
       title: c.string(archives.title, "archives.title"),
+      columns: c.count(archives.columns, "archives.columns"),
       intro: c.string(archives.intro, "archives.intro"),
       profileUrl: c.url(archives.profileUrl, "archives.profileUrl"),
       profileLinkLabel: c.string(archives.profileLinkLabel, "archives.profileLinkLabel"),
+      channelLinkLabel: c.string(archives.channelLinkLabel, "archives.channelLinkLabel"),
       previewBlocks: c.count(archives.previewBlocks, "archives.previewBlocks"),
       expandedBlocks: c.count(archives.expandedBlocks, "archives.expandedBlocks"),
       showMoreLabel: c.string(archives.showMoreLabel, "archives.showMoreLabel"),
@@ -120,7 +132,13 @@ export function validateHomeConfig(raw: unknown): HomeConfig {
           ...(area.subtitle !== undefined
             ? { subtitle: c.string(area.subtitle, `${at}.subtitle`) }
             : {}),
-          channel: c.string(area.channel, `${at}.channel`),
+          // `channel` (one) is still accepted alongside `channels` (several).
+          channels: [
+            ...(area.channel !== undefined ? [c.string(area.channel, `${at}.channel`)] : []),
+            ...(area.channels !== undefined
+              ? c.array(area.channels, `${at}.channels`).map((v, j) => c.string(v, `${at}.channels[${j}]`))
+              : []),
+          ],
           links: c.array(area.links, `${at}.links`).map((l, j) => {
             const linkAt = `${at}.links[${j}]`;
             const link = c.object(l, linkAt);

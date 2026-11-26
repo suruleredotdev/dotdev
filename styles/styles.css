@@ -276,6 +276,14 @@ body.DARK {
   --home-min: 190px;
 }
 
+/* A section's `columns` setting fixes its cards per row on desktop.
+   Narrower screens keep fitting by width (and phones keep the rules below). */
+@media screen and (min-width: 900px) {
+  .home-grid--cols {
+    grid-template-columns: repeat(var(--home-cols), minmax(0, 1fr));
+  }
+}
+
 @media screen and (max-width: 600px) {
   .home-grid--tools {
     --home-min: 140px;

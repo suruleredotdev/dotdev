@@ -12,6 +12,7 @@
   },
   "tools": {
     "title": "TOOLS",
+    "columns": 2,
     "items": [
       {
         "title": "Symbolic Motif Analysis",
@@ -41,6 +42,7 @@
   },
   "archives": {
     "title": "ARCHIVES",
+    "columns": 2,
     "intro": "Curated references for each research area, collected as Are.na channels.",
     "profileUrl": "https://www.are.na/korede-aderele",
     "profileLinkLabel": "All channels on Are.na",

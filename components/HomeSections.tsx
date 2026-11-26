@@ -59,6 +59,15 @@ const SectionHead = ({
   </div>
 );
 
+/**
+ * Grid props for a section's `columns` setting: a fixed count on desktop
+ * (see .home-grid--cols), or 0 to fit as many as the width allows.
+ */
+const gridColumns = (columns: number) =>
+  columns > 0
+    ? { className: " home-grid--cols", style: { ["--home-cols" as any]: columns } as React.CSSProperties }
+    : { className: "", style: undefined };
+
 const ToggleButton = ({
   open,
   onToggle,
@@ -179,7 +188,10 @@ export const EssaysSection = ({
 export const ToolsSection = ({ config }: { config: HomeConfig["tools"] }) => (
   <section id="tools" aria-labelledby="tools-title" className="home-section">
     <SectionHead id="tools" title={config.title} />
-    <ul className="home-grid home-grid--tools">
+    <ul
+      className={"home-grid home-grid--tools" + gridColumns(config.columns).className}
+      style={gridColumns(config.columns).style}
+    >
       {config.items.map((tool, i) => (
         <li key={i}>
           <a className="home-tile home-tile--media" href={tool.url} target="_blank" rel="noopener noreferrer">
@@ -212,7 +224,10 @@ export const ArchivesSection = ({
     </SectionHead>
     <p className="home-intro">{config.intro}</p>
 
-    <ul className="home-grid home-grid--areas">
+    <ul
+      className={"home-grid home-grid--areas" + gridColumns(config.columns).className}
+      style={gridColumns(config.columns).style}
+    >
       {areas.map((area, i) => (
         <AreaCard key={i} id={`area-${i}`} area={area} config={config} />
       ))}

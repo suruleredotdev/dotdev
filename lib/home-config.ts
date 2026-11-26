@@ -50,10 +50,14 @@ export interface HomeConfig {
   };
   tools: {
     title: string;
+    /** Cards per row on desktop; 0 fits as many as the width allows. */
+    columns: number;
     items: HomeTool[];
   };
   archives: {
     title: string;
+    /** Areas per row on desktop; 0 fits as many as the width allows. */
+    columns: number;
     intro: string;
     profileUrl: string;
     profileLinkLabel: string;
@@ -97,6 +101,7 @@ export function validateHomeConfig(raw: unknown): HomeConfig {
     },
     tools: {
       title: c.string(tools.title, "tools.title"),
+      columns: c.count(tools.columns, "tools.columns"),
       items: c.array(tools.items, "tools.items").map((item, i) => {
         const at = `tools.items[${i}]`;
         const tool = c.object(item, at);
@@ -110,6 +115,7 @@ export function validateHomeConfig(raw: unknown): HomeConfig {
     },
     archives: {
       title: c.string(archives.title, "archives.title"),
+      columns: c.count(archives.columns, "archives.columns"),
       intro: c.string(archives.intro, "archives.intro"),
       profileUrl: c.url(archives.profileUrl, "archives.profileUrl"),
       profileLinkLabel: c.string(archives.profileLinkLabel, "archives.profileLinkLabel"),

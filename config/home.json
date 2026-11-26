@@ -45,8 +45,8 @@
     "profileUrl": "https://www.are.na/korede-aderele",
     "profileLinkLabel": "All channels on Are.na",
     "channelLinkLabel": "See all ({count})",
-    "previewBlocks": 4,
-    "expandedBlocks": 8,
+    "previewBlocks": 3,
+    "expandedBlocks": 7,
     "showMoreLabel": "More from each",
     "showFewerLabel": "Fewer",
     "areas": [

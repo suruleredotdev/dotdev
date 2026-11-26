@@ -410,6 +410,7 @@ body.DARK {
   list-style: none;
 }
 
+/* The newest block leads across the card; the rest sit two across. */
 .home-blocks {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -419,7 +420,12 @@ body.DARK {
   list-style: none;
 }
 
+.home-blocks > li:first-child {
+  grid-column: 1 / -1;
+}
+
 .home-block {
+  position: relative;
   display: grid;
   place-items: center;
   aspect-ratio: 1;
@@ -439,6 +445,37 @@ body.DARK {
 
 .home-block:has(img) {
   padding: 0;
+}
+
+.home-block--lead {
+  aspect-ratio: 16 / 10;
+}
+
+/* One line of title along the bottom of each image, on solid ground so it
+   reads over any picture. Hover or keyboard focus shows the whole title. */
+.home-block-caption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 2px 5px 3px;
+  overflow: hidden;
+  background: var(--home-ground);
+  font-size: 0.6rem;
+  line-height: 1.3;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-block--lead .home-block-caption {
+  padding: 4px 7px 5px;
+  font-size: 0.7rem;
+}
+
+.home-block:hover .home-block-caption,
+.home-block:focus-visible .home-block-caption {
+  white-space: normal;
 }
 
 /* Titles often wrap: keep a title's own lines close and put clear space

@@ -269,17 +269,21 @@ export const ArchivesSection = ({
 
             {area.blocks.length > 0 && (
               <ul className="home-blocks">
-                {area.blocks.slice(0, shown).map((block) => (
+                {area.blocks.slice(0, shown).map((block, j) => (
                   <li key={block.id}>
+                    {/* The newest block leads, larger; each image carries its
+                        title in a caption strip, so you know what it opens. */}
                     <a
-                      className="home-block"
+                      className={`home-block${j === 0 ? " home-block--lead" : ""}`}
                       href={block.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      title={block.title}
                     >
                       {block.image ? (
-                        <img src={block.image} alt={block.title} loading="lazy" />
+                        <>
+                          <img src={block.image} alt="" loading="lazy" />
+                          <span className="home-block-caption">{block.title}</span>
+                        </>
                       ) : (
                         <span>{clip(block.title, 60)}</span>
                       )}

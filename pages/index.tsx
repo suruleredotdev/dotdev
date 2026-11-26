@@ -121,9 +121,9 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
         <p className={classes.description}>{home.hero.description}</p>
         <SectionLinks
           links={[
-            { id: "essays", label: home.essays.title, count: essays.length },
-            { id: "tools", label: home.tools.title, count: home.tools.items.length },
-            { id: "archives", label: home.archives.title, count: areas.length },
+            { id: "essays", label: home.essays.title },
+            { id: "tools", label: home.tools.title },
+            { id: "archives", label: home.archives.title },
           ]}
         />
       </div>

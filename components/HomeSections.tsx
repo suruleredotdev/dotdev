@@ -25,16 +25,16 @@ const formatDate = (published: number) =>
 const clip = (text: string | undefined, max: number) =>
   text && text.length > max ? text.substring(0, max - 3) + "..." : text;
 
-/** "Essays 7 · Tools 4 · Archives 4" jump links under the intro. */
+/** "Essays · Tools · Areas" jump links under the intro. */
 export const SectionLinks = ({
   links,
 }: {
-  links: { id: string; label: string; count: number }[];
+  links: { id: string; label: string }[];
 }) => (
   <nav aria-label="On this page" className="home-jump">
     {links.map((l) => (
       <a key={l.id} href={`#${l.id}`}>
-        {l.label} <span className="o-60">{l.count}</span> ↓
+        {l.label} ↓
       </a>
     ))}
   </nav>
@@ -44,18 +44,15 @@ export const SectionLinks = ({
 const SectionHead = ({
   id,
   title,
-  count,
   children,
 }: {
   id: string;
   title: string;
-  count?: string | number;
   children?: React.ReactNode;
 }) => (
   <div className="home-head">
     <h2 id={`${id}-title`} className="home-head-title title">
       {title}
-      {count !== undefined && <span className="o-60"> {count}</span>}
     </h2>
     <span className="home-head-fill" />
     {children}
@@ -120,7 +117,7 @@ export const EssaysSection = ({
 
   return (
     <section id="essays" aria-labelledby="essays-title" className="home-section">
-      <SectionHead id="essays" title={config.title} count={essays.length}>
+      <SectionHead id="essays" title={config.title}>
         <a
           className="home-head-link"
           href={substackUrl}
@@ -181,7 +178,7 @@ export const EssaysSection = ({
 
 export const ToolsSection = ({ config }: { config: HomeConfig["tools"] }) => (
   <section id="tools" aria-labelledby="tools-title" className="home-section">
-    <SectionHead id="tools" title={config.title} count={config.items.length} />
+    <SectionHead id="tools" title={config.title} />
     <ul className="home-grid home-grid--tools">
       {config.items.map((tool, i) => (
         <li key={i}>
@@ -215,7 +212,7 @@ export const ArchivesSection = ({
 
   return (
     <section id="archives" aria-labelledby="archives-title" className="home-section">
-      <SectionHead id="archives" title={config.title} count={areas.length}>
+      <SectionHead id="archives" title={config.title}>
         <a className="home-head-link" href={config.profileUrl} target="_blank" rel="noopener noreferrer">
           {config.profileLinkLabel} <ExternalLinkIcon />
         </a>

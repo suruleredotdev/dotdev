@@ -40,11 +40,11 @@
     ]
   },
   "archives": {
-    "title": "AREA",
+    "title": "AREAS",
     "intro": "Curated references for each research area, collected as Are.na channels.",
     "profileUrl": "https://www.are.na/korede-aderele",
     "profileLinkLabel": "All channels on Are.na",
-    "channelLinkLabel": "Go to archives ({count})",
+    "channelLinkLabel": "See all ({count})",
     "previewBlocks": 4,
     "expandedBlocks": 8,
     "showMoreLabel": "More from each",

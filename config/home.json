@@ -65,7 +65,7 @@
         "name": "Sensemaking",
         "subtitle": "Knowledge systems that built and evolve society",
         "channels": [
-          "https://www.are.na/suruleredotdev/symbolism-bwuyw96jhpu",
+          "https://www.are.na/korede-aderele/symbolism-bwuyw96jhpu",
           "https://www.are.na/suruleredotdev/sensemaking-tools"
         ],
         "links": []
@@ -80,7 +80,8 @@
         "name": "Technology",
         "subtitle": "Computation and engineering tools and execution",
         "channels": [
-          "https://www.are.na/suruleredotdev/cloud-computing-c6yrctevufs"
+          "https://www.are.na/suruleredotdev/cloud-computing-c6yrctevufs",
+          "https://www.are.na/korede-aderele/observability-tools"
         ],
         "links": []
       }

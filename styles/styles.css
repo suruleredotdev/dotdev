@@ -173,8 +173,44 @@ body.DARK {
   padding-bottom: 1.5rem;
 }
 
-.LIGHT #content { --home-ground: var(--bg-color-light); --home-line: #c9ccc8; --home-surface: rgba(63, 73, 61, 0.06); }
-.DARK #content { --home-ground: var(--bg-color-dark); --home-line: #2a3428; --home-surface: rgba(163, 168, 162, 0.05); }
+/*
+ * Text colors are solid, never faded with opacity, so each one keeps its
+ * contrast: ink (headlines, titles) 11.8:1 light / 13.3:1 dark; text (body)
+ * 6.7:1 / 7.6:1; muted (dates, counts, secondary links) 5.1:1 / 5.3:1.
+ */
+.LIGHT #content {
+  --home-ground: var(--bg-color-light);
+  --home-line: #c9ccc8;
+  --home-surface: rgba(63, 73, 61, 0.06);
+  --home-ink: #232922;
+  --home-text: var(--txt-color-light);
+  --home-muted: #5a6159;
+}
+
+.DARK #content {
+  --home-ground: var(--bg-color-dark);
+  --home-line: #2a3428;
+  --home-surface: rgba(163, 168, 162, 0.05);
+  --home-ink: #d8dcd7;
+  --home-text: var(--txt-color-dark);
+  --home-muted: #848b83;
+}
+
+.LIGHT .home-tagline,
+.DARK .home-tagline {
+  color: var(--home-ink);
+  opacity: 1;
+}
+
+.LIGHT .home-description,
+.DARK .home-description {
+  color: var(--home-text);
+  opacity: 1;
+}
+
+.home-count {
+  color: var(--home-muted);
+}
 
 .home-jump {
   display: flex;
@@ -210,18 +246,21 @@ body.DARK {
   letter-spacing: 0.12em;
 }
 
-/* --title-color is too dark to read on the dark ground. */
+/* Overrides .title, whose --title-color is unreadable on the dark ground. */
+.LIGHT .home-head-title,
 .DARK .home-head-title {
-  color: var(--txt-color-dark);
+  color: var(--home-ink);
 }
 
 .home-head-fill {
   flex: 1 1 auto;
 }
 
-.home-head-link {
+.LIGHT .home-head-link,
+.DARK .home-head-link {
   font-size: 0.75rem;
-  opacity: 0.75;
+  color: var(--home-muted);
+  border-bottom-color: var(--home-muted);
 }
 
 .home-more {
@@ -245,7 +284,7 @@ body.DARK {
 .home-intro {
   margin: 0 0 1rem;
   font-size: 0.8rem;
-  opacity: 0.8;
+  color: var(--home-text);
 }
 
 .home-grid {
@@ -324,18 +363,25 @@ body.DARK {
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.3;
+  color: var(--home-ink);
+}
+
+/* Area names are links; beat the site-wide `.LIGHT a` / `.DARK a` color. */
+.LIGHT a.home-tile-title,
+.DARK a.home-tile-title {
+  color: var(--home-ink);
 }
 
 .home-tile-text {
   font-size: 0.8rem;
   line-height: 1.5;
-  opacity: 0.85;
+  color: var(--home-text);
 }
 
 .home-meta {
   font-size: 0.7rem;
   letter-spacing: 0.06em;
-  opacity: 0.7;
+  color: var(--home-muted);
 }
 
 .home-rows {
@@ -358,12 +404,13 @@ body.DARK {
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.3;
+  color: var(--home-ink);
 }
 
 .home-row-text {
   flex: 2 1 20rem;
   font-size: 0.8rem;
-  opacity: 0.85;
+  color: var(--home-text);
 }
 
 .home-area {

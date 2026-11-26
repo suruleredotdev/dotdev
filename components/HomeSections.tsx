@@ -34,7 +34,7 @@ export const SectionLinks = ({
   <nav aria-label="On this page" className="home-jump">
     {links.map((l) => (
       <a key={l.id} href={`#${l.id}`}>
-        {l.label} <span className="o-60">{l.count}</span> ↓
+        {l.label} <span className="home-count">{l.count}</span> ↓
       </a>
     ))}
   </nav>
@@ -55,7 +55,7 @@ const SectionHead = ({
   <div className="home-head">
     <h2 id={`${id}-title`} className="home-head-title title">
       {title}
-      {count !== undefined && <span className="o-60"> {count}</span>}
+      {count !== undefined && <span className="home-count"> {count}</span>}
     </h2>
     <span className="home-head-fill" />
     {children}

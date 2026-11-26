@@ -117,8 +117,8 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
   return (
     <div id="content" className={classes.content}>
       <div id="about" className="home-hero">
-        <p className={classes.tagline}>{home.hero.tagline}</p>
-        <p className={classes.description}>{home.hero.description}</p>
+        <p className={`${classes.tagline} home-tagline`}>{home.hero.tagline}</p>
+        <p className={`${classes.description} home-description`}>{home.hero.description}</p>
         <SectionLinks
           links={[
             { id: "essays", label: home.essays.title, count: essays.length },

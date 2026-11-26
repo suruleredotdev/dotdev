@@ -10,29 +10,34 @@ export interface AreaBlock {
   /** Square-ish thumbnail; null for text blocks. */
   image: string | null;
   url: string;
+  /** ISO time it was added to the channel; orders blocks across channels. */
+  connectedAt: string | null;
+}
+
+export interface AreaChannel {
+  title: string;
+  url: string;
+  blockCount: number;
 }
 
 export interface ResearchArea {
   name: string;
   subtitle: string | null;
   links: HomeLink[];
-  /** The Are.na channel, or null when it wasn't found at build time. */
-  channel: {
-    url: string;
-    blockCount: number;
-    /** Most recent first, up to archives.expandedBlocks. */
-    blocks: AreaBlock[];
-  } | null;
+  /** The channels found at build time; empty when none were. */
+  channels: AreaChannel[];
+  /** Newest across all its channels, up to archives.expandedBlocks. */
+  blocks: AreaBlock[];
 }
 
 /**
- * Joins each configured research area to its Are.na channel, keeping only
+ * Joins each configured research area to its Are.na channels, keeping only
  * what the page shows, so the full channel contents never reach the client.
  *
- * An area's `channel` is a channel URL, a slug or a title. A URL or slug that
- * isn't among the account's fetched channels (the account list is one page
- * long) is fetched by itself from the public API. An area whose channel still
- * can't be found renders with its links and no previews.
+ * Each channel is a URL, a slug or a title. A URL or slug that isn't among
+ * the account's fetched channels (the account list is one page long) is
+ * fetched by itself from the public API. A channel that still can't be found
+ * is skipped and logged; the area renders with whatever was found.
  */
 export async function buildResearchAreas(
   channels: Arena.Channel[],
@@ -40,32 +45,40 @@ export async function buildResearchAreas(
 ): Promise<ResearchArea[]> {
   return Promise.all(
     archives.areas.map(async (area) => {
-      if (!area.channel) {
-        return { name: area.name, subtitle: area.subtitle ?? null, links: area.links, channel: null };
-      }
-      const ref = parseChannelRef(area.channel);
-      const channel =
-        findChannel(channels, ref) ||
-        (ref.slug ? await fetchChannel(ref.slug, archives.expandedBlocks) : null);
-      if (!channel) {
-        log("ERROR", "research area has no matching Are.na channel", {
-          area: area.name,
-          channel: area.channel,
-          available: channels.map((c) => c.slug),
-        });
-      }
+      const found = await Promise.all(
+        area.channels.map(async (value) => {
+          const ref = parseChannelRef(value);
+          const channel =
+            findChannel(channels, ref) ||
+            (ref.slug ? await fetchChannel(ref.slug, archives.expandedBlocks) : null);
+          if (!channel) {
+            log("ERROR", "research area channel not found on Are.na", {
+              area: area.name,
+              channel: value,
+              available: channels.map((c) => c.slug),
+            });
+          }
+          return channel ? { ref, channel } : null;
+        })
+      );
+      const hits = found.filter(Boolean) as { ref: ChannelRef; channel: Arena.Channel }[];
+      const seen = new Set<number>();
+      const blocks = hits
+        .flatMap(({ channel }) => recentBlocks(channel, archives.expandedBlocks))
+        .sort((a, b) => time(b.connectedAt) - time(a.connectedAt))
+        .filter((b) => !seen.has(b.id) && seen.add(b.id))
+        .slice(0, archives.expandedBlocks);
       return {
         name: area.name,
         subtitle: area.subtitle ?? null,
         links: area.links,
-        channel: channel
-          ? {
-              // A URL in the config is used as written.
-              url: ref.url || `https://www.are.na/${channel.user?.slug}/${channel.slug}`,
-              blockCount: channel.length ?? channel.contents?.length ?? 0,
-              blocks: recentBlocks(channel, archives.expandedBlocks),
-            }
-          : null,
+        channels: hits.map(({ ref, channel }) => ({
+          title: channel.title,
+          // A URL in the config is used as written.
+          url: ref.url || `https://www.are.na/${channel.user?.slug}/${channel.slug}`,
+          blockCount: channel.length ?? channel.contents?.length ?? 0,
+        })),
+        blocks,
       };
     })
   );
@@ -136,6 +149,7 @@ function recentBlocks(channel: Arena.Channel, limit: number): AreaBlock[] {
       title: b.title || b.generated_title || b.source?.url || "Untitled",
       image: b.image?.square?.url || b.image?.thumb?.url || b.image?.display?.url || null,
       url: `https://www.are.na/block/${b.id}`,
+      connectedAt: b.connected_at || null,
     }));
 }
 

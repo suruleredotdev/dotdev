@@ -26,10 +26,10 @@ export interface HomeArea {
   name: string;
   subtitle?: string;
   /**
-   * Are.na channel URL, slug or title (case ignored). A URL is also the card's
-   * link. Leave it out for an area with no channel of its own.
+   * Are.na channels the area collects: each a URL, slug or title (case
+   * ignored). A URL is also that channel's link. Empty for an area with none.
    */
-  channel?: string;
+  channels: string[];
   /** Essays and tools that belong to this area. */
   links: HomeLink[];
 }
@@ -57,7 +57,7 @@ export interface HomeConfig {
     intro: string;
     profileUrl: string;
     profileLinkLabel: string;
-    /** Link to an area's Are.na channel; "{count}" is its number of blocks. */
+    /** Link for an area with one channel; "{count}" is its number of blocks. */
     channelLinkLabel: string;
     /** Block previews per area before "More from each", and after. */
     previewBlocks: number;
@@ -126,9 +126,13 @@ export function validateHomeConfig(raw: unknown): HomeConfig {
           ...(area.subtitle !== undefined
             ? { subtitle: c.string(area.subtitle, `${at}.subtitle`) }
             : {}),
-          ...(area.channel !== undefined
-            ? { channel: c.string(area.channel, `${at}.channel`) }
-            : {}),
+          // `channel` (one) is still accepted alongside `channels` (several).
+          channels: [
+            ...(area.channel !== undefined ? [c.string(area.channel, `${at}.channel`)] : []),
+            ...(area.channels !== undefined
+              ? c.array(area.channels, `${at}.channels`).map((v, j) => c.string(v, `${at}.channels[${j}]`))
+              : []),
+          ],
           links: c.array(area.links, `${at}.links`).map((l, j) => {
             const linkAt = `${at}.links[${j}]`;
             const link = c.object(l, linkAt);

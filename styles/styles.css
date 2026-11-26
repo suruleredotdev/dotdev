@@ -391,6 +391,25 @@ body.DARK {
   opacity: 1;
 }
 
+/* An area with several channels lists them, one per line; long channel
+   names wrap inside the card. */
+.home-area-channels .home-area-channel {
+  white-space: normal;
+}
+
+.home-area-channels {
+  /* Set on the list: the links are inline, so their own line-height
+     doesn't size the line. */
+  font-size: 0.7rem;
+  line-height: 1.35;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin: 0.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
 .home-blocks {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

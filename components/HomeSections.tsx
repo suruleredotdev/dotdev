@@ -207,7 +207,7 @@ export const ArchivesSection = ({
   const [open, setOpen] = React.useState(false);
   const shown = open ? config.expandedBlocks : config.previewBlocks;
   const hasMore = areas.some(
-    (a) => (a.channel?.blocks.length ?? 0) > config.previewBlocks
+    (a) => a.blocks.length > config.previewBlocks
   );
 
   return (
@@ -233,23 +233,43 @@ export const ArchivesSection = ({
           <li key={i} className="home-area">
             <div className="home-area-head">
               <h3 className="home-tile-title">{area.name}</h3>
-              {/* Only areas with their own channel link out. */}
-              {area.channel && (
+              {area.subtitle && <span className="home-tile-text">{area.subtitle}</span>}
+              {/* One channel: "See all (N)". Several: one link per channel. */}
+              {area.channels.length === 1 && (
                 <a
                   className="home-meta home-area-channel"
-                  href={area.channel.url}
+                  href={area.channels[0].url}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {fillCount(config.channelLinkLabel, area.channel.blockCount)} <ExternalLinkIcon />
+                  {fillCount(config.channelLinkLabel, area.channels[0].blockCount)} <ExternalLinkIcon />
                 </a>
               )}
+              {area.channels.length > 1 && (
+                <ul className="home-area-channels">
+                  {area.channels.map((ch) => (
+                    <li key={ch.url}>
+                      <a
+                        className="home-meta home-area-channel"
+                        href={ch.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {ch.title}{" "}
+                        {/* The count and arrow stay with the end of the name. */}
+                        <span className="nowrap">
+                          ({ch.blockCount}) <ExternalLinkIcon />
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-            {area.subtitle && <span className="home-tile-text">{area.subtitle}</span>}
 
-            {area.channel && area.channel.blocks.length > 0 && (
+            {area.blocks.length > 0 && (
               <ul className="home-blocks">
-                {area.channel.blocks.slice(0, shown).map((block) => (
+                {area.blocks.slice(0, shown).map((block) => (
                   <li key={block.id}>
                     <a
                       className="home-block"

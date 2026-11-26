@@ -175,8 +175,13 @@ body.DARK {
 
 /*
  * Text colors are solid, never faded with opacity, so each one keeps its
- * contrast: ink (headlines, titles) 11.8:1 light / 13.3:1 dark; text (body)
- * 6.7:1 / 7.6:1; muted (dates, counts, secondary links) 5.1:1 / 5.3:1.
+ * contrast. Content leads and the page's own chrome steps back:
+ *   ink   (tagline, essay/tool/area titles)         11.8:1 light / 13.3:1 dark
+ *   text  (descriptions, intros, block captions)     6.7:1 / 7.6:1
+ *   muted (section labels, jump links, Show more,    5.1:1 / 5.3:1
+ *          dates, secondary links)
+ * Muted stays above the 4.5:1 that small text needs; quiet controls step up
+ * to ink on hover and focus.
  */
 .LIGHT #content {
   --home-ground: var(--bg-color-light);
@@ -216,6 +221,20 @@ body.DARK {
   letter-spacing: 0.1em;
 }
 
+.LIGHT .home-jump a,
+.DARK .home-jump a {
+  color: var(--home-muted);
+  border-bottom-color: var(--home-muted);
+}
+
+.LIGHT .home-jump a:hover,
+.DARK .home-jump a:hover,
+.LIGHT .home-head-link:hover,
+.DARK .home-head-link:hover {
+  color: var(--home-ink);
+  border-bottom-color: var(--home-ink);
+}
+
 .home-section {
   margin-bottom: 2.5rem;
   scroll-margin-top: 0.5rem;
@@ -232,7 +251,7 @@ body.DARK {
   margin-bottom: 1rem;
   padding: 0.75rem 0;
   background: var(--home-ground);
-  border-bottom: 1px solid var(--title-color);
+  border-bottom: 1px solid var(--home-line);
 }
 
 .home-head-title {
@@ -242,10 +261,11 @@ body.DARK {
   letter-spacing: 0.12em;
 }
 
-/* Overrides .title, whose --title-color is unreadable on the dark ground. */
+/* A label for the section, not content: muted, so the titles under it lead.
+   Overrides .title, whose --title-color is unreadable on the dark ground. */
 .LIGHT .home-head-title,
 .DARK .home-head-title {
-  color: var(--home-ink);
+  color: var(--home-muted);
 }
 
 .home-head-fill {
@@ -266,7 +286,7 @@ body.DARK {
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: inherit;
+  color: var(--home-muted);
   background: transparent;
   border: 1px dashed currentColor;
   cursor: pointer;
@@ -275,6 +295,11 @@ body.DARK {
 .home-more:hover,
 .home-more[aria-expanded="true"] {
   border-style: solid;
+}
+
+.home-more:hover,
+.home-more:focus-visible {
+  color: var(--home-ink);
 }
 
 /* Under an area's previews: small, full width, tied to that area. */
@@ -455,8 +480,16 @@ body.DARK {
   margin: 0;
 }
 
-.home-area-channel:hover {
-  opacity: 1;
+.LIGHT a.home-area-channel,
+.DARK a.home-area-channel {
+  color: var(--home-muted);
+  border-bottom-color: var(--home-muted);
+}
+
+.LIGHT a.home-area-channel:hover,
+.DARK a.home-area-channel:hover {
+  color: var(--home-ink);
+  border-bottom-color: var(--home-ink);
 }
 
 /* An area with several channels lists them, one per line; long channel

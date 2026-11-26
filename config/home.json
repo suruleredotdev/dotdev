@@ -40,7 +40,7 @@
     ]
   },
   "archives": {
-    "title": "AREAS",
+    "title": "ARCHIVES",
     "intro": "Curated references for each research area, collected as Are.na channels.",
     "profileUrl": "https://www.are.na/korede-aderele",
     "profileLinkLabel": "All channels on Are.na",
@@ -57,8 +57,7 @@
           "https://www.are.na/suruleredotdev/historiography-kr29u84pivs",
           "https://www.are.na/suruleredotdev/african-empires-states"
         ],
-        "links": [
-        ]
+        "links": []
       },
       {
         "name": "Sensemaking",
@@ -67,16 +66,13 @@
           "https://www.are.na/suruleredotdev/symbolism-bwuyw96jhpu",
           "https://www.are.na/suruleredotdev/sensemaking-tools"
         ],
-        "links": [
-          { "label": "Symbolic Motif Analysis", "url": "https://symbolic-motif-analysis.surulere.dev/" }
-        ]
+        "links": []
       },
       {
         "name": "Permaculture",
         "subtitle": "Sustainable, resource-efficient ecosystems and agriculture",
         "channel": "https://www.are.na/suruleredotdev/permaculture-gndkdg_ckpc",
-        "links": [
-        ]
+        "links": []
       },
       {
         "name": "Technology",
@@ -84,9 +80,7 @@
         "channels": [
           "https://www.are.na/suruleredotdev/cloud-computing-c6yrctevufs"
         ],
-        "links": [
-          { "label": "African Artifacts Index", "url": "https://artifacts-index.surulere.dev" }
-        ]
+        "links": []
       }
     ]
   }

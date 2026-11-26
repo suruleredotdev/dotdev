@@ -1,15 +1,25 @@
 {
   "hero": {
-    "tagline": "A space for critical thinking on African future",
+    "tagline": "Critical thinking on Africa's future",
     "description": "Essays and visualizations to help us think critically about our ever-changing reality in the 2020s and build a better future for ourselves."
   },
   "essays": {
     "title": "ESSAYS",
-    "substackLinkLabel": "Read on Substack"
+    "substackLinkLabel": "Read on Substack",
+    "previewCount": 3,
+    "showAllLabel": "Show all {count}",
+    "showFewerLabel": "Show fewer"
   },
   "tools": {
     "title": "TOOLS",
+    "columns": 2,
     "items": [
+      {
+        "title": "Symbolic Motif Analysis",
+        "url": "https://symbolic-motif-analysis.surulere.dev/",
+        "image": "/symbolic-motif-analysis-preview.jpg",
+        "description": "Recurring motifs across Yoruba and Ife panel art: plates, motifs, families and readings"
+      },
       {
         "title": "African Artifacts Index",
         "url": "https://artifacts-index.surulere.dev",
@@ -32,7 +42,48 @@
   },
   "archives": {
     "title": "ARCHIVES",
-    "intro": "Preview curated references on our research areas. Expand each section or click the link to view the full channel.",
-    "maxChannels": 10
+    "columns": 2,
+    "intro": "Curated references for each research area, collected as Are.na channels.",
+    "profileUrl": "https://www.are.na/korede-aderele",
+    "profileLinkLabel": "All channels on Are.na",
+    "channelLinkLabel": "See all ({count})",
+    "previewBlocks": 3,
+    "expandedBlocks": 7,
+    "showMoreLabel": "Show more",
+    "showFewerLabel": "Show less",
+    "areas": [
+      {
+        "name": "Historiography",
+        "subtitle": "Reading how the past is written",
+        "channels": [
+          "https://www.are.na/suruleredotdev/historiography-kr29u84pivs",
+          "https://www.are.na/suruleredotdev/african-empires-states"
+        ],
+        "links": []
+      },
+      {
+        "name": "Sensemaking",
+        "subtitle": "Knowledge systems that built and evolve society",
+        "channels": [
+          "https://www.are.na/suruleredotdev/symbolism-bwuyw96jhpu",
+          "https://www.are.na/suruleredotdev/sensemaking-tools"
+        ],
+        "links": []
+      },
+      {
+        "name": "Permaculture",
+        "subtitle": "Sustainable, resource-efficient ecosystems and agriculture",
+        "channel": "https://www.are.na/suruleredotdev/permaculture-gndkdg_ckpc",
+        "links": []
+      },
+      {
+        "name": "Technology",
+        "subtitle": "Computation and engineering tools and execution",
+        "channels": [
+          "https://www.are.na/suruleredotdev/cloud-computing-c6yrctevufs"
+        ],
+        "links": []
+      }
+    ]
   }
 }

@@ -163,3 +163,431 @@ body.DARK {
   background-size: 10px 100%, 10px 100%, 10px 100%, 10px 100%;
   background-attachment: local, local, scroll, scroll;
 }
+
+/*
+ * Home page sections (components/HomeSections.tsx): a short preview of each
+ * section across the full width, with "Show all" for the rest. Tiles sit flush,
+ * divided by 1px hairlines; each section's title row sticks while it's on screen.
+ */
+.home-hero {
+  padding-bottom: 1.5rem;
+}
+
+/*
+ * Text colors are solid, never faded with opacity, so each one keeps its
+ * contrast. Content leads and the page's own chrome steps back:
+ *   ink   (tagline, essay/tool/area titles)         11.8:1 light / 13.3:1 dark
+ *   text  (descriptions, intros, block captions)     6.7:1 / 7.6:1
+ *   muted (section labels, jump links, Show more,    5.1:1 / 5.3:1
+ *          dates, secondary links)
+ * Muted stays above the 4.5:1 that small text needs; quiet controls step up
+ * to ink on hover and focus.
+ */
+.LIGHT #content {
+  --home-ground: var(--bg-color-light);
+  --home-line: #c9ccc8;
+  --home-surface: rgba(63, 73, 61, 0.06);
+  --home-ink: #232922;
+  --home-text: var(--txt-color-light);
+  --home-muted: #5a6159;
+}
+
+.DARK #content {
+  --home-ground: var(--bg-color-dark);
+  --home-line: #2a3428;
+  --home-surface: rgba(163, 168, 162, 0.05);
+  --home-ink: #d8dcd7;
+  --home-text: var(--txt-color-dark);
+  --home-muted: #848b83;
+}
+
+.LIGHT .home-tagline,
+.DARK .home-tagline {
+  color: var(--home-ink);
+  opacity: 1;
+}
+
+.LIGHT .home-description,
+.DARK .home-description {
+  color: var(--home-text);
+  opacity: 1;
+}
+
+.home-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.75rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+}
+
+.LIGHT .home-jump a,
+.DARK .home-jump a {
+  color: var(--home-muted);
+  border-bottom-color: var(--home-muted);
+}
+
+.LIGHT .home-jump a:hover,
+.DARK .home-jump a:hover,
+.LIGHT .home-head-link:hover,
+.DARK .home-head-link:hover {
+  color: var(--home-ink);
+  border-bottom-color: var(--home-ink);
+}
+
+.home-section {
+  margin-bottom: 2.5rem;
+  scroll-margin-top: 0.5rem;
+}
+
+.home-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 0;
+  background: var(--home-ground);
+  border-bottom: 1px solid var(--home-line);
+}
+
+.home-head-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+/* A label for the section, not content: muted, so the titles under it lead.
+   Overrides .title, whose --title-color is unreadable on the dark ground. */
+.LIGHT .home-head-title,
+.DARK .home-head-title {
+  color: var(--home-muted);
+}
+
+.home-head-fill {
+  flex: 1 1 auto;
+}
+
+.LIGHT .home-head-link,
+.DARK .home-head-link {
+  font-size: 0.75rem;
+  color: var(--home-muted);
+  border-bottom-color: var(--home-muted);
+}
+
+.home-more {
+  min-height: 32px;
+  padding: 0 0.75rem;
+  font: inherit;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--home-muted);
+  background: transparent;
+  border: 1px dashed currentColor;
+  cursor: pointer;
+}
+
+.home-more:hover,
+.home-more[aria-expanded="true"] {
+  border-style: solid;
+}
+
+.home-more:hover,
+.home-more:focus-visible {
+  color: var(--home-ink);
+}
+
+/* Under an area's previews: small, full width, tied to that area. */
+.home-more--small {
+  width: 100%;
+  min-height: 28px;
+  font-size: 0.65rem;
+}
+
+@media (pointer: coarse) {
+  .home-more--small {
+    min-height: 40px;
+  }
+}
+
+.home-intro {
+  margin: 0 0 1rem;
+  font-size: 0.8rem;
+  color: var(--home-text);
+}
+
+.home-grid {
+  --home-min: 240px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--home-min), 100%), 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 1px;
+  list-style: none;
+}
+
+.home-grid--tools,
+.home-grid--areas {
+  --home-min: 190px;
+}
+
+/* A section's `columns` setting fixes its cards per row on desktop.
+   Narrower screens keep fitting by width (and phones keep the rules below). */
+@media screen and (min-width: 900px) {
+  .home-grid--cols {
+    grid-template-columns: repeat(var(--home-cols), minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .home-grid--tools {
+    --home-min: 140px;
+  }
+
+  /* One area per row on phones, so its previews get the full width. */
+  .home-grid--areas {
+    --home-min: 100%;
+  }
+}
+
+.home-grid > li {
+  display: flex;
+  background: var(--home-ground);
+  box-shadow: 0 0 0 1px var(--home-line);
+}
+
+.home-tile {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1rem;
+}
+
+.LIGHT a.home-tile,
+.DARK a.home-tile,
+.LIGHT a.home-row,
+.DARK a.home-row,
+.LIGHT a.home-block,
+.DARK a.home-block {
+  border-bottom: 0;
+}
+
+.home-tile:hover,
+.home-row:hover,
+.home-block:hover {
+  outline: 1px dashed currentColor;
+  outline-offset: -1px;
+}
+
+.home-tile--media {
+  padding: 0;
+}
+
+.home-tile-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: top left;
+  background: var(--home-surface);
+}
+
+.home-tile-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.75rem 0.85rem 0.9rem;
+}
+
+.home-tile-title {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--home-ink);
+}
+
+/* Area names are links; beat the site-wide `.LIGHT a` / `.DARK a` color. */
+.LIGHT a.home-tile-title,
+.DARK a.home-tile-title {
+  color: var(--home-ink);
+}
+
+.home-tile-text {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--home-text);
+}
+
+.home-meta {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--home-muted);
+}
+
+.home-rows {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1.25rem;
+  padding: 0.75rem 0.25rem;
+  border-bottom: 1px solid var(--home-line) !important;
+}
+
+.home-row-title {
+  flex: 1 1 18rem;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--home-ink);
+}
+
+.home-row-text {
+  flex: 2 1 20rem;
+  font-size: 0.8rem;
+  color: var(--home-text);
+}
+
+.home-area {
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.85rem;
+}
+
+.home-area-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+}
+
+.home-meta {
+  white-space: nowrap;
+}
+
+.home-area .home-tile-title {
+  margin: 0;
+}
+
+.LIGHT a.home-area-channel,
+.DARK a.home-area-channel {
+  color: var(--home-muted);
+  border-bottom-color: var(--home-muted);
+}
+
+.LIGHT a.home-area-channel:hover,
+.DARK a.home-area-channel:hover {
+  color: var(--home-ink);
+  border-bottom-color: var(--home-ink);
+}
+
+/* An area with several channels lists them, one per line; long channel
+   names wrap inside the card. */
+.home-area-channels .home-area-channel {
+  white-space: normal;
+}
+
+.home-area-channels {
+  /* Set on the list: the links are inline, so their own line-height
+     doesn't size the line. */
+  font-size: 0.7rem;
+  line-height: 1.35;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin: 0.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The newest block leads across the card; the rest sit two across. */
+.home-blocks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-blocks > li:first-child {
+  grid-column: 1 / -1;
+}
+
+.home-block {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  overflow: hidden;
+  padding: 0.25rem;
+  font-size: 0.65rem;
+  line-height: 1.3;
+  text-align: center;
+  background: var(--home-surface);
+}
+
+.home-block img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.home-block:has(img) {
+  padding: 0;
+}
+
+.home-block--lead {
+  aspect-ratio: 16 / 10;
+}
+
+/* One line of title along the bottom of each image, on solid ground so it
+   reads over any picture. Hover or keyboard focus shows the whole title. */
+.home-block-caption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 2px 5px 3px;
+  overflow: hidden;
+  background: var(--home-ground);
+  font-size: 0.6rem;
+  line-height: 1.3;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-block--lead .home-block-caption {
+  padding: 4px 7px 5px;
+  font-size: 0.7rem;
+}
+
+.home-block:hover .home-block-caption,
+.home-block:focus-visible .home-block-caption {
+  white-space: normal;
+}
+
+/* Titles often wrap: keep a title's own lines close and put clear space
+   between titles, so each link reads as one item. */
+.home-area-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}

@@ -17,6 +17,23 @@ export interface HomeTool {
   description: string;
 }
 
+export interface HomeLink {
+  label: string;
+  url: string;
+}
+
+export interface HomeArea {
+  name: string;
+  subtitle?: string;
+  /**
+   * Are.na channels the area collects: each a URL, slug or title (case
+   * ignored). A URL is also that channel's link. Empty for an area with none.
+   */
+  channels: string[];
+  /** Tools and research that grew out of this area (essays live in the Essays section). */
+  links: HomeLink[];
+}
+
 export interface HomeConfig {
   hero: {
     tagline: string;
@@ -25,16 +42,33 @@ export interface HomeConfig {
   essays: {
     title: string;
     substackLinkLabel: string;
+    /** Essays shown before "Show all". */
+    previewCount: number;
+    /** "{count}" is replaced with the number of essays. */
+    showAllLabel: string;
+    showFewerLabel: string;
   };
   tools: {
     title: string;
+    /** Cards per row on desktop; 0 fits as many as the width allows. */
+    columns: number;
     items: HomeTool[];
   };
   archives: {
     title: string;
+    /** Areas per row on desktop; 0 fits as many as the width allows. */
+    columns: number;
     intro: string;
-    /** Most Are.na channels to list. */
-    maxChannels: number;
+    profileUrl: string;
+    profileLinkLabel: string;
+    /** Link for an area with one channel; "{count}" is its number of blocks. */
+    channelLinkLabel: string;
+    /** Block previews per area before "More from each", and after. */
+    previewBlocks: number;
+    expandedBlocks: number;
+    showMoreLabel: string;
+    showFewerLabel: string;
+    areas: HomeArea[];
   };
 }
 
@@ -61,9 +95,13 @@ export function validateHomeConfig(raw: unknown): HomeConfig {
     essays: {
       title: c.string(essays.title, "essays.title"),
       substackLinkLabel: c.string(essays.substackLinkLabel, "essays.substackLinkLabel"),
+      previewCount: c.count(essays.previewCount, "essays.previewCount"),
+      showAllLabel: c.string(essays.showAllLabel, "essays.showAllLabel"),
+      showFewerLabel: c.string(essays.showFewerLabel, "essays.showFewerLabel"),
     },
     tools: {
       title: c.string(tools.title, "tools.title"),
+      columns: c.count(tools.columns, "tools.columns"),
       items: c.array(tools.items, "tools.items").map((item, i) => {
         const at = `tools.items[${i}]`;
         const tool = c.object(item, at);
@@ -77,10 +115,46 @@ export function validateHomeConfig(raw: unknown): HomeConfig {
     },
     archives: {
       title: c.string(archives.title, "archives.title"),
+      columns: c.count(archives.columns, "archives.columns"),
       intro: c.string(archives.intro, "archives.intro"),
-      maxChannels: c.count(archives.maxChannels, "archives.maxChannels"),
+      profileUrl: c.url(archives.profileUrl, "archives.profileUrl"),
+      profileLinkLabel: c.string(archives.profileLinkLabel, "archives.profileLinkLabel"),
+      channelLinkLabel: c.string(archives.channelLinkLabel, "archives.channelLinkLabel"),
+      previewBlocks: c.count(archives.previewBlocks, "archives.previewBlocks"),
+      expandedBlocks: c.count(archives.expandedBlocks, "archives.expandedBlocks"),
+      showMoreLabel: c.string(archives.showMoreLabel, "archives.showMoreLabel"),
+      showFewerLabel: c.string(archives.showFewerLabel, "archives.showFewerLabel"),
+      areas: c.array(archives.areas, "archives.areas").map((item, i) => {
+        const at = `archives.areas[${i}]`;
+        const area = c.object(item, at);
+        return {
+          name: c.string(area.name, `${at}.name`),
+          ...(area.subtitle !== undefined
+            ? { subtitle: c.string(area.subtitle, `${at}.subtitle`) }
+            : {}),
+          // `channel` (one) is still accepted alongside `channels` (several).
+          channels: [
+            ...(area.channel !== undefined ? [c.string(area.channel, `${at}.channel`)] : []),
+            ...(area.channels !== undefined
+              ? c.array(area.channels, `${at}.channels`).map((v, j) => c.string(v, `${at}.channels[${j}]`))
+              : []),
+          ],
+          links: c.array(area.links, `${at}.links`).map((l, j) => {
+            const linkAt = `${at}.links[${j}]`;
+            const link = c.object(l, linkAt);
+            return {
+              label: c.string(link.label, `${linkAt}.label`),
+              url: c.url(link.url, `${linkAt}.url`),
+            };
+          }),
+        };
+      }),
     },
   };
+
+  if (config.archives.expandedBlocks < config.archives.previewBlocks) {
+    c.fail("archives.expandedBlocks should be at least archives.previewBlocks");
+  }
 
   c.throwIfErrors();
   return config;
@@ -122,6 +196,10 @@ class Checker {
     if (Number.isInteger(value) && (value as number) >= 0) return value as number;
     this.errors.push(`${at} should be a whole number, 0 or more`);
     return 0;
+  }
+
+  fail(message: string) {
+    this.errors.push(message);
   }
 
   throwIfErrors() {

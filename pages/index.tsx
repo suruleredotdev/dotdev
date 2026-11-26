@@ -12,11 +12,17 @@ import { mapPageUrl } from "lib/map-page-url";
 import { getLayoutProps } from "lib/get-layout-props";
 import { getSiteMap } from "lib/get-site-map";
 import { getHomeConfig, HomeConfig } from "lib/home-config";
+import { buildResearchAreas, ResearchArea } from "lib/research-areas";
 
 import { LayoutDefault } from "components/LayoutDefault";
 import { Footer } from "components/Footer";
-import { ArenaChannel } from "components/Arena";
-import { ExternalLinkIcon } from "components/ExternalLinkIcon";
+import {
+  ArchivesSection,
+  EssaysSection,
+  HomeEssay,
+  SectionLinks,
+  ToolsSection,
+} from "components/HomeSections";
 // NOTE: simple styling classlist strings w tachyons. may upgrade to be more configurable
 import {
   globalClasses,
@@ -34,6 +40,7 @@ export const getStaticProps = async () => {
     const notionProps = await resolveNotionPage(config.domain);
     const channels = await resolveArenaChannels();
     const siteMap = await getSiteMap();
+    const home = getHomeConfig();
 
     const substackHandle = process.env.SUBSTACK_HANDLE || "suruleredotdev";
     const substackApiKey = process.env.SUBSTACK_API_KEY;
@@ -41,11 +48,11 @@ export const getStaticProps = async () => {
 
     const props = {
       ...notionProps,
-      channels,
       siteMap,
       substackHandle,
       substackEssays,
-      home: getHomeConfig(),
+      home,
+      areas: await buildResearchAreas(channels, home.archives),
     };
 
     return { props, revalidate: 3600 }; // Revalidate every hour for fresh Substack content
@@ -62,17 +69,16 @@ interface HomePageContentProps extends types.PageProps {
   substackHandle?: string;
   substackEssays?: SubstackEssay[];
   home: HomeConfig;
+  areas: ResearchArea[];
 }
 
 export const HomePageContent: React.FC<HomePageContentProps> = ({
-  site,
   recordMap,
-  pageId,
-  channels,
   siteMap,
   substackHandle = "suruleredotdev",
   substackEssays = [],
   home,
+  areas,
 }) => {
   // TODO: render from root page block
   const posts = getSitePosts({
@@ -87,142 +93,63 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
     {}
   );
 
-  const allItems = [
-    ...posts
-      ?.filter((post: any) => post.public == true)
-      .map((post: any) => ({ ...post, isExternal: false })),
+  const essays: HomeEssay[] = [
+    ...(posts ?? [])
+      .filter((post: any) => post.public == true)
+      .map((post: any) => ({
+        title: post.title,
+        description: post.description,
+        published: post.published,
+        href: "/" + idToPagePath[post.id],
+        isExternal: false,
+      })),
     ...substackEssays.map((essay) => ({
-      ...essay,
+      title: essay.title,
+      description: essay.description,
+      published: essay.published,
+      href: essay.url,
       isExternal: true,
-      id: `substack-${essay.id}`,
     })),
-  ].sort((a: any, b: any) => b.published - a.published);
+  ].sort((a, b) => b.published - a.published);
 
+  const substackUrl = `https://${substackHandle}.substack.com/`;
 
   return (
     <div id="content" className={classes.content}>
-      <div id="about pb5">
-        <p className={classes.tagline}>{home.hero.tagline}</p>
-
-        <p className={classes.description}>{home.hero.description}</p>
+      <div id="about" className="home-hero">
+        <p className={`${classes.tagline} home-tagline`}>{home.hero.tagline}</p>
+        <p className={`${classes.description} home-description`}>{home.hero.description}</p>
+        <SectionLinks
+          links={[
+            { id: "essays", label: home.essays.title },
+            { id: "tools", label: home.tools.title },
+            { id: "archives", label: home.archives.title },
+          ]}
+        />
       </div>
 
-      <b className={classes.postsTitle}>{home.essays.title}</b>
-      <a
-        href={`https://${substackHandle}.substack.com/`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={classes.postDescription}
-        style={{ display: "inline-block", marginBottom: "1rem", opacity: 0.7, marginLeft: "10px" }}
-      >
-        {home.essays.substackLinkLabel} <ExternalLinkIcon />
-      </a>
-        <>
-          {allItems.length > 0 && (
-            <ul className={classes.postsList} style={{ listStyle: "none", padding: 0 }}>
-              {allItems.map((item: any, i) => (
-                <li key={i} style={{ marginBottom: "1.5rem" }}>
-                  <a
-                    href={item.isExternal ? item.url : "/" + idToPagePath[item.id]}
-                    target={item.isExternal ? "_blank" : undefined}
-                    rel={item.isExternal ? "noopener noreferrer" : undefined}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <span className={classes.postLink}>
-                      {item.title}
-                      {item.isExternal && <ExternalLinkIcon />}
-                    </span>
-                    <span className={classes.postDate} style={{ fontSize: ".60rem", marginLeft: "0.4rem" }}>
-                      &mdash; {new Date(item.published).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                    </span>
-                  </a>
-                  <br />
-                  <span className={classes.postDescription}>
-                    {item.description?.length > 200
-                      ? item.description?.substring(0, 197) + "..."
-                      : item.description}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-          {substackEssays.length === 0 && (
-            <iframe
-              src={`https://${substackHandle}.substack.com/embed`}
-              width="100%"
-              height="320"
-              style={{
-                border: "1px solid #eee",
-                background: "white",
-                maxWidth: "480px",
-                display: "block",
-                margin: "1rem 0",
-              }}
-              frameBorder="0"
-              scrolling="no"
-            />
-          )}
-        </>
-      <br />
+      {essays.length > 0 ? (
+        <EssaysSection essays={essays} config={home.essays} substackUrl={substackUrl} />
+      ) : (
+        <iframe
+          src={`https://${substackHandle}.substack.com/embed`}
+          width="100%"
+          height="320"
+          style={{
+            border: "1px solid #eee",
+            background: "white",
+            maxWidth: "480px",
+            display: "block",
+            margin: "1rem 0",
+          }}
+          frameBorder="0"
+          scrolling="no"
+        />
+      )}
 
-      <b className={classes.postsTitle}>{home.tools.title}</b>
-      <ul className={"f5 pl2 flex flex-row gap-2 flex-wrap w-100"}>
-        {home.tools.items.map((tool, i) => (
-          <div
-            key={i}
-            className={`pa1 flex flex-column w-50-ns w-100 mb1 mt1 pr4-l`}
-          >
-            <a
-              className={classes.postLink + " flex flex-column gap-2 pa1"}
-              href={tool.url}
-              target="_blank"
-            >
-              <div
-                style={{ width: "100%", height: "175px", overflow: "hidden" }}
-              >
-                <img
-                  src={tool.image}
-                  alt={tool.title}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              </div>
-              <span className={classes.postLink}>{tool.title}</span>
-            </a>
+      <ToolsSection config={home.tools} />
 
-            <span className={classes.postDescription}>
-              {tool.description?.length > 200
-                ? tool.description?.substring(0, 197) + "..."
-                : tool.description}
-            </span>
-          </div>
-        ))}
-      </ul>
-      <br />
-
-      <b className={classes.postsTitle}>{home.archives.title}</b>
-      <p className={classes.postDescription}>{home.archives.intro}</p>
-      <ul className={"f5 pl2 flex flex-column gap-2"}>
-        {/* {JSON.stringify((new Map(channels.map(channel => [channel.title, channel])).values().toArray())
-          ?.slice(0, 10), null, 2) */}
-        {[
-          ...new Map(
-            channels.map((channel) => [channel.title, channel])
-          ).values(),
-        ]
-          .slice(0, home.archives.maxChannels)
-          ?.filter(
-            (channel) =>
-              !!channel &&
-              channel.contents?.some(
-                (block) => block.base_class === "Block"
-              ) /* &&
-            (channel.user?.slug === "suruleredotdev" || 
-             channel.collaborators?.some(collaborator => collaborator.slug === "suruleredotdev")) */
-          )
-          .map((channel, i) => (
-            <ArenaChannel channel={channel} key={i} />
-          ))}
-      </ul>
+      <ArchivesSection areas={areas} config={home.archives} />
     </div>
   );
 };
@@ -232,11 +159,11 @@ interface IndexPageProps {
   recordMap: any;
   error?: any;
   pageId?: string;
-  channels: any;
   siteMap: any;
   substackHandle?: string;
   substackEssays?: SubstackEssay[];
   home: HomeConfig;
+  areas: ResearchArea[];
 }
 
 const IndexPage: React.FC<IndexPageProps> = (props) => {
@@ -245,11 +172,11 @@ const IndexPage: React.FC<IndexPageProps> = (props) => {
     recordMap,
     error,
     pageId,
-    channels: arenaChannels,
     siteMap,
     substackHandle,
     substackEssays,
     home,
+    areas,
   } = props;
 
   const { isDarkMode } = useDarkMode();
@@ -285,10 +212,10 @@ const IndexPage: React.FC<IndexPageProps> = (props) => {
           error={error}
           pageId={pageId}
           rootPageBlock={block}
-          channels={arenaChannels}
           substackHandle={substackHandle}
           substackEssays={substackEssays}
           home={home}
+          areas={areas}
         ></HomePageContent>
         <Footer page={undefined} isBlogPost={isBlogPost}></Footer>
       </NotionContextProvider>

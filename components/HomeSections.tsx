@@ -235,16 +235,17 @@ export const ArchivesSection = ({
         {areas.map((area, i) => (
           <li key={i} className="home-area">
             <div className="home-area-head">
-              <a
-                className="home-tile-title"
-                href={area.channel?.url ?? config.profileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {area.name} <ExternalLinkIcon />
-              </a>
+              <h3 className="home-tile-title">{area.name}</h3>
+              {/* Only areas with their own channel link out. */}
               {area.channel && (
-                <span className="home-meta">{area.channel.blockCount} blocks</span>
+                <a
+                  className="home-meta home-area-channel"
+                  href={area.channel.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {fillCount(config.channelLinkLabel, area.channel.blockCount)} <ExternalLinkIcon />
+                </a>
               )}
             </div>
             {area.subtitle && <span className="home-tile-text">{area.subtitle}</span>}

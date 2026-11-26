@@ -52,7 +52,7 @@ export const getStaticProps = async () => {
       substackHandle,
       substackEssays,
       home,
-      areas: buildResearchAreas(channels, home.archives),
+      areas: await buildResearchAreas(channels, home.archives),
     };
 
     return { props, revalidate: 3600 }; // Revalidate every hour for fresh Substack content

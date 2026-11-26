@@ -57,8 +57,6 @@
           "https://www.are.na/suruleredotdev/african-empires-states"
         ],
         "links": [
-          { "label": "Why study African history?", "url": "https://suruleredotdev.substack.com/p/why-study-african-history" },
-          { "label": "On Yoruba Art as Historic Storytelling", "url": "https://suruleredotdev.substack.com/p/on-yoruba-art-as-historic-storytelling" }
         ]
       },
       {
@@ -69,8 +67,6 @@
           "https://www.are.na/suruleredotdev/sensemaking-tools"
         ],
         "links": [
-          { "label": "How we Understand our Archives in the Age of LLMs", "url": "https://suruleredotdev.substack.com/p/how-we-understanding-archives-in" },
-          { "label": "African Symbolism Inquiry", "url": "https://suruleredotdev.substack.com/p/african-symbolism-inquiry" },
           { "label": "Symbolic Motif Analysis", "url": "https://symbolic-motif-analysis.surulere.dev/" }
         ]
       },
@@ -78,7 +74,6 @@
         "name": "Permaculture",
         "channel": "https://www.are.na/suruleredotdev/permaculture-gndkdg_ckpc",
         "links": [
-          { "label": "Nigeria Agriculture", "url": "https://surulere.dev/nigeria-agriculture/" }
         ]
       },
       {
@@ -87,10 +82,6 @@
           "https://www.are.na/suruleredotdev/cloud-computing-c6yrctevufs"
         ],
         "links": [
-          { "label": "Indexing African Artifacts", "url": "https://suruleredotdev.substack.com/p/indexing-african-artifacts" },
-          { "label": "Archiving with Are.na", "url": "https://suruleredotdev.substack.com/p/archiving-with-arena" },
-          { "label": "Naira Stablecoins", "url": "https://surulere.dev/naira-stablecoins/" },
-          { "label": "Blockchain In Africa", "url": "https://surulere.dev/blockchain-in-africa/" },
           { "label": "African Artifacts Index", "url": "https://artifacts-index.surulere.dev" }
         ]
       }

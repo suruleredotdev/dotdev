@@ -264,9 +264,13 @@ body.DARK {
 }
 
 @media screen and (max-width: 600px) {
-  .home-grid--tools,
-  .home-grid--areas {
+  .home-grid--tools {
     --home-min: 140px;
+  }
+
+  /* One area per row on phones, so its previews get the full width. */
+  .home-grid--areas {
+    --home-min: 100%;
   }
 }
 

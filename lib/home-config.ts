@@ -30,7 +30,7 @@ export interface HomeArea {
    * ignored). A URL is also that channel's link. Empty for an area with none.
    */
   channels: string[];
-  /** Essays and tools that belong to this area. */
+  /** Tools and research that grew out of this area (essays live in the Essays section). */
   links: HomeLink[];
 }
 

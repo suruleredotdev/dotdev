@@ -35,6 +35,8 @@ jobs:
       SUBSTACK_API_KEY: ${{ secrets.SUBSTACK_API_KEY }}
       SUBSTACK_HANDLE: ${{ vars.SUBSTACK_HANDLE }}
       NEXT_PUBLIC_BASE_PATH: ${{ vars.NEXT_PUBLIC_BASE_PATH }}
+      # GA4 measurement ID; unset (the default) loads no GA script.
+      NEXT_PUBLIC_GA_ID: ${{ vars.NEXT_PUBLIC_GA_ID }}
       NODE_ENV: production
       LOG_LEVEL: error
       DEBUG: error

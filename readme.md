@@ -240,7 +240,52 @@ All pages are designed to be responsive across common device sizes.
 
 ## Analytics
 
-Analytics are an optional feature that are easy to enable if you want.
+### Google Analytics (GA4) product events
+
+`lib/analytics.ts` sends custom events to GA4, following the same conventions as the Artifacts Index (`african-artifacts/docs/analytics.md`) so the two sites read the same in GA. It is started from `pages/_app.tsx`.
+
+- **Measurement ID:** read from `NEXT_PUBLIC_GA_ID` at build time. When it's unset, no GA script is loaded at all and events are only logged to the console.
+- **Production only:** only `surulere.dev` (and `www.`) sends. On localhost and on deploy previews, events are printed to the console as `[analytics] <event> {…}`, and gtag isn't loaded.
+- **Debug:** add `?analytics_debug` to any URL to load gtag and send the events anyway, flagged `debug_mode`, so they show up in GA under **Admin → DebugView**. Without `NEXT_PUBLIC_GA_ID`, the flag just logs.
+- **`site`:** every event, including the automatic `page_view`, carries `site: "surulere.dev"`, so one property can serve every `*.surulere.dev` site.
+
+Elements are marked up instead of wired up by hand. A `data-track="<event>"` attribute plus one `data-track-<param>` per parameter is read by a single delegated click listener. In React, spread the typed helper:
+
+```tsx
+import { track } from "lib/analytics";
+
+<a href={tool.url} {...track("tool_open", { tool: "artifacts-index" })}>…</a>
+// → data-track="tool_open" data-track-tool="artifacts-index"
+```
+
+`components/su/TopBar.tsx` uses the same convention (`data-track="nav_click"`, `data-track-target`). To add an event, add it to `AnalyticsEvents` and `EVENT_NAMES` in `lib/analytics.ts`, then to the table below. Use `trackEvent(name, params)` for anything that isn't a click. The listener runs in the capture phase, so a toggle's `data-track-to` attribute holds the state the click moves *to*.
+
+| Event | Fires when | Parameters |
+| --- | --- | --- |
+| `nav_click` | A jump link under the intro is clicked | `target` (`essays` / `tools` / `archives`) |
+| `essay_open` | An essay tile or row is opened | `source` (`substack` / `site`), `title`, `area` (optional; not sent yet, since essays have no area mapping) |
+| `essays_show_all` | The essays "Show all" / "Show fewer" toggle is clicked | `to` (`open` / `closed`) |
+| `tool_open` | A tool card is opened | `tool` (the tool's subdomain, e.g. `artifacts-index`) |
+| `channel_open` | An Archives card's "See all (N)" or per-channel link is opened | `area`, `channel` (the Are.na channel title) |
+| `block_open` | An Are.na block thumbnail is opened | `area` |
+| `area_show_more` | An area's "Show more" / "Show less" is clicked | `area`, `to` (`open` / `closed`) |
+| `subscribe_click` | A Substack link is clicked | `placement` (`essays_head`: "Read on Substack" in the Essays header) |
+| `theme_toggle` | The footer's SETTINGS → TOGGLE DARK MODE is clicked | `to` (`dark` / `light`) |
+
+Every event also carries `site`.
+
+#### One-time GA setup
+
+GA collects parameters from the start, but reports and Explorations show only registered parameters, and only from the day they're registered. Do this when the change deploys.
+
+1. **Admin → Data display → Custom definitions → Create custom dimension**, scope *Event*, one per parameter:
+   `site` · `target` · `source` · `title` · `area` · `to` · `tool` · `channel` · `placement`
+   If the property is shared with the Artifacts Index, `source` already exists there. Skip any that do.
+2. **Admin → Data collection → Data filters → Developer traffic**: set it to *Active*, so `?analytics_debug` sessions stay out of reports.
+3. Optionally, mark `subscribe_click` as a key event (**Admin → Events**).
+4. Set `NEXT_PUBLIC_GA_ID` as a GitHub **repository variable** (Settings → Secrets and variables → Actions → Variables). `.github/workflows/deploy.yml` passes it to the production build. Netlify previews only need it, under Site configuration → Environment variables, to test `?analytics_debug` end to end.
+
+Per-feature counts show in **Reports → Engagement → Events** with no setup. Break them down by a parameter in **Explore → Free form**.
 
 ### Fathom Analytics
 

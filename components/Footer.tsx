@@ -11,6 +11,7 @@ import { IoSunnyOutline } from "@react-icons/all-files/io5/IoSunnyOutline";
 import { IoMoonSharp } from "@react-icons/all-files/io5/IoMoonSharp";
 
 import { useDarkMode } from "lib/use-dark-mode";
+import { track } from "lib/analytics";
 import * as config from "lib/config";
 
 import styles from "./styles.module.css";
@@ -28,7 +29,7 @@ export const FooterImpl: React.FC<any> = ({ page, isBlogPost }) => {
   const settingsHoverRef = React.useRef(null);
   const settingsIsHovered = useHover(settingsHoverRef);
 
-  const { toggleDarkMode } = useDarkMode();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   return (
     <footer ref={shareHoverRef} id="footer" className={classes.footer}>
@@ -112,6 +113,7 @@ export const FooterImpl: React.FC<any> = ({ page, isBlogPost }) => {
               id="dark-mode-toggle"
               className={classes.settingsBlockAction}
               onClick={toggleDarkMode}
+              {...track("theme_toggle", { to: isDarkMode ? "light" : "dark" })}
             >
               TOGGLE DARK MODE
             </span>

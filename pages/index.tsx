@@ -20,15 +20,19 @@ import {
   ArchivesSection,
   EssaysSection,
   HomeEssay,
-  SectionLinks,
   ToolsSection,
+  areaAnchor,
 } from "components/HomeSections";
+import { SideNav } from "components/SideNav";
 // NOTE: simple styling classlist strings w tachyons. may upgrade to be more configurable
 import {
   globalClasses,
   layoutDefaultClasses,
   StyleClasses,
 } from "components/styles";
+/** "ESSAYS" → "Essays", for the side navigation. */
+const sentenceCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+
 const classes: StyleClasses = {
   ...globalClasses,
   ...layoutDefaultClasses,
@@ -119,14 +123,22 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
       <div id="about" className="home-hero">
         <p className={`${classes.tagline} home-tagline`}>{home.hero.tagline}</p>
         <p className={`${classes.description} home-description`}>{home.hero.description}</p>
-        <SectionLinks
-          links={[
-            { id: "essays", label: home.essays.title },
-            { id: "tools", label: home.tools.title },
-            { id: "archives", label: home.archives.title },
-          ]}
-        />
       </div>
+
+      <SideNav
+        label="On this page"
+        groups={[
+          {
+            title: "surulere.dev",
+            items: [
+              { label: sentenceCase(home.essays.title), href: "#essays" },
+              { label: sentenceCase(home.tools.title), href: "#tools" },
+              { label: sentenceCase(home.archives.title), href: "#archives" },
+              ...areas.map((area) => ({ label: area.name, href: `#${areaAnchor(area.name)}`, level: 1 })),
+            ],
+          },
+        ]}
+      />
 
       {essays.length > 0 ? (
         <EssaysSection essays={essays} config={home.essays} substackUrl={substackUrl} />

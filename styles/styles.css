@@ -213,22 +213,6 @@ body.DARK {
   opacity: 1;
 }
 
-.home-jump {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.75rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-}
-
-.LIGHT .home-jump a,
-.DARK .home-jump a {
-  color: var(--home-muted);
-  border-bottom-color: var(--home-muted);
-}
-
-.LIGHT .home-jump a:hover,
-.DARK .home-jump a:hover,
 .LIGHT .home-head-link:hover,
 .DARK .home-head-link:hover {
   color: var(--home-ink);
@@ -590,4 +574,141 @@ body.DARK {
   list-style: none;
   font-size: 0.8rem;
   line-height: 1.35;
+}
+
+/*
+ * Side navigation (components/SideNav.tsx): where you are on the site and,
+ * on essays, the headings. A fixed column in the left-hand margin from 60em;
+ * below that, a "Contents" button in the corner opens the same list as a
+ * small panel.
+ */
+.side-nav {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--home-muted);
+}
+
+.side-nav-group + .side-nav-group {
+  margin-top: 1.25rem;
+}
+
+.side-nav-title {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--home-muted);
+}
+
+.side-nav ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-left: 1px solid var(--home-line);
+}
+
+.LIGHT .side-nav a,
+.DARK .side-nav a {
+  display: block;
+  margin-left: -1px;
+  padding: 0.2rem 0 0.2rem 0.75rem;
+  border-bottom: 0;
+  border-left: 2px solid transparent;
+  color: var(--home-muted);
+}
+
+.side-nav .side-nav-level-1 a {
+  padding-left: 1.5rem;
+}
+
+.side-nav .side-nav-level-2 a {
+  padding-left: 2.25rem;
+}
+
+.LIGHT .side-nav a:hover,
+.DARK .side-nav a:hover,
+.side-nav a:focus-visible {
+  color: var(--home-ink);
+}
+
+/* The section you're reading: ink text and a small accent marker. */
+.LIGHT .side-nav a[aria-current],
+.DARK .side-nav a[aria-current] {
+  color: var(--home-ink);
+  border-left-color: var(--accent-color);
+}
+
+.side-nav-toggle {
+  display: none;
+}
+
+/* In the left margin, the side of #content that has room at every desktop
+   width: 16rem from 60em, then a fixed 200px (4 × --bg-size) from 1200px,
+   when #content becomes a fixed 965px column. */
+@media screen and (min-width: 60em) {
+  .side-nav {
+    position: fixed;
+    top: 8rem;
+    left: 1rem;
+    z-index: 20;
+    width: 13.5rem;
+    max-height: calc(100vh - 11rem);
+    overflow-y: auto;
+    /* Solid ground so the list reads over the page pattern. */
+    padding: 0.75rem 0.75rem 0.75rem 0.6rem;
+    background: var(--home-ground);
+    border: 1px solid var(--home-line);
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .side-nav {
+    width: calc(4 * var(--bg-size) - 2rem);
+  }
+}
+
+@media screen and (max-width: 59.99em) {
+  .side-nav {
+    display: none;
+  }
+
+  .side-nav--open {
+    display: block;
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: calc(4.25rem + env(safe-area-inset-bottom));
+    z-index: 40;
+    width: min(18rem, calc(100vw - 2rem));
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 1rem;
+    background: var(--home-ground);
+    border: 1px solid var(--home-line);
+  }
+
+  .side-nav-toggle {
+    display: block;
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    z-index: 40;
+    min-height: 44px;
+    padding: 0 1rem;
+    font: inherit;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--home-ink);
+    background: var(--home-ground);
+    border: 1px dashed currentColor;
+    cursor: pointer;
+  }
+
+  .side-nav-toggle[aria-expanded="true"] {
+    border-style: solid;
+  }
 }

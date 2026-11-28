@@ -2,7 +2,12 @@ import * as React from "react";
 import { GetStaticProps } from "next";
 import { ExtendedRecordMap } from "notion-types";
 import NextHead from "next/head";
-import { getBlockValue, getPageProperty } from "notion-utils";
+import {
+  getBlockValue,
+  getPageProperty,
+  getPageTableOfContents,
+  uuidToId,
+} from "notion-utils";
 
 import { NotionRenderer, NotionComponents } from "react-notion-x";
 
@@ -14,9 +19,12 @@ import { PageProps, Params } from "lib/types";
 import { LayoutDefault, parsePageId } from "components/LayoutDefault";
 import { LayoutPost } from "components/LayoutPost";
 import { Footer } from "components/Footer";
+import { SideNav } from "components/SideNav";
 import { getLayoutProps } from "lib/get-layout-props";
 
 import { log } from "lib/log";
+
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export default function DynamicPostPage(props: PageProps) {
   const { recordMap, pageId: postPageId } = props;
@@ -26,6 +34,15 @@ export default function DynamicPostPage(props: PageProps) {
   log("DEBUG", "DynamicPostPage", { props, block_id: block?.id, isBlogPost });
 
   const { components } = notionProps;
+
+  // Headings render with an anchor named after the block id without dashes.
+  const headings = block
+    ? getPageTableOfContents(block as any, recordMap).map((entry) => ({
+        label: entry.text,
+        href: `#${uuidToId(entry.id)}`,
+        level: Math.min(entry.indentLevel, 2),
+      }))
+    : [];
 
   const title = block?.properties?.title;
   const description = getPageProperty(
@@ -49,6 +66,20 @@ export default function DynamicPostPage(props: PageProps) {
         pageId={postPageId}
         rootPageBlock={block}
       >
+        <SideNav
+          groups={[
+            {
+              title: "surulere.dev",
+              items: [
+                { label: "Essays", href: `${basePath}/#essays` },
+                { label: "Tools", href: `${basePath}/#tools` },
+                { label: "Archives", href: `${basePath}/#archives` },
+              ],
+            },
+            // An essay's own headings, once it has enough to be worth listing.
+            ...(headings.length >= 2 ? [{ title: "Contents", items: headings }] : []),
+          ]}
+        />
         <PostRenderer
           bodyClassName={
             "" // (styles.notion, pageId === site.rootNotionPageId && "index-page")

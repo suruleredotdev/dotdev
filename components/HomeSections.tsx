@@ -25,20 +25,9 @@ const formatDate = (published: number) =>
 const clip = (text: string | undefined, max: number) =>
   text && text.length > max ? text.substring(0, max - 3) + "..." : text;
 
-/** "Essays · Tools · Areas" jump links under the intro. */
-export const SectionLinks = ({
-  links,
-}: {
-  links: { id: string; label: string }[];
-}) => (
-  <nav aria-label="On this page" className="home-jump">
-    {links.map((l) => (
-      <a key={l.id} href={`#${l.id}`}>
-        {l.label} ↓
-      </a>
-    ))}
-  </nav>
-);
+/** Anchor for an archive area, e.g. "area-historiography". */
+export const areaAnchor = (name: string) =>
+  "area-" + name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 /** Section title row; sticks to the top while its section is on screen. */
 const SectionHead = ({
@@ -229,7 +218,7 @@ export const ArchivesSection = ({
       style={gridColumns(config.columns).style}
     >
       {areas.map((area, i) => (
-        <AreaCard key={i} id={`area-${i}`} area={area} config={config} />
+        <AreaCard key={i} id={areaAnchor(area.name)} area={area} config={config} />
       ))}
     </ul>
   </section>
@@ -251,7 +240,7 @@ const AreaCard = ({
   const blocksId = `${id}-blocks`;
 
   return (
-    <li className="home-area">
+    <li className="home-area" id={id}>
       <div className="home-area-head">
         <h3 className="home-tile-title">{area.name}</h3>
         {area.subtitle && <span className="home-tile-text">{area.subtitle}</span>}

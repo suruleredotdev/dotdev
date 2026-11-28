@@ -33,6 +33,7 @@ import Head from "next/head";
 import posthog from "posthog-js";
 
 import { bootstrap } from "lib/bootstrap-client";
+import { initAnalytics } from "lib/analytics";
 import {
   isServer,
   fathomId,
@@ -70,6 +71,9 @@ export default function App({ Component, pageProps }: AppProps) {
         posthog.capture("$pageview");
       }
     }
+
+    // GA4 product events; a no-op for sending when NEXT_PUBLIC_GA_ID is unset.
+    initAnalytics();
 
     if (fathomId) {
       Fathom.load(fathomId, fathomConfig);

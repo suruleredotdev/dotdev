@@ -3,6 +3,7 @@ import * as React from "react";
 import { HomeConfig } from "lib/home-config";
 import { ResearchArea } from "lib/research-areas";
 import { ExternalLinkIcon } from "components/ExternalLinkIcon";
+import { track } from "lib/analytics";
 
 export interface HomeEssay {
   title: string;
@@ -22,6 +23,15 @@ const formatDate = (published: number) =>
     day: "numeric",
   });
 
+/** "https://artifacts-index.surulere.dev" → "artifacts-index": stable across renames. */
+const toolSlug = (url: string) => {
+  try {
+    return new URL(url).hostname.split(".")[0];
+  } catch {
+    return url;
+  }
+};
+
 const clip = (text: string | undefined, max: number) =>
   text && text.length > max ? text.substring(0, max - 3) + "..." : text;
 
@@ -33,7 +43,7 @@ export const SectionLinks = ({
 }) => (
   <nav aria-label="On this page" className="home-jump">
     {links.map((l) => (
-      <a key={l.id} href={`#${l.id}`}>
+      <a key={l.id} href={`#${l.id}`} {...track("nav_click", { target: l.id })}>
         {l.label} ↓
       </a>
     ))}
@@ -74,16 +84,20 @@ const ToggleButton = ({
   closedLabel,
   openLabel,
   controls,
+  trackAttrs,
 }: {
   open: boolean;
   onToggle: () => void;
   closedLabel: string;
   openLabel: string;
   controls: string;
+  /** Spread onto the button, e.g. track("essays_show_all", …). */
+  trackAttrs?: Record<string, string>;
 }) => (
   <button
     type="button"
     className="home-more"
+    {...trackAttrs}
     aria-expanded={open}
     aria-controls={controls}
     onClick={onToggle}
@@ -106,6 +120,10 @@ const EssayLink = ({
     href={essay.href}
     target={essay.isExternal ? "_blank" : undefined}
     rel={essay.isExternal ? "noopener noreferrer" : undefined}
+    {...track("essay_open", {
+      source: essay.isExternal ? "substack" : "site",
+      title: essay.title,
+    })}
   >
     {children}
   </a>
@@ -132,6 +150,7 @@ export const EssaysSection = ({
           href={substackUrl}
           target="_blank"
           rel="noopener noreferrer"
+          {...track("subscribe_click", { placement: "essays_head" })}
         >
           {config.substackLinkLabel} <ExternalLinkIcon />
         </a>
@@ -142,6 +161,7 @@ export const EssaysSection = ({
             closedLabel={fillCount(config.showAllLabel, essays.length)}
             openLabel={config.showFewerLabel}
             controls="essays-earlier"
+            trackAttrs={track("essays_show_all", { to: open ? "closed" : "open" })}
           />
         )}
       </SectionHead>
@@ -194,7 +214,13 @@ export const ToolsSection = ({ config }: { config: HomeConfig["tools"] }) => (
     >
       {config.items.map((tool, i) => (
         <li key={i}>
-          <a className="home-tile home-tile--media" href={tool.url} target="_blank" rel="noopener noreferrer">
+          <a
+            className="home-tile home-tile--media"
+            href={tool.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            {...track("tool_open", { tool: toolSlug(tool.url) })}
+          >
             <img className="home-tile-image" src={tool.image} alt="" loading="lazy" />
             <span className="home-tile-body">
               <span className="home-tile-title">
@@ -262,6 +288,7 @@ const AreaCard = ({
             href={area.channels[0].url}
             target="_blank"
             rel="noopener noreferrer"
+            {...track("channel_open", { area: area.name, channel: area.channels[0].title })}
           >
             {fillCount(config.channelLinkLabel, area.channels[0].blockCount)} <ExternalLinkIcon />
           </a>
@@ -275,6 +302,7 @@ const AreaCard = ({
                   href={ch.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  {...track("channel_open", { area: area.name, channel: ch.title })}
                 >
                   {ch.title}{" "}
                   {/* The count and arrow stay with the end of the name. */}
@@ -299,6 +327,7 @@ const AreaCard = ({
                 href={block.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                {...track("block_open", { area: area.name })}
               >
                 {block.image ? (
                   <>
@@ -320,6 +349,7 @@ const AreaCard = ({
           aria-expanded={open}
           aria-controls={blocksId}
           onClick={() => setOpen(!open)}
+          {...track("area_show_more", { area: area.name, to: open ? "closed" : "open" })}
         >
           {open ? `${config.showFewerLabel} ↑` : `${config.showMoreLabel} ↓`}
         </button>

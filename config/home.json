@@ -48,9 +48,11 @@
     "profileLinkLabel": "All channels on Are.na",
     "channelLinkLabel": "See all ({count})",
     "previewBlocks": 3,
-    "expandedBlocks": 7,
+    "expandedBlocks": 9,
     "showMoreLabel": "Show more",
     "showFewerLabel": "Show less",
+    "summaryLabel": "Summary",
+    "summaryNote": "Written by AI from the {count} newest blocks",
     "areas": [
       {
         "name": "Historiography",

@@ -68,6 +68,10 @@ export interface HomeConfig {
     expandedBlocks: number;
     showMoreLabel: string;
     showFewerLabel: string;
+    /** Heading of the AI summary shown beside an expanded area. */
+    summaryLabel: string;
+    /** Under the summary; "{count}" is the number of blocks it was written from. */
+    summaryNote: string;
     areas: HomeArea[];
   };
 }
@@ -124,6 +128,8 @@ export function validateHomeConfig(raw: unknown): HomeConfig {
       expandedBlocks: c.count(archives.expandedBlocks, "archives.expandedBlocks"),
       showMoreLabel: c.string(archives.showMoreLabel, "archives.showMoreLabel"),
       showFewerLabel: c.string(archives.showFewerLabel, "archives.showFewerLabel"),
+      summaryLabel: c.string(archives.summaryLabel, "archives.summaryLabel"),
+      summaryNote: c.string(archives.summaryNote, "archives.summaryNote"),
       areas: c.array(archives.areas, "archives.areas").map((item, i) => {
         const at = `archives.areas[${i}]`;
         const area = c.object(item, at);

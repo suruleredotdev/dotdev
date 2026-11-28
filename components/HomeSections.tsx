@@ -235,7 +235,11 @@ export const ArchivesSection = ({
   </section>
 );
 
-/** One research area. Its "Show more" sits under its own previews. */
+/**
+ * One research area. "Show more" opens it in place: it takes the whole row,
+ * shows more of its blocks and, when one has been generated, a short AI
+ * summary of the area alongside.
+ */
 const AreaCard = ({
   id,
   area,
@@ -246,12 +250,20 @@ const AreaCard = ({
   config: HomeConfig["archives"];
 }) => {
   const [open, setOpen] = React.useState(false);
+  const ref = React.useRef<HTMLLIElement>(null);
+  const toggled = React.useRef(false);
   const shown = open ? config.expandedBlocks : config.previewBlocks;
-  const hasMore = area.blocks.length > config.previewBlocks;
-  const blocksId = `${id}-blocks`;
+  const hasMore = area.blocks.length > config.previewBlocks || !!area.summary;
+  const bodyId = `${id}-body`;
+
+  // Opening or closing can move the card to another row; keep it in view.
+  React.useEffect(() => {
+    if (!toggled.current) return;
+    ref.current?.scrollIntoView({ block: "nearest" });
+  }, [open]);
 
   return (
-    <li className="home-area">
+    <li ref={ref} className={`home-area${open ? " home-area--open" : ""}`}>
       <div className="home-area-head">
         <h3 className="home-tile-title">{area.name}</h3>
         {area.subtitle && <span className="home-tile-text">{area.subtitle}</span>}
@@ -288,38 +300,60 @@ const AreaCard = ({
         )}
       </div>
 
-      {area.blocks.length > 0 && (
-        <ul className="home-blocks" id={blocksId}>
-          {area.blocks.slice(0, shown).map((block, j) => (
-            <li key={block.id}>
-              {/* The newest block leads, larger; each image carries its
-                  title in a caption strip, so you know what it opens. */}
-              <a
-                className={`home-block${j === 0 ? " home-block--lead" : ""}`}
-                href={block.url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {block.image ? (
-                  <>
-                    <img src={block.image} alt="" loading="lazy" />
-                    <span className="home-block-caption">{block.title}</span>
-                  </>
-                ) : (
-                  <span>{clip(block.title, 60)}</span>
-                )}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
+      <div className="home-area-body" id={bodyId}>
+        {open && area.summary && (
+          <aside className="home-area-summary" aria-label={`${config.summaryLabel}: ${area.name}`}>
+            <span className="home-area-summary-label">{config.summaryLabel}</span>
+            <p>{area.summary.summary}</p>
+            {area.summary.themes.length > 0 && (
+              <ul className="home-area-themes">
+                {area.summary.themes.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
+            )}
+            <span className="home-area-summary-note">
+              {fillCount(config.summaryNote, area.summary.blocksRead)} · {area.summary.generatedAt}
+            </span>
+          </aside>
+        )}
+
+        {area.blocks.length > 0 && (
+          <ul className="home-blocks">
+            {area.blocks.slice(0, shown).map((block, j) => (
+              <li key={block.id}>
+                {/* The newest block leads, larger; each image carries its
+                    title in a caption strip, so you know what it opens. */}
+                <a
+                  className={`home-block${j === 0 ? " home-block--lead" : ""}`}
+                  href={block.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {block.image ? (
+                    <>
+                      <img src={block.image} alt="" loading="lazy" />
+                      <span className="home-block-caption">{block.title}</span>
+                    </>
+                  ) : (
+                    <span>{clip(block.title, 60)}</span>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
       {hasMore && (
         <button
           type="button"
           className="home-more home-more--small"
           aria-expanded={open}
-          aria-controls={blocksId}
-          onClick={() => setOpen(!open)}
+          aria-controls={bodyId}
+          onClick={() => {
+            toggled.current = true;
+            setOpen(!open);
+          }}
         >
           {open ? `${config.showFewerLabel} ↑` : `${config.showMoreLabel} ↓`}
         </button>

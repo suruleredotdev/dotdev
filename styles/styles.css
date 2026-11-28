@@ -579,6 +579,97 @@ body.DARK {
   white-space: normal;
 }
 
+/* An expanded area takes the whole row: more blocks, four across with the
+   lead two by two, and its summary beside them. Narrower, the two stack. */
+.home-area-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.home-grid > li.home-area--open {
+  grid-column: 1 / -1;
+}
+
+@media screen and (min-width: 1200px) {
+  .home-area--open .home-blocks {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .home-area--open .home-blocks > li:first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .home-area--open .home-block--lead {
+    aspect-ratio: 1;
+    height: 100%;
+  }
+
+  .home-area--open .home-area-body {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr);
+    align-items: start;
+    gap: 1rem;
+  }
+
+  .home-area--open .home-area-summary {
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: 5rem;
+  }
+
+  .home-area--open .home-blocks {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+.home-area-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--home-line);
+  background: var(--home-ground);
+}
+
+.home-area-summary p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--home-text);
+}
+
+.home-area-summary-label,
+.home-area-summary-note {
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  color: var(--home-muted);
+}
+
+.home-area-summary-label {
+  text-transform: uppercase;
+}
+
+/* Themes are labels, not links: solid hairline, no accent. */
+.home-area-themes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-area-themes li {
+  padding: 1px 6px 2px;
+  border: 1px solid var(--home-line);
+  font-size: 0.7rem;
+  color: var(--home-text);
+}
+
 /* Titles often wrap: keep a title's own lines close and put clear space
    between titles, so each link reads as one item. */
 .home-area-links {

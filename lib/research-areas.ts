@@ -3,6 +3,7 @@ import fetch from "node-fetch";
 
 import { HomeArea, HomeConfig, HomeLink } from "./home-config";
 import { log } from "./log";
+import { ArchiveSummary, getArchiveSummaries } from "./archive-summaries";
 
 export interface AreaBlock {
   id: number;
@@ -28,6 +29,8 @@ export interface ResearchArea {
   channels: AreaChannel[];
   /** Newest across all its channels, up to archives.expandedBlocks. */
   blocks: AreaBlock[];
+  /** From data/archive-summaries.json; shown when the area is expanded. */
+  summary: ArchiveSummary | null;
 }
 
 /**
@@ -43,6 +46,7 @@ export async function buildResearchAreas(
   channels: Arena.Channel[],
   archives: HomeConfig["archives"]
 ): Promise<ResearchArea[]> {
+  const summaries = getArchiveSummaries();
   return Promise.all(
     archives.areas.map(async (area) => {
       const found = await Promise.all(
@@ -79,6 +83,7 @@ export async function buildResearchAreas(
           blockCount: channel.length ?? channel.contents?.length ?? 0,
         })),
         blocks,
+        summary: summaries[area.name] ?? null,
       };
     })
   );
@@ -109,7 +114,7 @@ const ARENA_API = "https://api.are.na/v2";
  * One channel straight from the public API: its length, then the last page
  * of its contents (blocks are listed oldest first, so that page is newest).
  */
-async function fetchChannel(slug: string, newest: number): Promise<Arena.Channel | null> {
+export async function fetchChannel(slug: string, newest: number): Promise<Arena.Channel | null> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   const token = process.env.ARENA_PERSONAL_ACCESS_TOKEN;
   if (token) headers["Authorization"] = `Bearer ${token}`;
